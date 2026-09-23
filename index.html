@@ -1,962 +1,1361 @@
-<html lang="ja"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
-        window.__firebase_config = firebaseConfig;
-        window.__initial_auth_token = initialAuthToken;
-        window.__app_id = appId;
-            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNDY2NTMzMzU4NzkxNzUwODI2MiIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjX2FmZDM4ZjVjNWE0Nzg0ZjJfaW5kZXguaHRtbC00MzgifSwiZXhwIjoxNzkwMTI5NjA1LCJpYXQiOjE3OTAxMjYwMDUsImFsZyI6IlJTMjU2In0.N38vswP9batfbZtnDbMf0kV8J6V3yDk-mznXt8UJDnIHuMgskN1FqKDH8113T3MY-QpKbxZCCGOcefeei98qFGrBuDSo2b9ATDxv8jME34Y8waJJ6HRJNM5gGMi0_-MQVWo_9C5vj9_zj1vpx5X70RUN6NjP6Z8_1aTWEa00r45VXpzvzhiMXgYstdzySbZRZbP6sd22yMQ01XIC7OSlKDP3UIrdMfDFLJZn39Jk5wdHnyXAUyYwb5UAup0k7kGZE_S-tlCKZuZd2LF3X3M6Q3nOtQWM8Hr5tP8MlYyVlcOfOPB9kDxH0mPr8XYGoF8h8NuFV63TX4bD1_vmMAfTng","c_afd38f5c5a4784f2_index.html-438")</script><script data-bard-client-injected="true">
-  document.addEventListener('input', (event) => {
-    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
-      const clonedDoc = document.cloneNode(true);
-      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
-      injectedScripts.forEach(el => el.remove());
-      window.parent.postMessage({
-        type: 'inlineEdit',
-        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
-      }, '*');
-    }
-  });
-</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const SCROLL_KEYS = new Set([
-    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
-  ]);
-  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gran Turismo Record</title>
 
-  function isTextEntryTarget(target) {
-    if (!target) return false;
-    const tagName = target.tagName;
-    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
-        tagName === 'SELECT' || target.isContentEditable === true;
-  }
-
-  // An element absorbs the key only if it both overflows on the axis being
-  // scrolled and is configured to scroll on that axis. The cheap dimension
-  // test runs first because getComputedStyle forces a style recalc, and this
-  // runs on every keypress. Each axis is read from its own longhand: the
-  // 'overflow' shorthand serializes as two values when the axes differ, which
-  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
-  function canScroll(node, horizontal) {
-    const overflows = horizontal ? node.scrollWidth > node.clientWidth
-                                 : node.scrollHeight > node.clientHeight;
-    if (!overflows) return false;
-    const style = window.getComputedStyle(node);
-    const overflow = horizontal ? style.overflowX : style.overflowY;
-    return overflow === 'auto' || overflow === 'scroll';
-  }
-
-  // Walks up from the event target so nested scrollers keep their behavior.
-  // <body> is included because pages that pin the root height make it the
-  // scroll container.
-  function hasScrollableAncestor(target, horizontal) {
-    let node = target;
-    while (node && node !== document.documentElement) {
-      if (canScroll(node, horizontal)) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
-
-  function rootCanScroll(horizontal) {
-    const scroller = document.scrollingElement || document.documentElement;
-    if (!scroller) return false;
-    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
-    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
-                      : scroller.scrollHeight > window.innerHeight + 1;
-  }
-
-  window.addEventListener('keydown', function(event) {
-    if (!SCROLL_KEYS.has(event.key)) return;
-    if (event.defaultPrevented) return;
-    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
-    // reserved for shortcuts, so none of them are scroll intent.
-    if (event.altKey || event.metaKey || event.ctrlKey) return;
-
-    const target = event.target;
-    if (isTextEntryTarget(target)) return;
-
-    // Anything that can still absorb the scroll gets to keep it.
-    const horizontal = HORIZONTAL_KEYS.has(event.key);
-    if (rootCanScroll(horizontal)) return;
-    if (hasScrollableAncestor(target, horizontal)) return;
-
-    event.preventDefault();
-  }, {capture: true, passive: false});
-})();</script><script data-bard-client-injected="true">(function() {
-  // Ensure this script is executed only once
-  if (window.firebaseAuthBridgeScriptLoaded) {
-    return;
-  }
-  window.firebaseAuthBridgeScriptLoaded = true;
-
-  let nextTokenPromiseId = 0;
-
-  // Stores { resolve, reject } for ongoing token requests
-  const pendingTokenPromises = {};
-
-  // Listen for messages from the Host Application
-  window.addEventListener('message', function(event) {
-
-    const messageData = event.data;
-
-  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
-      const { success, token, error, promiseId } = messageData ?? {};
-      if (pendingTokenPromises[promiseId]) {
-        if (success) {
-          pendingTokenPromises[promiseId].resolve(token);
-        } else {
-          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
-        }
-        delete pendingTokenPromises[promiseId];
-      }
-    }
-  });
-
-  // Expose a function for the Generated App to request a new Firebase token
-  window.requestNewFirebaseToken = function() {
-    const currentPromiseId = nextTokenPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingTokenPromises[currentPromiseId] = { resolve, reject };
-    });
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({
-        type: 'REQUEST_NEW_FIREBASE_TOKEN',
-        promiseId: currentPromiseId
-      }, '*');
-    } else {
-      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
-      delete pendingTokenPromises[currentPromiseId];
-    }
-    return promise;
-  };
-})();</script><script data-bard-client-injected="true">
-let realOriginalGetUserMedia = null;
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+<style>
+:root {
+    --bg: #111318;
+    --panel: #1b1e25;
+    --panel2: #242832;
+    --border: #343a46;
+    --text: #e8eaed;
+    --muted: #9aa0aa;
+    --accent: #4da3ff;
+    --gold: #e6b84a;
+    --silver: #bfc5cc;
+    --bronze: #c98b5b;
+    --danger: #e45d5d;
 }
 
-(function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
-    try {
-      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
-        get: function() {
-          return undefined; // Or throw an error
-        },
-        configurable: false
-      });
-    } catch (error) {
-      console.error("Error defining prototype getter:", error);
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+    padding: 24px;
+    background: #0d0f13;
+    border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+}
+
+header p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 20px;
+}
+
+.game-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.game-tab {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.game-tab:hover {
+    background: var(--panel2);
+}
+
+.game-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.section-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.section-tab {
+    padding: 11px 18px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.section-tab.active {
+    background: #303744;
+    border-color: var(--accent);
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+}
+
+.stat-title {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+.progress {
+    height: 6px;
+    background: #30343d;
+    border-radius: 3px;
+    margin-top: 12px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--accent);
+    width: 0%;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+button {
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--text);
+    padding: 8px 13px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(1.15);
+}
+
+button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+button.danger {
+    background: transparent;
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.search {
+    width: 100%;
+    padding: 11px;
+    margin-bottom: 12px;
+    background: #101217;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+th {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+td {
+    font-size: 14px;
+}
+
+tr:hover {
+    background: rgba(255,255,255,0.025);
+}
+
+.status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status.gold {
+    color: #111;
+    background: var(--gold);
+}
+
+.status.silver {
+    color: #111;
+    background: var(--silver);
+}
+
+.status.bronze {
+    color: #111;
+    background: var(--bronze);
+}
+
+.status.none {
+    color: var(--muted);
+    background: #30343d;
+}
+
+.actions {
+    display: flex;
+    gap: 5px;
+}
+
+.empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 40px 10px;
+}
+
+.modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.modal-bg.show {
+    display: flex;
+}
+
+.modal {
+    width: min(600px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.modal h2 {
+    margin-top: 0;
+}
+
+.form-row {
+    margin-bottom: 13px;
+}
+
+.form-row label {
+    display: block;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea {
+    width: 100%;
+    padding: 10px;
+    background: #101217;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+}
+
+.form-row textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 800px) {
+    .dashboard {
+        grid-template-columns: 1fr;
     }
-  }
-})();
 
-(function() {
-  const pendingMediaResolvers = {};
-  let nextMediaPromiseId = 0;
-
-  function requestMediaPermissions(constraints) {
-    const mediaPromiseId = nextMediaPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingMediaResolvers[mediaPromiseId] = (granted) => {
-        delete pendingMediaResolvers[mediaPromiseId];
-        resolve(granted);
-      };
-    });
-
-    window.parent.postMessage({
-      type: 'requestMediaPermission',
-      constraints: constraints,
-      promiseId: mediaPromiseId,
-    }, '*');
-
-    return promise;
-  }
-
-  let originalGetUserMedia = realOriginalGetUserMedia;
-
-  function interceptGetUserMedia() {
-    if (navigator.mediaDevices) {
-      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
-        value: function(constraints) {
-          return requestMediaPermissions(constraints).then((granted) => {
-            if (granted) {
-              if (originalGetUserMedia) {
-                return originalGetUserMedia(constraints);
-              } else {
-                throw new Error("Original getUserMedia not available.");
-              }
-            } else {
-              throw new DOMException('Permission denied', 'NotAllowedError');
-            }
-          });
-        },
-        writable: false,
-        configurable: false
-      });
-    }
-  }
-
-  interceptGetUserMedia();
-
-  const observer = new MutationObserver(function(mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'childList' && mutation.addedNodes) {
-        mutation.addedNodes.forEach(node => {
-          if (node === navigator.mediaDevices) {
-            interceptGetUserMedia();
-          }
-        });
-      }
-    }
-  });
-
-  function interceptSpeechRecognition() {
-    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
-      return;
+    table {
+        min-width: 700px;
     }
 
-    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const SpeechRecognitionWrapper = function(...args) {
-      const recognizer = new OriginalSpeechRecognition(...args);
-      const originalStart = recognizer.start.bind(recognizer);
-
-      recognizer.start = function() {
-        requestMediaPermissions({ audio: true }).then(granted => {
-          if (granted) {
-            originalStart();
-          } else {
-            const errorEvent = new SpeechRecognitionErrorEvent('error');
-            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
-            recognizer.dispatchEvent(errorEvent);
-          }
-        });
-      };
-
-      return recognizer;
-    };
-
-    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
-    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
-
-    if (window.SpeechRecognition) {
-      window.SpeechRecognition = SpeechRecognitionWrapper;
+    .table-wrapper {
+        overflow-x: auto;
     }
-    if (window.webkitSpeechRecognition) {
-      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
-    }
-  }
+}
+</style>
+</head>
 
-  interceptSpeechRecognition();
+<body>
 
-  window.addEventListener('message', function(event) {
-    if (event.data) {
-      if (event.data.type === 'resolveMediaPermission') {
-        const { promiseId, granted } = event.data;
-        if (pendingMediaResolvers[promiseId]) {
-          pendingMediaResolvers[promiseId](granted);
-        }
-      }
-    }
-  });
+<header>
+    <h1>🏎️ Gran Turismo Record</h1>
+    <p>Gran Turismo 1 - 7 Personal Record</p>
+</header>
 
-})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
-function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+<div class="container">
 
- Copyright The Closure Library Authors.
- SPDX-License-Identifier: Apache-2.0
-*/
-function A(b,d){function e(){}e.prototype=d.prototype;b.j=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
-let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
-null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.i="";var l=0,t=null,r=null,q=[],F=new TextEncoder,G=new TextDecoder;
-c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*16|0;return(f===
-"x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;(g=t)==null||g.postMessage(a)}};
-Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
-(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
-url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
-</script><script data-bard-client-injected="true">((function(modelInformation) {
-  const originalFetch = window.fetch;
-  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
-  let googleLlmBaseApiUrls = [
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
-  ];
-  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-    );
-  });
-  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-
-  const pendingFetchResolvers = {};
-  let nextPromiseId = 0;
-
-  function handleStringInput(input, optionsArgument) {
-    const actualUrl = input;
-    const fetchCallArgs = [actualUrl, optionsArgument];
-    const effectiveOptions = optionsArgument || {};
-    const bodyForApiKeyCheck = effectiveOptions.body;
-    const bodyForPostMessage = effectiveOptions.body;
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  function handleRequestInput(input, optionsArgument) {
-    const actualUrl = input.url;
-    const fetchCallArgs = [input, optionsArgument];
-    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (optionsArgument) {
-      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
-      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
-      if ('body' in optionsArgument) {
-        bodyForApiKeyCheck = optionsArgument.body;
-        bodyForPostMessage = optionsArgument.body;
-      } else {
-        bodyForApiKeyCheck = undefined;
-        bodyForPostMessage = input.body;
-      }
-    } else {
-      bodyForApiKeyCheck = undefined;
-      bodyForPostMessage = input.body;
-    }
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  window.fetch = function(input, optionsArgument) {
-    let actualUrl;
-    let fetchCallArgs;
-    let effectiveOptions = {};
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (typeof input === 'string') {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
-    } else if (input instanceof Request) {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
-    } else {
-      return originalFetch.apply(window, [input, optionsArgument]);
-    }
-
-    effectiveOptions.method = effectiveOptions.method || 'GET';
-    if (!effectiveOptions.headers) {
-      effectiveOptions.headers = new Headers();
-    }
-
-
-    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
-      let apiKeyIsNull = true;
-
-      const regex = new RegExp("models/([^:]+)");
-      const modelNameMatch = actualUrl.match(regex);
-      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
-
-
-      try {
-        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
-        const apiKeyParam = urlObject.searchParams.get('key');
-        if (apiKeyParam) {
-          apiKeyIsNull = false;
-        }
-      } catch (e) {
-        // Continue checks even if URL parsing fails
-      }
-
-      if (apiKeyIsNull && effectiveOptions.headers) {
-        const h = new Headers(effectiveOptions.headers);
-        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
-        if (apiKeyHeaderValue) {
-          apiKeyIsNull = false;
-          return originalFetch.apply(window, fetchCallArgs);
-        }
-      }
-
-      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
-        try {
-          const bodyData = JSON.parse(bodyForApiKeyCheck);
-          if (bodyData && bodyData.apiKey) {
-            apiKeyIsNull = false;
-            return originalFetch.apply(window, fetchCallArgs);
-          }
-        } catch (e) {
-          // Ignore JSON parsing errors
-        }
-      }
-
-      if(apiKeyIsNull) {
-        const promiseId = nextPromiseId++;
-        const promise = new Promise((resolve) => {
-          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
-            delete pendingFetchResolvers[promiseId];
-            resolve(resolvedResponse);
-          };
-        });
-
-        let serializedBodyForPostMessage;
-        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
-            serializedBodyForPostMessage = bodyForPostMessage;
-        } else if (bodyForPostMessage instanceof ReadableStream) {
-            serializedBodyForPostMessage = null;
-        } else {
-            try {
-                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
-            } catch (e) {
-                serializedBodyForPostMessage = null;
-            }
-        }
-
-        const messageOptions = {
-            method: effectiveOptions.method,
-            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
-            body: serializedBodyForPostMessage
-        };
-
-        window.parent.postMessage({
-          type: 'requestFetch',
-          url: actualUrl,
-          modelName: modelName,
-          options: messageOptions,
-          promiseId: promiseId,
-        }, '*');
-
-        return promise;
-      }
-      return originalFetch.apply(window, fetchCallArgs);
-    }
-    return originalFetch.apply(window, fetchCallArgs);
-  };
-
-  window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'resolveFetch') {
-      const { promiseId, response } = event.data;
-      if (pendingFetchResolvers[promiseId]) {
-        try {
-          const reconstructedResponse = new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: new Headers(response.headers),
-          });
-          pendingFetchResolvers[promiseId](reconstructedResponse);
-        } catch (error) {
-          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
-        }
-      }
-    }
-  });
-
-}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const originalConsoleLog = console.log;
-  const originalConsoleError = console.error;
-
-    /**
-   * Normalizes an error event or a promise rejection reason into a structured error object.
-   * @param {*} errorEventOrReason The error object or reason.
-   * @return {object} Structured error data { message, name, stack }.
-   */
-  function getErrorObject(errorEventOrReason) {
-    if (errorEventOrReason instanceof Error) {
-      return {
-        message: errorEventOrReason.message,
-        name: errorEventOrReason.name,
-        stack: errorEventOrReason.stack,
-      };
-    }
-    // Fallback for non-Error objects.
-    try {
-      return {
-        message: JSON.stringify(errorEventOrReason),
-        name: 'UnknownErrorType',
-        stack: null,
-      };
-    } catch (e) {
-      return {
-        message: String(errorEventOrReason),
-        name: 'UnknownErrorTypeNonStringifiable',
-        stack: null,
-      };
-    }
-  }
-
-  /**
-   * Converts an array of arguments (from log/error) into a single string.
-   * Handles Error objects specially to include their message and stack.
-   * @param {Array<*>} args - Arguments passed to console methods.
-   * @return {string} A string representation of the arguments.
-   */
-  function stringifyArgs(args) {
-    return args
-      .map((arg) => {
-        if (arg instanceof Error) {
-          const {message, stack} = arg;
-          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
-        }
-        if (typeof arg === 'object' && arg !== null) {
-          try {
-            return JSON.stringify(arg);
-          } catch (error) {
-            return '[Circular Object]';
-          }
-        } else {
-          return String(arg);
-        }
-      })
-      .join(' ');
-  }
-
-  console.log = function(...args) {
-    const logString = stringifyArgs(args);
-    window.parent.postMessage({ type: 'log', message: logString }, '*');
-    originalConsoleLog.apply(console, args);
-  };
-
-  console.error = function(...args) {
-    let errorData;
-    if (args.length > 0 && args[0] instanceof Error) {
-      const err = args[0];
-      // If the first arg is an Error, capture its details.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        ...getErrorObject(err),
-        rawArgsString: stringifyArgs(args.slice(1)),
-        timestamp: new Date().toISOString(),
-      };
-    } else {
-      // If not an Error object, treat all args as a general error message.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        message: stringifyArgs(args),
-        name: 'ConsoleLoggedError',
-        stack: null,
-        timestamp: new Date().toISOString(),
-      };
-    }
-    window.parent.postMessage(errorData, '*');
-    originalConsoleError.apply(console, args);
-  };
-
-  // Listen for global unhandled synchronous errors.
-  window.addEventListener('error', function(event) {
-    const errorDetails = event.error ? getErrorObject(event.error) : {
-      message: event.message,
-      name: 'GlobalError',
-      stack: null,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    };
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'global',
-      ...errorDetails,
-      message: errorDetails.message || event.message,
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-  // Listen for unhandled promise rejections (asynchronous errors).
-  window.addEventListener('unhandledrejection', function(event) {
-    const errorDetails = getErrorObject(event.reason);
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'unhandledrejection',
-      ...errorDetails,
-      message: errorDetails.message || 'Unhandled Promise Rejection',
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-})();</script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gran Turismo Series Play Log</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gtRed: '#E50914',
-                        gtDark: '#0B0D10',
-                        gtCard: '#161920',
-                        gtCardBorder: '#232733',
-                        gtTextSub: '#9CA3AF'
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- FontAwesome icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background-color: #0B0D10;
-            color: #F3F4F6;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0B0D10;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #232733;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #E50914;
-        }
-    </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.sticky{position:sticky}.bottom-6{bottom:1.5rem}.right-6{right:1.5rem}.top-0{top:0px}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-4{margin-bottom:1rem}.mt-12{margin-top:3rem}.flex{display:flex}.grid{display:grid}.h-8{height:2rem}.min-h-screen{min-height:100vh}.w-3{width:0.75rem}.w-full{width:100%}.max-w-7xl{max-width:80rem}.flex-1{flex:1 1 0%}.-skew-x-12{--tw-skew-x:-12deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l-2{border-left-width:2px}.border-t{border-top-width:1px}.border-gray-600{--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.border-gtCardBorder{--tw-border-opacity:1;border-color:rgb(35 39 51 / var(--tw-border-opacity, 1))}.border-gtRed{--tw-border-opacity:1;border-color:rgb(229 9 20 / var(--tw-border-opacity, 1))}.border-neutral-700{--tw-border-opacity:1;border-color:rgb(64 64 64 / var(--tw-border-opacity, 1))}.bg-gtCard{--tw-bg-opacity:1;background-color:rgb(22 25 32 / var(--tw-bg-opacity, 1))}.bg-gtCard\/80{background-color:rgb(22 25 32 / 0.8)}.bg-gtCardBorder{--tw-bg-opacity:1;background-color:rgb(35 39 51 / var(--tw-bg-opacity, 1))}.bg-gtRed{--tw-bg-opacity:1;background-color:rgb(229 9 20 / var(--tw-bg-opacity, 1))}.bg-neutral-800{--tw-bg-opacity:1;background-color:rgb(38 38 38 / var(--tw-bg-opacity, 1))}.bg-neutral-900\/90{background-color:rgb(23 23 23 / 0.9)}.p-3{padding:0.75rem}.p-5{padding:1.25rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-3{padding-bottom:0.75rem}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-gray-200{--tw-text-opacity:1;color:rgb(229 231 235 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gtRed{--tw-text-opacity:1;color:rgb(229 9 20 / var(--tw-text-opacity, 1))}.text-gtTextSub{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-teal-400{--tw-text-opacity:1;color:rgb(45 212 191 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.opacity-100{opacity:1}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-gtRed\/20{--tw-shadow-color:rgb(229 9 20 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.selection\:bg-gtRed *::selection{--tw-bg-opacity:1;background-color:rgb(229 9 20 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-gtRed::selection{--tw-bg-opacity:1;background-color:rgb(229 9 20 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:border-gtRed:hover{--tw-border-opacity:1;border-color:rgb(229 9 20 / var(--tw-border-opacity, 1))}.hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.hover\:bg-neutral-700:hover{--tw-bg-opacity:1;background-color:rgb(64 64 64 / var(--tw-bg-opacity, 1))}.hover\:bg-red-700:hover{--tw-bg-opacity:1;background-color:rgb(185 28 28 / var(--tw-bg-opacity, 1))}.hover\:shadow-lg:hover{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:shadow-gtRed\/10:hover{--tw-shadow-color:rgb(229 9 20 / 0.1);--tw-shadow:var(--tw-shadow-colored)}@media (min-width: 640px){.sm\:px-4{padding-left:1rem;padding-right:1rem}.sm\:px-8{padding-left:2rem;padding-right:2rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 768px){.md\:w-auto{width:auto}.md\:flex-initial{flex:0 1 auto}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}}@media (min-width: 1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style></head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-gtRed selection:text-white">
-
-    <div>
-        <header class="border-b border-gtCardBorder bg-gtCard/80 backdrop-blur-md sticky top-0 z-50 py-4 px-4 sm:px-8 shadow-xl">
-            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-3 h-8 bg-gtRed rounded-full transform -skew-x-12"></div>
-                    <div>
-                        <h1 class="text-2xl font-black italic tracking-wider text-white uppercase flex items-center gap-2">
-                            Gran Turismo <span class="text-gtRed">Play Log</span>
-                        </h1>
-                        <p class="text-xs text-gtTextSub">グランツーリスモ1〜7 プレイ実績メモ・記録管理</p>
-                    </div>
-                </div>
-
-                <!-- Action Controls -->
-                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-center">
-                    <button id="copyFullTextBtn" onclick="copyFullLogText()" class="flex-1 md:flex-initial text-xs sm:text-sm bg-gtCardBorder hover:bg-gray-700 text-gray-200 font-semibold py-2 px-3 sm:px-4 rounded-lg transition-all duration-200 border border-gray-600 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-file-lines text-gtRed"></i>
-                        <span>全テキストコピー</span>
-                    </button>
-                    <button id="copyHtmlBtn" onclick="copySourceHtml()" class="flex-1 md:flex-initial text-xs sm:text-sm bg-gtRed hover:bg-red-700 text-white font-bold py-2 px-3 sm:px-4 rounded-lg transition-all duration-200 shadow-lg shadow-gtRed/20 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-code"></i>
-                        <span>HTML全コードコピー</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
-            <!-- Toast notification element -->
-            <div id="toast" class="fixed bottom-6 right-6 bg-gtRed text-white px-5 py-3 rounded-lg shadow-2xl transition-opacity duration-300 pointer-events-none z-50 flex items-center gap-2 font-medium opacity-0">
-                <i class="fa-solid fa-circle-check"></i>
-                <span id="toastMsg">HTMLソースコード全体をコピーしました！</span>
-            </div>
-
-            <!-- GT Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                <article class="card bg-gtCard border border-gtCardBorder rounded-xl p-5 hover:border-gtRed transition-all duration-300 hover:shadow-lg hover:shadow-gtRed/10 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start border-b border-gtCardBorder pb-3 mb-4">
-                            <div>
-                                <h2 class="gt-title text-xl font-bold text-white tracking-wide">Gran Turismo</h2>
-                                <span class="text-xs text-gtTextSub">1997年 発売</span>
-                            </div>
-                            <span class="gt-platform bg-neutral-800 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded border border-neutral-700">PS1</span>
-                        </div>
-                        <ul class="space-y-2 text-sm mb-4">
-                            <li class="flex justify-between"><span class="text-gtTextSub">達成率:</span><span class="gt-rate font-semibold text-white">100%</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">ライセンス:</span><span class="gt-license font-semibold text-amber-400">ALL GOLD</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">主な愛車:</span><span class="gt-car font-semibold text-white">GTO TwinTurbo, FTO</span></li>
-                        </ul>
-                        <div class="gt-memo bg-neutral-900/90 border-l-2 border-gtRed p-3 rounded text-xs text-gray-300 leading-relaxed mb-4">
-                            初代の衝撃的なグラフィックと挙動。ハイスピードリングでの最高速チャレンジやGT-Rのチューニングが思い出深い。
-                        </div>
-                    </div>
-                    <button onclick="copyCardInfo(this)" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gray-200 text-xs font-semibold py-2 px-3 rounded border border-neutral-700 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>カード内容をコピー</span>
-                    </button>
-                </article>
-
-                <article class="card bg-gtCard border border-gtCardBorder rounded-xl p-5 hover:border-gtRed transition-all duration-300 hover:shadow-lg hover:shadow-gtRed/10 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start border-b border-gtCardBorder pb-3 mb-4">
-                            <div>
-                                <h2 class="gt-title text-xl font-bold text-white tracking-wide">Gran Turismo 2</h2>
-                                <span class="text-xs text-gtTextSub">1999年 発売</span>
-                            </div>
-                            <span class="gt-platform bg-neutral-800 text-red-400 text-xs font-mono font-bold px-2.5 py-1 rounded border border-neutral-700">PS1</span>
-                        </div>
-                        <ul class="space-y-2 text-sm mb-4">
-                            <li class="flex justify-between"><span class="text-gtTextSub">達成率:</span><span class="gt-rate font-semibold text-white">98.2%</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">ライセンス:</span><span class="gt-license font-semibold text-amber-400">SUPER ALL CLEAR</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">主な愛車:</span><span class="gt-car font-semibold text-white">Escudo Pikes Peak</span></li>
-                        </ul>
-                        <div class="gt-memo bg-neutral-900/90 border-l-2 border-gtRed p-3 rounded text-xs text-gray-300 leading-relaxed mb-4">
-                            Disc2枚組の大ボリューム。モンスターマシン「エスクード パイクスピーク」の異次元の加速とダートコースが強烈。
-                        </div>
-                    </div>
-                    <button onclick="copyCardInfo(this)" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gray-200 text-xs font-semibold py-2 px-3 rounded border border-neutral-700 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>カード内容をコピー</span>
-                    </button>
-                </article>
-
-                <article class="card bg-gtCard border border-gtCardBorder rounded-xl p-5 hover:border-gtRed transition-all duration-300 hover:shadow-lg hover:shadow-gtRed/10 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start border-b border-gtCardBorder pb-3 mb-4">
-                            <div>
-                                <h2 class="gt-title text-xl font-bold text-white tracking-wide">Gran Turismo 3 A-spec</h2>
-                                <span class="text-xs text-gtTextSub">2001年 発売</span>
-                            </div>
-                            <span class="gt-platform bg-neutral-800 text-blue-400 text-xs font-mono font-bold px-2.5 py-1 rounded border border-neutral-700">PS2</span>
-                        </div>
-                        <ul class="space-y-2 text-sm mb-4">
-                            <li class="flex justify-between"><span class="text-gtTextSub">達成率:</span><span class="gt-rate font-semibold text-white">100%</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">ライセンス:</span><span class="gt-license font-semibold text-amber-400">ALL GOLD</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">主な愛車:</span><span class="gt-car font-semibold text-white">787B, Castrol TOM'S SUPRA</span></li>
-                        </ul>
-                        <div class="gt-memo bg-neutral-900/90 border-l-2 border-gtRed p-3 rounded text-xs text-gray-300 leading-relaxed mb-4">
-                            PS2世代への進化。路面の照り返しや水たまりの表現に感動。長時間に及ぶ耐久レースを何度も完走した。
-                        </div>
-                    </div>
-                    <button onclick="copyCardInfo(this)" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gray-200 text-xs font-semibold py-2 px-3 rounded border border-neutral-700 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>カード内容をコピー</span>
-                    </button>
-                </article>
-
-                <article class="card bg-gtCard border border-gtCardBorder rounded-xl p-5 hover:border-gtRed transition-all duration-300 hover:shadow-lg hover:shadow-gtRed/10 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start border-b border-gtCardBorder pb-3 mb-4">
-                            <div>
-                                <h2 class="gt-title text-xl font-bold text-white tracking-wide">Gran Turismo 4</h2>
-                                <span class="text-xs text-gtTextSub">2004年 発売</span>
-                            </div>
-                            <span class="gt-platform bg-neutral-800 text-blue-400 text-xs font-mono font-bold px-2.5 py-1 rounded border border-neutral-700">PS2</span>
-                        </div>
-                        <ul class="space-y-2 text-sm mb-4">
-                            <li class="flex justify-between"><span class="text-gtTextSub">達成率:</span><span class="gt-rate font-semibold text-white">100%</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">ライセンス:</span><span class="gt-license font-semibold text-amber-400">ALL GOLD</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">主な愛車:</span><span class="gt-car font-semibold text-white">Minolta Toyota 88C-V</span></li>
-                        </ul>
-                        <div class="gt-memo bg-neutral-900/90 border-l-2 border-gtRed p-3 rounded text-xs text-gray-300 leading-relaxed mb-4">
-                            ニュルブルクリンク北コースが初収録。B-spec監督モードでの放置育成やフォトモードに時間を忘れて熱中。
-                        </div>
-                    </div>
-                    <button onclick="copyCardInfo(this)" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gray-200 text-xs font-semibold py-2 px-3 rounded border border-neutral-700 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>カード内容をコピー</span>
-                    </button>
-                </article>
-
-                <article class="card bg-gtCard border border-gtCardBorder rounded-xl p-5 hover:border-gtRed transition-all duration-300 hover:shadow-lg hover:shadow-gtRed/10 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start border-b border-gtCardBorder pb-3 mb-4">
-                            <div>
-                                <h2 class="gt-title text-xl font-bold text-white tracking-wide">Gran Turismo 5</h2>
-                                <span class="text-xs text-gtTextSub">2010年 発売</span>
-                            </div>
-                            <span class="gt-platform bg-neutral-800 text-yellow-400 text-xs font-mono font-bold px-2.5 py-1 rounded border border-neutral-700">PS3</span>
-                        </div>
-                        <ul class="space-y-2 text-sm mb-4">
-                            <li class="flex justify-between"><span class="text-gtTextSub">達成率:</span><span class="gt-rate font-semibold text-white">92.0%</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">ライセンス:</span><span class="gt-license font-semibold text-gray-300">S-License CLEAR</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">主な愛車:</span><span class="gt-car font-semibold text-white">Red Bull X2010</span></li>
-                        </ul>
-                        <div class="gt-memo bg-neutral-900/90 border-l-2 border-gtRed p-3 rounded text-xs text-gray-300 leading-relaxed mb-4">
-                            HD化とオンライン対戦の本格化。ダメージ表現や天候変化の追加、GT Autoでの定期的な洗車とオイル交換。
-                        </div>
-                    </div>
-                    <button onclick="copyCardInfo(this)" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gray-200 text-xs font-semibold py-2 px-3 rounded border border-neutral-700 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>カード内容をコピー</span>
-                    </button>
-                </article>
-
-                <article class="card bg-gtCard border border-gtCardBorder rounded-xl p-5 hover:border-gtRed transition-all duration-300 hover:shadow-lg hover:shadow-gtRed/10 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start border-b border-gtCardBorder pb-3 mb-4">
-                            <div>
-                                <h2 class="gt-title text-xl font-bold text-white tracking-wide">Gran Turismo 6</h2>
-                                <span class="text-xs text-gtTextSub">2013年 発売</span>
-                            </div>
-                            <span class="gt-platform bg-neutral-800 text-yellow-400 text-xs font-mono font-bold px-2.5 py-1 rounded border border-neutral-700">PS3</span>
-                        </div>
-                        <ul class="space-y-2 text-sm mb-4">
-                            <li class="flex justify-between"><span class="text-gtTextSub">達成率:</span><span class="gt-rate font-semibold text-white">88.5%</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">ライセンス:</span><span class="gt-license font-semibold text-gray-300">S-License CLEAR</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">主な愛車:</span><span class="gt-car font-semibold text-white">Vision GT Concepts</span></li>
-                        </ul>
-                        <div class="gt-memo bg-neutral-900/90 border-l-2 border-gtRed p-3 rounded text-xs text-gray-300 leading-relaxed mb-4">
-                            Vision Gran Turismoプロジェクトの始動。月面探査車（LRV）での月面走行ミッションなどユニークな要素が楽しめた。
-                        </div>
-                    </div>
-                    <button onclick="copyCardInfo(this)" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gray-200 text-xs font-semibold py-2 px-3 rounded border border-neutral-700 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>カード内容をコピー</span>
-                    </button>
-                </article>
-
-                <article class="card bg-gtCard border border-gtCardBorder rounded-xl p-5 hover:border-gtRed transition-all duration-300 hover:shadow-lg hover:shadow-gtRed/10 flex flex-col justify-between">
-                    <div>
-                        <div class="flex justify-between items-start border-b border-gtCardBorder pb-3 mb-4">
-                            <div>
-                                <h2 class="gt-title text-xl font-bold text-white tracking-wide">Gran Turismo 7</h2>
-                                <span class="text-xs text-gtTextSub">2022年 発売</span>
-                            </div>
-                            <span class="gt-platform bg-neutral-800 text-teal-400 text-xs font-mono font-bold px-2.5 py-1 rounded border border-neutral-700">PS4 / PS5</span>
-                        </div>
-                        <ul class="space-y-2 text-sm mb-4">
-                            <li class="flex justify-between"><span class="text-gtTextSub">達成率:</span><span class="gt-rate font-semibold text-emerald-400">PLAYING NOW</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">コレクターLv:</span><span class="gt-license font-semibold text-amber-400">50 (MAX)</span></li>
-                            <li class="flex justify-between"><span class="text-gtTextSub">主な愛車:</span><span class="gt-car font-semibold text-white">Porsche 911 GT3 RS, 917K</span></li>
-                        </ul>
-                        <div class="gt-memo bg-neutral-900/90 border-l-2 border-gtRed p-3 rounded text-xs text-gray-300 leading-relaxed mb-4">
-                            カフェのメニューブックを中心に車の歴史を学びながらプレイ中。DualSenseハプティックフィードバックの質感が最高。
-                        </div>
-                    </div>
-                    <button onclick="copyCardInfo(this)" class="w-full bg-neutral-800 hover:bg-neutral-700 text-gray-200 text-xs font-semibold py-2 px-3 rounded border border-neutral-700 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>カード内容をコピー</span>
-                    </button>
-                </article>
-
-            </div>
-        </main>
+    <!-- GT selection -->
+    <div class="game-tabs">
+        <button class="game-tab active" data-game="GT1">GT1</button>
+        <button class="game-tab" data-game="GT2">GT2</button>
+        <button class="game-tab" data-game="GT3">GT3</button>
+        <button class="game-tab" data-game="GT4">GT4</button>
+        <button class="game-tab" data-game="GT5">GT5</button>
+        <button class="game-tab" data-game="GT6">GT6</button>
+        <button class="game-tab" data-game="GT7">GT7</button>
     </div>
 
-    <footer class="border-t border-gtCardBorder bg-gtCard py-6 text-center text-xs text-gtTextSub mt-12">
-        <p>© 2026 Gran Turismo Play Log | Created for kekokoke</p>
-    </footer>
+    <!-- Section selection -->
+    <div class="section-tabs">
+        <button class="section-tab active" data-section="cars">
+            🚗 Cars
+        </button>
 
-    <script>
-        // Copy functionality with fallback for restrictive environments
-        function copyToClipboard(text, successCallback) {
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(text).then(successCallback).catch(err => {
-                    fallbackCopy(text, successCallback);
-                });
-            } else {
-                fallbackCopy(text, successCallback);
-            }
+        <button class="section-tab" data-section="races">
+            🏁 Races
+        </button>
+
+        <button class="section-tab" data-section="licenses">
+            🪪 Licenses
+        </button>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="dashboard">
+
+        <div class="stat">
+            <div class="stat-title">Cars</div>
+            <div class="stat-value" id="carStat">0 / 0</div>
+            <div class="progress">
+                <div class="progress-bar" id="carProgress"></div>
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">Races</div>
+            <div class="stat-value" id="raceStat">0</div>
+            <div class="progress">
+                <div class="progress-bar" id="raceProgress"></div>
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-title">Licenses</div>
+            <div class="stat-value" id="licenseStat">0</div>
+            <div class="progress">
+                <div class="progress-bar" id="licenseProgress"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Cars -->
+    <div id="carsSection" class="panel">
+
+        <div class="panel-header">
+            <h2>🚗 Car Collection - <span class="game-name">GT1</span></h2>
+            <button class="primary" onclick="openCarModal()">
+                ＋ Add Car
+            </button>
+        </div>
+
+        <input
+            class="search"
+            id="carSearch"
+            placeholder="Search car..."
+            oninput="render()"
+        >
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Obtained</th>
+                        <th>Manufacturer</th>
+                        <th>Car</th>
+                        <th>Year</th>
+                        <th>Date</th>
+                        <th>Memo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody id="carTable"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Races -->
+    <div id="racesSection" class="panel hidden">
+
+        <div class="panel-header">
+            <h2>🏁 Race Record - <span class="game-name">GT1</span></h2>
+
+            <button class="primary" onclick="openRaceModal()">
+                ＋ Add Race
+            </button>
+        </div>
+
+        <input
+            class="search"
+            id="raceSearch"
+            placeholder="Search race..."
+            oninput="render()"
+        >
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Course</th>
+                        <th>Car</th>
+                        <th>Result</th>
+                        <th>Best Lap</th>
+                        <th>Date</th>
+                        <th>Memo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody id="raceTable"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Licenses -->
+    <div id="licensesSection" class="panel hidden">
+
+        <div class="panel-header">
+            <h2>🪪 License Record - <span class="game-name">GT1</span></h2>
+
+            <button class="primary" onclick="openLicenseModal()">
+                ＋ Add License
+            </button>
+        </div>
+
+        <input
+            class="search"
+            id="licenseSearch"
+            placeholder="Search license..."
+            oninput="render()"
+        >
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>License</th>
+                        <th>Test</th>
+                        <th>Course</th>
+                        <th>Result</th>
+                        <th>Your Time</th>
+                        <th>Date</th>
+                        <th>Memo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody id="licenseTable"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+
+    <div class="modal">
+
+        <h2 id="modalTitle">Add</h2>
+
+        <!-- Car form -->
+        <form id="carForm" class="hidden">
+
+            <div class="form-row">
+                <label>Manufacturer</label>
+                <input id="carManufacturer" required>
+            </div>
+
+            <div class="form-row">
+                <label>Car Name</label>
+                <input id="carName" required>
+            </div>
+
+            <div class="form-row">
+                <label>Year</label>
+                <input id="carYear">
+            </div>
+
+            <div class="form-row">
+                <label>Obtained</label>
+                <select id="carObtained">
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label>Date</label>
+                <input type="date" id="carDate">
+            </div>
+
+            <div class="form-row">
+                <label>Memo</label>
+                <textarea id="carMemo"></textarea>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal()">Cancel</button>
+                <button class="primary" type="submit">Save</button>
+            </div>
+
+        </form>
+
+        <!-- Race form -->
+        <form id="raceForm" class="hidden">
+
+            <div class="form-row">
+                <label>Event</label>
+                <input id="raceEvent" required>
+            </div>
+
+            <div class="form-row">
+                <label>Course</label>
+                <input id="raceCourse">
+            </div>
+
+            <div class="form-row">
+                <label>Car</label>
+                <input id="raceCar">
+            </div>
+
+            <div class="form-row">
+                <label>Result</label>
+                <input id="raceResult" placeholder="1st / 2nd / DNF ...">
+            </div>
+
+            <div class="form-row">
+                <label>Best Lap</label>
+                <input id="raceLap" placeholder="1:23.456">
+            </div>
+
+            <div class="form-row">
+                <label>Date</label>
+                <input type="date" id="raceDate">
+            </div>
+
+            <div class="form-row">
+                <label>Memo</label>
+                <textarea id="raceMemo"></textarea>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal()">Cancel</button>
+                <button class="primary" type="submit">Save</button>
+            </div>
+
+        </form>
+
+        <!-- License form -->
+        <form id="licenseForm" class="hidden">
+
+            <div class="form-row">
+                <label>License</label>
+                <input id="licenseName" placeholder="B / A / IB / IA / S" required>
+            </div>
+
+            <div class="form-row">
+                <label>Test</label>
+                <input id="licenseTest" placeholder="B-1" required>
+            </div>
+
+            <div class="form-row">
+                <label>Course</label>
+                <input id="licenseCourse">
+            </div>
+
+            <div class="form-row">
+                <label>Result</label>
+                <select id="licenseResult">
+                    <option value="Gold">Gold</option>
+                    <option value="Silver">Silver</option>
+                    <option value="Bronze">Bronze</option>
+                    <option value="None">Not Passed</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label>Your Time</label>
+                <input id="licenseTime" placeholder="1:23.456">
+            </div>
+
+            <div class="form-row">
+                <label>Date</label>
+                <input type="date" id="licenseDate">
+            </div>
+
+            <div class="form-row">
+                <label>Memo</label>
+                <textarea id="licenseMemo"></textarea>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="button" onclick="closeModal()">Cancel</button>
+                <button class="primary" type="submit">Save</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<script>
+
+const STORAGE_KEY = "gran_turismo_record_v1";
+
+let db = JSON.parse(
+    localStorage.getItem(STORAGE_KEY)
+) || {
+    GT1: { cars: [], races: [], licenses: [] },
+    GT2: { cars: [], races: [], licenses: [] },
+    GT3: { cars: [], races: [], licenses: [] },
+    GT4: { cars: [], races: [], licenses: [] },
+    GT5: { cars: [], races: [], licenses: [] },
+    GT6: { cars: [], races: [], licenses: [] },
+    GT7: { cars: [], races: [], licenses: [] }
+};
+
+let currentGame = "GT1";
+let currentSection = "cars";
+let editId = null;
+
+function saveDB() {
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(db)
+    );
+}
+
+function createId() {
+    return Date.now().toString(36) +
+        Math.random().toString(36).substring(2);
+}
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function selectGame(game) {
+
+    currentGame = game;
+
+    document.querySelectorAll(".game-tab").forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.game === game
+        );
+    });
+
+    document.querySelectorAll(".game-name").forEach(element => {
+        element.textContent = game;
+    });
+
+    render();
+}
+
+function selectSection(section) {
+
+    currentSection = section;
+
+    document.querySelectorAll(".section-tab").forEach(button => {
+        button.classList.toggle(
+            "active",
+            button.dataset.section === section
+        );
+    });
+
+    document.getElementById("carsSection")
+        .classList.toggle("hidden", section !== "cars");
+
+    document.getElementById("racesSection")
+        .classList.toggle("hidden", section !== "races");
+
+    document.getElementById("licensesSection")
+        .classList.toggle("hidden", section !== "licenses");
+
+    render();
+}
+
+document.querySelectorAll(".game-tab").forEach(button => {
+    button.addEventListener("click", () => {
+        selectGame(button.dataset.game);
+    });
+});
+
+document.querySelectorAll(".section-tab").forEach(button => {
+    button.addEventListener("click", () => {
+        selectSection(button.dataset.section);
+    });
+});
+
+function render() {
+
+    renderCars();
+    renderRaces();
+    renderLicenses();
+    renderStats();
+}
+
+function renderCars() {
+
+    const search =
+        document.getElementById("carSearch")
+            .value.toLowerCase();
+
+    const cars = db[currentGame].cars.filter(car => {
+
+        const text = [
+            car.manufacturer,
+            car.name,
+            car.year,
+            car.memo
+        ].join(" ").toLowerCase();
+
+        return text.includes(search);
+    });
+
+    const tbody = document.getElementById("carTable");
+
+    if (cars.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty">
+                    No car records.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tbody.innerHTML = cars.map(car => `
+
+        <tr>
+
+            <td>
+                <input
+                    type="checkbox"
+                    ${car.obtained ? "checked" : ""}
+                    onchange="toggleCar('${car.id}')"
+                >
+            </td>
+
+            <td>${escapeHTML(car.manufacturer)}</td>
+
+            <td><strong>${escapeHTML(car.name)}</strong></td>
+
+            <td>${escapeHTML(car.year)}</td>
+
+            <td>${escapeHTML(car.date)}</td>
+
+            <td>${escapeHTML(car.memo)}</td>
+
+            <td>
+                <div class="actions">
+                    <button onclick="editCar('${car.id}')">
+                        Edit
+                    </button>
+
+                    <button
+                        class="danger"
+                        onclick="deleteRecord('cars','${car.id}')"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </td>
+
+        </tr>
+
+    `).join("");
+}
+
+function renderRaces() {
+
+    const search =
+        document.getElementById("raceSearch")
+            .value.toLowerCase();
+
+    const races = db[currentGame].races.filter(race => {
+
+        const text = [
+            race.event,
+            race.course,
+            race.car,
+            race.result,
+            race.memo
+        ].join(" ").toLowerCase();
+
+        return text.includes(search);
+    });
+
+    const tbody = document.getElementById("raceTable");
+
+    if (races.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty">
+                    No race records.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tbody.innerHTML = races.map(race => `
+
+        <tr>
+
+            <td><strong>${escapeHTML(race.event)}</strong></td>
+
+            <td>${escapeHTML(race.course)}</td>
+
+            <td>${escapeHTML(race.car)}</td>
+
+            <td>${escapeHTML(race.result)}</td>
+
+            <td>${escapeHTML(race.lap)}</td>
+
+            <td>${escapeHTML(race.date)}</td>
+
+            <td>${escapeHTML(race.memo)}</td>
+
+            <td>
+                <div class="actions">
+
+                    <button onclick="editRace('${race.id}')">
+                        Edit
+                    </button>
+
+                    <button
+                        class="danger"
+                        onclick="deleteRecord('races','${race.id}')"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+
+    `).join("");
+}
+
+function renderLicenses() {
+
+    const search =
+        document.getElementById("licenseSearch")
+            .value.toLowerCase();
+
+    const licenses =
+        db[currentGame].licenses.filter(license => {
+
+            const text = [
+                license.name,
+                license.test,
+                license.course,
+                license.result,
+                license.memo
+            ].join(" ").toLowerCase();
+
+            return text.includes(search);
+        });
+
+    const tbody =
+        document.getElementById("licenseTable");
+
+    if (licenses.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty">
+                    No license records.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tbody.innerHTML = licenses.map(license => {
+
+        const resultClass =
+            license.result.toLowerCase();
+
+        return `
+
+        <tr>
+
+            <td>
+                <strong>
+                    ${escapeHTML(license.name)}
+                </strong>
+            </td>
+
+            <td>${escapeHTML(license.test)}</td>
+
+            <td>${escapeHTML(license.course)}</td>
+
+            <td>
+                <span class="status ${resultClass}">
+                    ${escapeHTML(license.result)}
+                </span>
+            </td>
+
+            <td>${escapeHTML(license.time)}</td>
+
+            <td>${escapeHTML(license.date)}</td>
+
+            <td>${escapeHTML(license.memo)}</td>
+
+            <td>
+                <div class="actions">
+
+                    <button onclick="editLicense('${license.id}')">
+                        Edit
+                    </button>
+
+                    <button
+                        class="danger"
+                        onclick="deleteRecord('licenses','${license.id}')"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+            </td>
+
+        </tr>
+
+        `;
+    }).join("");
+}
+
+function renderStats() {
+
+    const data = db[currentGame];
+
+    const totalCars = data.cars.length;
+    const obtainedCars =
+        data.cars.filter(car => car.obtained).length;
+
+    document.getElementById("carStat").textContent =
+        `${obtainedCars} / ${totalCars}`;
+
+    document.getElementById("carProgress").style.width =
+        totalCars
+            ? `${obtainedCars / totalCars * 100}%`
+            : "0%";
+
+    document.getElementById("raceStat").textContent =
+        data.races.length;
+
+    document.getElementById("raceProgress").style.width =
+        data.races.length ? "100%" : "0%";
+
+    document.getElementById("licenseStat").textContent =
+        data.licenses.length;
+
+    document.getElementById("licenseProgress").style.width =
+        data.licenses.length ? "100%" : "0%";
+}
+
+function openModal(type) {
+
+    editId = null;
+
+    document.getElementById("modalBg")
+        .classList.add("show");
+
+    document.getElementById("carForm")
+        .classList.toggle("hidden", type !== "cars");
+
+    document.getElementById("raceForm")
+        .classList.toggle("hidden", type !== "races");
+
+    document.getElementById("licenseForm")
+        .classList.toggle("hidden", type !== "licenses");
+
+    document.getElementById("modalTitle").textContent =
+        type === "cars"
+            ? "Add Car"
+            : type === "races"
+                ? "Add Race"
+                : "Add License";
+}
+
+function closeModal() {
+
+    document.getElementById("modalBg")
+        .classList.remove("show");
+
+    document.querySelectorAll("form").forEach(form => {
+        form.reset();
+    });
+
+    editId = null;
+}
+
+function openCarModal() {
+    openModal("cars");
+}
+
+function openRaceModal() {
+    openModal("races");
+}
+
+function openLicenseModal() {
+    openModal("licenses");
+}
+
+document.getElementById("carForm")
+    .addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        const record = {
+            id: editId || createId(),
+            manufacturer:
+                document.getElementById("carManufacturer").value,
+            name:
+                document.getElementById("carName").value,
+            year:
+                document.getElementById("carYear").value,
+            obtained:
+                document.getElementById("carObtained").value === "true",
+            date:
+                document.getElementById("carDate").value,
+            memo:
+                document.getElementById("carMemo").value
+        };
+
+        if (editId) {
+
+            const index =
+                db[currentGame].cars.findIndex(
+                    car => car.id === editId
+                );
+
+            db[currentGame].cars[index] = record;
+
+        } else {
+
+            db[currentGame].cars.push(record);
         }
 
-        function fallbackCopy(text, successCallback) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'fixed';
-            textarea.style.left = '-9999px';
-            document.body.appendChild(textarea);
-            textarea.focus();
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                successCallback();
-            } catch (err) {
-                alert('コピーに失敗しました。');
-            }
-            document.body.removeChild(textarea);
+        saveDB();
+        closeModal();
+        render();
+    });
+
+document.getElementById("raceForm")
+    .addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        const record = {
+            id: editId || createId(),
+            event:
+                document.getElementById("raceEvent").value,
+            course:
+                document.getElementById("raceCourse").value,
+            car:
+                document.getElementById("raceCar").value,
+            result:
+                document.getElementById("raceResult").value,
+            lap:
+                document.getElementById("raceLap").value,
+            date:
+                document.getElementById("raceDate").value,
+            memo:
+                document.getElementById("raceMemo").value
+        };
+
+        if (editId) {
+
+            const index =
+                db[currentGame].races.findIndex(
+                    race => race.id === editId
+                );
+
+            db[currentGame].races[index] = record;
+
+        } else {
+
+            db[currentGame].races.push(record);
         }
 
-        // Show toast notification
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            toastMsg.innerText = message;
-            toast.classList.remove('opacity-0');
-            toast.classList.add('opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0');
-            }, 2500);
+        saveDB();
+        closeModal();
+        render();
+    });
+
+document.getElementById("licenseForm")
+    .addEventListener("submit", event => {
+
+        event.preventDefault();
+
+        const record = {
+            id: editId || createId(),
+            name:
+                document.getElementById("licenseName").value,
+            test:
+                document.getElementById("licenseTest").value,
+            course:
+                document.getElementById("licenseCourse").value,
+            result:
+                document.getElementById("licenseResult").value,
+            time:
+                document.getElementById("licenseTime").value,
+            date:
+                document.getElementById("licenseDate").value,
+            memo:
+                document.getElementById("licenseMemo").value
+        };
+
+        if (editId) {
+
+            const index =
+                db[currentGame].licenses.findIndex(
+                    license => license.id === editId
+                );
+
+            db[currentGame].licenses[index] = record;
+
+        } else {
+
+            db[currentGame].licenses.push(record);
         }
 
-        // Copy individual card info
-        function copyCardInfo(button) {
-            const card = button.closest('.card');
-            const title = card.querySelector('.gt-title').innerText;
-            const platform = card.querySelector('.gt-platform').innerText;
-            const rate = card.querySelector('.gt-rate').innerText;
-            const license = card.querySelector('.gt-license').innerText;
-            const car = card.querySelector('.gt-car').innerText;
-            const memo = card.querySelector('.gt-memo').innerText.trim();
+        saveDB();
+        closeModal();
+        render();
+    });
 
-            const textToCopy = `【${title} (${platform})】\n・達成率/ステータス: ${rate}\n・ライセンス/Lv: ${license}\n・主な愛車: ${car}\n・メモ: ${memo}`;
+function toggleCar(id) {
 
-            copyToClipboard(textToCopy, () => {
-                const originalHtml = button.innerHTML;
-                button.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i><span class="text-emerald-400">コピー完了！</span>`;
-                button.classList.add('border-emerald-500');
+    const car =
+        db[currentGame].cars.find(
+            car => car.id === id
+        );
 
-                showToast(`${title} の情報をコピーしました`);
+    if (!car) return;
 
-                setTimeout(() => {
-                    button.innerHTML = originalHtml;
-                    button.classList.remove('border-emerald-500');
-                }, 2000);
-            });
-        }
+    car.obtained = !car.obtained;
 
-        // Copy all log texts combined
-        function copyFullLogText() {
-            const cards = document.querySelectorAll('.card');
-            let fullText = "=== GRAN TURISMO PLAY LOG ===\n\n";
+    saveDB();
+    render();
+}
 
-            cards.forEach(card => {
-                const title = card.querySelector('.gt-title').innerText;
-                const platform = card.querySelector('.gt-platform').innerText;
-                const rate = card.querySelector('.gt-rate').innerText;
-                const license = card.querySelector('.gt-license').innerText;
-                const car = card.querySelector('.gt-car').innerText;
-                const memo = card.querySelector('.gt-memo').innerText.trim();
+function deleteRecord(type, id) {
 
-                fullText += `【${title} (${platform})】\n・達成率: ${rate}\n・ライセンス: ${license}\n・愛車: ${car}\n・メモ: ${memo}\n\n`;
-            });
+    if (!confirm("Delete this record?")) {
+        return;
+    }
 
-            copyToClipboard(fullText, () => {
-                showToast("全タイトルのテキストログをコピーしました");
-            });
-        }
+    db[currentGame][type] =
+        db[currentGame][type].filter(
+            item => item.id !== id
+        );
 
-        // Copy raw HTML source code of the entire document
-        function copySourceHtml() {
-            const htmlSource = document.documentElement.outerHTML;
-            copyToClipboard(htmlSource, () => {
-                showToast("HTMLソースコード全体をコピーしました！");
-            });
-        }
-    </script>
+    saveDB();
+    render();
+}
 
-</body></html>
+function editCar(id) {
+
+    const car =
+        db[currentGame].cars.find(
+            item => item.id === id
+        );
+
+    if (!car) return;
+
+    editId = id;
+
+    openModal("cars");
+
+    document.getElementById("modalTitle").textContent =
+        "Edit Car";
+
+    document.getElementById("carManufacturer").value =
+        car.manufacturer;
+
+    document.getElementById("carName").value =
+        car.name;
+
+    document.getElementById("carYear").value =
+        car.year;
+
+    document.getElementById("carObtained").value =
+        String(car.obtained);
+
+    document.getElementById("carDate").value =
+        car.date;
+
+    document.getElementById("carMemo").value =
+        car.memo;
+}
+
+function editRace(id) {
+
+    const race =
+        db[currentGame].races.find(
+            item => item.id === id
+        );
+
+    if (!race) return;
+
+    editId = id;
+
+    openModal("races");
+
+    document.getElementById("modalTitle").textContent =
+        "Edit Race";
+
+    document.getElementById("raceEvent").value =
+        race.event;
+
+    document.getElementById("raceCourse").value =
+        race.course;
+
+    document.getElementById("raceCar").value =
+        race.car;
+
+    document.getElementById("raceResult").value =
+        race.result;
+
+    document.getElementById("raceLap").value =
+        race.lap;
+
+    document.getElementById("raceDate").value =
+        race.date;
+
+    document.getElementById("raceMemo").value =
+        race.memo;
+}
+
+function editLicense(id) {
+
+    const license =
+        db[currentGame].licenses.find(
+            item => item.id === id
+        );
+
+    if (!license) return;
+
+    editId = id;
+
+    openModal("licenses");
+
+    document.getElementById("modalTitle").textContent =
+        "Edit License";
+
+    document.getElementById("licenseName").value =
+        license.name;
+
+    document.getElementById("licenseTest").value =
+        license.test;
+
+    document.getElementById("licenseCourse").value =
+        license.course;
+
+    document.getElementById("licenseResult").value =
+        license.result;
+
+    document.getElementById("licenseTime").value =
+        license.time;
+
+    document.getElementById("licenseDate").value =
+        license.date;
+
+    document.getElementById("licenseMemo").value =
+        license.memo;
+}
+
+render();
+
+</script>
+
+</body>
+</html>
