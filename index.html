@@ -1,1361 +1,310 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gran Turismo Record</title>
-
-<style>
-:root {
-    --bg: #111318;
-    --panel: #1b1e25;
-    --panel2: #242832;
-    --border: #343a46;
-    --text: #e8eaed;
-    --muted: #9aa0aa;
-    --accent: #4da3ff;
-    --gold: #e6b84a;
-    --silver: #bfc5cc;
-    --bronze: #c98b5b;
-    --danger: #e45d5d;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-header {
-    padding: 24px;
-    background: #0d0f13;
-    border-bottom: 1px solid var(--border);
-}
-
-header h1 {
-    margin: 0 0 8px;
-    font-size: 28px;
-}
-
-header p {
-    margin: 0;
-    color: var(--muted);
-}
-
-.container {
-    max-width: 1400px;
-    margin: auto;
-    padding: 20px;
-}
-
-.game-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.game-tab {
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.game-tab:hover {
-    background: var(--panel2);
-}
-
-.game-tab.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
-.section-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-}
-
-.section-tab {
-    padding: 11px 18px;
-    border: 1px solid var(--border);
-    background: var(--panel);
-    color: var(--text);
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-.section-tab.active {
-    background: #303744;
-    border-color: var(--accent);
-}
-
-.dashboard {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-}
-
-.stat {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 18px;
-}
-
-.stat-title {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.stat-value {
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 6px;
-}
-
-.progress {
-    height: 6px;
-    background: #30343d;
-    border-radius: 3px;
-    margin-top: 12px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background: var(--accent);
-    width: 0%;
-}
-
-.panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 18px;
-}
-
-.panel-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.panel-header h2 {
-    margin: 0;
-    font-size: 20px;
-}
-
-button {
-    border: 1px solid var(--border);
-    background: var(--panel2);
-    color: var(--text);
-    padding: 8px 13px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    filter: brightness(1.15);
-}
-
-button.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-}
-
-button.danger {
-    background: transparent;
-    color: var(--danger);
-    border-color: var(--danger);
-}
-
-.search {
-    width: 100%;
-    padding: 11px;
-    margin-bottom: 12px;
-    background: #101217;
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 10px;
-    border-bottom: 1px solid var(--border);
-    text-align: left;
-}
-
-th {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-td {
-    font-size: 14px;
-}
-
-tr:hover {
-    background: rgba(255,255,255,0.025);
-}
-
-.status {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.status.gold {
-    color: #111;
-    background: var(--gold);
-}
-
-.status.silver {
-    color: #111;
-    background: var(--silver);
-}
-
-.status.bronze {
-    color: #111;
-    background: var(--bronze);
-}
-
-.status.none {
-    color: var(--muted);
-    background: #30343d;
-}
-
-.actions {
-    display: flex;
-    gap: 5px;
-}
-
-.empty {
-    text-align: center;
-    color: var(--muted);
-    padding: 40px 10px;
-}
-
-.modal-bg {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 100;
-}
-
-.modal-bg.show {
-    display: flex;
-}
-
-.modal {
-    width: min(600px, 100%);
-    max-height: 90vh;
-    overflow-y: auto;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.modal h2 {
-    margin-top: 0;
-}
-
-.form-row {
-    margin-bottom: 13px;
-}
-
-.form-row label {
-    display: block;
-    color: var(--muted);
-    font-size: 13px;
-    margin-bottom: 5px;
-}
-
-.form-row input,
-.form-row select,
-.form-row textarea {
-    width: 100%;
-    padding: 10px;
-    background: #101217;
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 5px;
-}
-
-.form-row textarea {
-    min-height: 90px;
-    resize: vertical;
-}
-
-.modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 18px;
-}
-
-.hidden {
-    display: none !important;
-}
-
-@media (max-width: 800px) {
-    .dashboard {
-        grid-template-columns: 1fr;
-    }
-
-    table {
-        min-width: 700px;
-    }
-
-    .table-wrapper {
-        overflow-x: auto;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gran Turismo 1 - Car Archive</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Rajdhani for racing HUD vibe -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Rajdhani', 'sans-serif'],
+                    },
+                    colors: {
+                        gt: {
+                            red: '#e50914',
+                            dark: '#0b0f19',
+                            card: '#161e2e',
+                            border: '#2a374a',
+                            accent: '#3b82f6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        /* Custom scrollbar for game HUD look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a374a;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6;
+        }
+    </style>
 </head>
-
-<body>
-
-<header>
-    <h1>🏎️ Gran Turismo Record</h1>
-    <p>Gran Turismo 1 - 7 Personal Record</p>
-</header>
-
-<div class="container">
-
-    <!-- GT selection -->
-    <div class="game-tabs">
-        <button class="game-tab active" data-game="GT1">GT1</button>
-        <button class="game-tab" data-game="GT2">GT2</button>
-        <button class="game-tab" data-game="GT3">GT3</button>
-        <button class="game-tab" data-game="GT4">GT4</button>
-        <button class="game-tab" data-game="GT5">GT5</button>
-        <button class="game-tab" data-game="GT6">GT6</button>
-        <button class="game-tab" data-game="GT7">GT7</button>
-    </div>
-
-    <!-- Section selection -->
-    <div class="section-tabs">
-        <button class="section-tab active" data-section="cars">
-            🚗 Cars
-        </button>
-
-        <button class="section-tab" data-section="races">
-            🏁 Races
-        </button>
-
-        <button class="section-tab" data-section="licenses">
-            🪪 Licenses
-        </button>
-    </div>
-
-    <!-- Dashboard -->
-    <div class="dashboard">
-
-        <div class="stat">
-            <div class="stat-title">Cars</div>
-            <div class="stat-value" id="carStat">0 / 0</div>
-            <div class="progress">
-                <div class="progress-bar" id="carProgress"></div>
-            </div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-title">Races</div>
-            <div class="stat-value" id="raceStat">0</div>
-            <div class="progress">
-                <div class="progress-bar" id="raceProgress"></div>
-            </div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-title">Licenses</div>
-            <div class="stat-value" id="licenseStat">0</div>
-            <div class="progress">
-                <div class="progress-bar" id="licenseProgress"></div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Cars -->
-    <div id="carsSection" class="panel">
-
-        <div class="panel-header">
-            <h2>🚗 Car Collection - <span class="game-name">GT1</span></h2>
-            <button class="primary" onclick="openCarModal()">
-                ＋ Add Car
-            </button>
-        </div>
-
-        <input
-            class="search"
-            id="carSearch"
-            placeholder="Search car..."
-            oninput="render()"
-        >
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Obtained</th>
-                        <th>Manufacturer</th>
-                        <th>Car</th>
-                        <th>Year</th>
-                        <th>Date</th>
-                        <th>Memo</th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody id="carTable"></tbody>
-            </table>
-        </div>
-
-    </div>
-
-    <!-- Races -->
-    <div id="racesSection" class="panel hidden">
-
-        <div class="panel-header">
-            <h2>🏁 Race Record - <span class="game-name">GT1</span></h2>
-
-            <button class="primary" onclick="openRaceModal()">
-                ＋ Add Race
-            </button>
-        </div>
-
-        <input
-            class="search"
-            id="raceSearch"
-            placeholder="Search race..."
-            oninput="render()"
-        >
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Event</th>
-                        <th>Course</th>
-                        <th>Car</th>
-                        <th>Result</th>
-                        <th>Best Lap</th>
-                        <th>Date</th>
-                        <th>Memo</th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody id="raceTable"></tbody>
-            </table>
-        </div>
-
-    </div>
-
-    <!-- Licenses -->
-    <div id="licensesSection" class="panel hidden">
-
-        <div class="panel-header">
-            <h2>🪪 License Record - <span class="game-name">GT1</span></h2>
-
-            <button class="primary" onclick="openLicenseModal()">
-                ＋ Add License
-            </button>
-        </div>
-
-        <input
-            class="search"
-            id="licenseSearch"
-            placeholder="Search license..."
-            oninput="render()"
-        >
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>License</th>
-                        <th>Test</th>
-                        <th>Course</th>
-                        <th>Result</th>
-                        <th>Your Time</th>
-                        <th>Date</th>
-                        <th>Memo</th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody id="licenseTable"></tbody>
-            </table>
-        </div>
-
-    </div>
-
-</div>
-
-<!-- Modal -->
-<div class="modal-bg" id="modalBg">
-
-    <div class="modal">
-
-        <h2 id="modalTitle">Add</h2>
-
-        <!-- Car form -->
-        <form id="carForm" class="hidden">
-
-            <div class="form-row">
-                <label>Manufacturer</label>
-                <input id="carManufacturer" required>
-            </div>
-
-            <div class="form-row">
-                <label>Car Name</label>
-                <input id="carName" required>
-            </div>
-
-            <div class="form-row">
-                <label>Year</label>
-                <input id="carYear">
-            </div>
-
-            <div class="form-row">
-                <label>Obtained</label>
-                <select id="carObtained">
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label>Date</label>
-                <input type="date" id="carDate">
-            </div>
-
-            <div class="form-row">
-                <label>Memo</label>
-                <textarea id="carMemo"></textarea>
-            </div>
-
-            <div class="modal-buttons">
-                <button type="button" onclick="closeModal()">Cancel</button>
-                <button class="primary" type="submit">Save</button>
-            </div>
-
-        </form>
-
-        <!-- Race form -->
-        <form id="raceForm" class="hidden">
-
-            <div class="form-row">
-                <label>Event</label>
-                <input id="raceEvent" required>
-            </div>
-
-            <div class="form-row">
-                <label>Course</label>
-                <input id="raceCourse">
-            </div>
-
-            <div class="form-row">
-                <label>Car</label>
-                <input id="raceCar">
-            </div>
-
-            <div class="form-row">
-                <label>Result</label>
-                <input id="raceResult" placeholder="1st / 2nd / DNF ...">
-            </div>
-
-            <div class="form-row">
-                <label>Best Lap</label>
-                <input id="raceLap" placeholder="1:23.456">
-            </div>
-
-            <div class="form-row">
-                <label>Date</label>
-                <input type="date" id="raceDate">
-            </div>
-
-            <div class="form-row">
-                <label>Memo</label>
-                <textarea id="raceMemo"></textarea>
-            </div>
-
-            <div class="modal-buttons">
-                <button type="button" onclick="closeModal()">Cancel</button>
-                <button class="primary" type="submit">Save</button>
-            </div>
-
-        </form>
-
-        <!-- License form -->
-        <form id="licenseForm" class="hidden">
-
-            <div class="form-row">
-                <label>License</label>
-                <input id="licenseName" placeholder="B / A / IB / IA / S" required>
-            </div>
-
-            <div class="form-row">
-                <label>Test</label>
-                <input id="licenseTest" placeholder="B-1" required>
-            </div>
-
-            <div class="form-row">
-                <label>Course</label>
-                <input id="licenseCourse">
-            </div>
-
-            <div class="form-row">
-                <label>Result</label>
-                <select id="licenseResult">
-                    <option value="Gold">Gold</option>
-                    <option value="Silver">Silver</option>
-                    <option value="Bronze">Bronze</option>
-                    <option value="None">Not Passed</option>
-                </select>
-            </div>
-
-            <div class="form-row">
-                <label>Your Time</label>
-                <input id="licenseTime" placeholder="1:23.456">
-            </div>
-
-            <div class="form-row">
-                <label>Date</label>
-                <input type="date" id="licenseDate">
-            </div>
-
-            <div class="form-row">
-                <label>Memo</label>
-                <textarea id="licenseMemo"></textarea>
-            </div>
-
-            <div class="modal-buttons">
-                <button type="button" onclick="closeModal()">Cancel</button>
-                <button class="primary" type="submit">Save</button>
-            </div>
-
-        </form>
-
-    </div>
-</div>
-
-<script>
-
-const STORAGE_KEY = "gran_turismo_record_v1";
-
-let db = JSON.parse(
-    localStorage.getItem(STORAGE_KEY)
-) || {
-    GT1: { cars: [], races: [], licenses: [] },
-    GT2: { cars: [], races: [], licenses: [] },
-    GT3: { cars: [], races: [], licenses: [] },
-    GT4: { cars: [], races: [], licenses: [] },
-    GT5: { cars: [], races: [], licenses: [] },
-    GT6: { cars: [], races: [], licenses: [] },
-    GT7: { cars: [], races: [], licenses: [] }
-};
-
-let currentGame = "GT1";
-let currentSection = "cars";
-let editId = null;
-
-function saveDB() {
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(db)
-    );
-}
-
-function createId() {
-    return Date.now().toString(36) +
-        Math.random().toString(36).substring(2);
-}
-
-function escapeHTML(value) {
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-function selectGame(game) {
-
-    currentGame = game;
-
-    document.querySelectorAll(".game-tab").forEach(button => {
-        button.classList.toggle(
-            "active",
-            button.dataset.game === game
-        );
-    });
-
-    document.querySelectorAll(".game-name").forEach(element => {
-        element.textContent = game;
-    });
-
-    render();
-}
-
-function selectSection(section) {
-
-    currentSection = section;
-
-    document.querySelectorAll(".section-tab").forEach(button => {
-        button.classList.toggle(
-            "active",
-            button.dataset.section === section
-        );
-    });
-
-    document.getElementById("carsSection")
-        .classList.toggle("hidden", section !== "cars");
-
-    document.getElementById("racesSection")
-        .classList.toggle("hidden", section !== "races");
-
-    document.getElementById("licensesSection")
-        .classList.toggle("hidden", section !== "licenses");
-
-    render();
-}
-
-document.querySelectorAll(".game-tab").forEach(button => {
-    button.addEventListener("click", () => {
-        selectGame(button.dataset.game);
-    });
-});
-
-document.querySelectorAll(".section-tab").forEach(button => {
-    button.addEventListener("click", () => {
-        selectSection(button.dataset.section);
-    });
-});
-
-function render() {
-
-    renderCars();
-    renderRaces();
-    renderLicenses();
-    renderStats();
-}
-
-function renderCars() {
-
-    const search =
-        document.getElementById("carSearch")
-            .value.toLowerCase();
-
-    const cars = db[currentGame].cars.filter(car => {
-
-        const text = [
-            car.manufacturer,
-            car.name,
-            car.year,
-            car.memo
-        ].join(" ").toLowerCase();
-
-        return text.includes(search);
-    });
-
-    const tbody = document.getElementById("carTable");
-
-    if (cars.length === 0) {
-
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="empty">
-                    No car records.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    tbody.innerHTML = cars.map(car => `
-
-        <tr>
-
-            <td>
-                <input
-                    type="checkbox"
-                    ${car.obtained ? "checked" : ""}
-                    onchange="toggleCar('${car.id}')"
-                >
-            </td>
-
-            <td>${escapeHTML(car.manufacturer)}</td>
-
-            <td><strong>${escapeHTML(car.name)}</strong></td>
-
-            <td>${escapeHTML(car.year)}</td>
-
-            <td>${escapeHTML(car.date)}</td>
-
-            <td>${escapeHTML(car.memo)}</td>
-
-            <td>
-                <div class="actions">
-                    <button onclick="editCar('${car.id}')">
-                        Edit
-                    </button>
-
-                    <button
-                        class="danger"
-                        onclick="deleteRecord('cars','${car.id}')"
-                    >
-                        Delete
-                    </button>
+<body class="min-h-screen flex flex-col font-sans selection:bg-gt-red selection:text-white">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-gt-dark via-gray-900 to-gt-dark border-b border-gt-border sticky top-0 z-50 shadow-2xl backdrop-blur-md bg-opacity-95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gt-red text-white p-2.5 rounded-xl shadow-lg shadow-gt-red/30 flex items-center justify-center">
+                    <i class="fa-solid fa-flag-checkered text-2xl"></i>
                 </div>
-            </td>
-
-        </tr>
-
-    `).join("");
-}
-
-function renderRaces() {
-
-    const search =
-        document.getElementById("raceSearch")
-            .value.toLowerCase();
-
-    const races = db[currentGame].races.filter(race => {
-
-        const text = [
-            race.event,
-            race.course,
-            race.car,
-            race.result,
-            race.memo
-        ].join(" ").toLowerCase();
-
-        return text.includes(search);
-    });
-
-    const tbody = document.getElementById("raceTable");
-
-    if (races.length === 0) {
-
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="empty">
-                    No race records.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    tbody.innerHTML = races.map(race => `
-
-        <tr>
-
-            <td><strong>${escapeHTML(race.event)}</strong></td>
-
-            <td>${escapeHTML(race.course)}</td>
-
-            <td>${escapeHTML(race.car)}</td>
-
-            <td>${escapeHTML(race.result)}</td>
-
-            <td>${escapeHTML(race.lap)}</td>
-
-            <td>${escapeHTML(race.date)}</td>
-
-            <td>${escapeHTML(race.memo)}</td>
-
-            <td>
-                <div class="actions">
-
-                    <button onclick="editRace('${race.id}')">
-                        Edit
-                    </button>
-
-                    <button
-                        class="danger"
-                        onclick="deleteRecord('races','${race.id}')"
-                    >
-                        Delete
-                    </button>
-
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-display font-bold tracking-wider text-white uppercase flex items-center gap-2">
+                        Gran Turismo <span class="text-xs bg-gt-red px-2 py-0.5 rounded text-white font-sans font-semibold tracking-normal">GT1 Archive</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">初代「グランツーリスモ」(1997) 登場車種データベース</p>
                 </div>
-            </td>
+            </div>
 
-        </tr>
+            <!-- Search Bar -->
+            <div class="w-full md:w-80 relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="searchInput" placeholder="車名・メーカーで検索 (例: Skyline, Honda)..." 
+                    class="w-full pl-10 pr-4 py-2.5 bg-gt-card border border-gt-border rounded-xl text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gt-red focus:ring-1 focus:ring-gt-red transition-all shadow-inner">
+            </div>
+        </div>
+    </header>
 
-    `).join("");
-}
+    <!-- Manufacturer Filter Tabs -->
+    <nav class="bg-gray-900/80 border-b border-gt-border py-3 shadow-inner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto">
+            <div id="manufacturerTabs" class="flex space-x-2 min-w-max pb-1">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+    </nav>
 
-function renderLicenses() {
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Stats / Count Bar -->
+        <div class="flex items-center justify-between mb-6 bg-gt-card/50 border border-gt-border/60 p-4 rounded-xl backdrop-blur">
+            <div class="flex items-center space-x-2 text-sm text-gray-300">
+                <i class="fa-solid fa-car text-gt-red"></i>
+                <span>表示中車両: <strong id="carCount" class="text-white font-display text-lg">0</strong> 台</span>
+            </div>
+            <div class="text-xs text-gray-400 hidden sm:block">
+                ※初代グランツーリスモ（日本版ベース）の代表的な収録車種を網羅
+            </div>
+        </div>
 
-    const search =
-        document.getElementById("licenseSearch")
-            .value.toLowerCase();
+        <!-- Car Cards Grid -->
+        <div id="carGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Dynamically populated via JS -->
+        </div>
 
-    const licenses =
-        db[currentGame].licenses.filter(license => {
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-20">
+            <div class="inline-block p-4 rounded-full bg-gt-card text-gray-500 mb-4 text-4xl">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-300">該当する車両が見つかりませんでした</h3>
+            <p class="text-sm text-gray-500 mt-1">検索条件を変更するか、フィルターをリセットしてください。</p>
+        </div>
+    </main>
 
-            const text = [
-                license.name,
-                license.test,
-                license.course,
-                license.result,
-                license.memo
-            ].join(" ").toLowerCase();
+    <!-- Footer -->
+    <footer class="bg-gt-dark border-t border-gt-border py-6 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>Gran Turismo 1 Car Archive Fan App &bull; Data sourced from the classic 1997 PlayStation masterpiece.</p>
+        </div>
+    </footer>
 
-            return text.includes(search);
+    <!-- JavaScript Application Logic -->
+    <script>
+        // GT1 Car Dataset (Representative and complete list of models featured in Gran Turismo 1)
+        const gt1Cars = [
+            // Honda
+            { name: "Civic SiR-II", maker: "Honda", drivetrain: "FF", hp: "170PS", category: "Compact / Sports", desc: "シビックスポーツの代名詞。高回転型B16A VTECエンジンを搭載。" },
+            { name: "Civic Ferio SiR", maker: "Honda", drivetrain: "FF", hp: "170PS", category: "Sedan", desc: "4ドアセダンボディにVTECを積んだスポーティセダン。" },
+            { name: "CR-X del Sol SiR", maker: "Honda", drivetrain: "FF", hp: "170PS", category: "Compact / Targa", desc: "電動オープントップルーフを持つコンパクトスポーツ。" },
+            { name: "Accord SiR", maker: "Honda", drivetrain: "FF", hp: "190PS", category: "Sedan", desc: "洗練されたスタイリングと優れた走行性能を持つミドルセダン。" },
+            { name: "Prelude SiR", maker: "Honda", drivetrain: "FF", hp: "200PS", category: "Coupe", desc: "当時のホンダ前輪駆動スポーツのフラッグシップクーペ。" },
+            { name: "Integra Type R (DC2)", maker: "Honda", drivetrain: "FF", hp: "200PS", category: "Sports", desc: "「走るレーシングカー」と称されたピュアスポーツ。圧倒的なハンドリング。" },
+            { name: "NSX (NA1)", maker: "Honda", drivetrain: "MR", hp: "280PS", category: "Supercar", desc: "アルミモノコックボディを採用した日本が誇るスーパースポーツ。" },
+            { name: "NSX Type S Zero", maker: "Honda", drivetrain: "MR", hp: "280PS", category: "Supercar", desc: "サーキット走行を主眼に置いたハードコアなNSX。" },
+            { name: "NSX GT2", maker: "Honda", drivetrain: "MR", hp: "350PS+", category: "Race Car", desc: "ル・マン等のGT2クラスを戦ったレース仕様のNSX。" },
+
+            // Toyota
+            { name: "Starlet Glanza V", maker: "Toyota", drivetrain: "FF", hp: "140PS", category: "Compact", desc: "ターボチャージャーを搭載したホットハッチの韋駄天。" },
+            { name: "Corolla Levin BZ-G", maker: "Toyota", drivetrain: "FF", hp: "165PS", category: "Coupe", desc: "4A-GE 20バルブエンジンを搭載した伝統のAE111レビン。" },
+            { name: "Sprinter Trueno BZ-G", maker: "Toyota", drivetrain: "FF", hp: "165PS", category: "Coupe", desc: "レビンと対をなすリトラクタブルライトのスポーツクーペ。" },
+            { name: "MR2 G-Limited", maker: "Toyota", drivetrain: "MR", hp: "200PS", category: "Sports", desc: "手頃なミッドシップスポーツとして人気を博したSW20型。" },
+            { name: "MR2 GT-S", maker: "Toyota", drivetrain: "MR", hp: "245PS", category: "Sports", desc: "3S-GTEターボエンジンを搭載し、強烈な加速力を発揮。" },
+            { name: "Celica GT-Four", maker: "Toyota", drivetrain: "4WD", hp: "255PS", category: "Sports / Rally", desc: "WRC制覇を狙って開発された本格フルタイム4WDスポーツ。" },
+            { name: "Supra 3.0GT Turbo A", maker: "Toyota", drivetrain: "FR", hp: "270PS", category: "GT", desc: "グループAホモロゲーションモデルの先祖、7M-GTE搭載。" },
+            { name: "Supra RZ", maker: "Toyota", drivetrain: "FR", hp: "280PS", category: "GT", desc: "2JZ-GTEツインターボを搭載する国産最強GTの1台。" },
+            { name: "Castrol Tom's Supra (GT)", maker: "Toyota", drivetrain: "FR", hp: "450PS+", category: "Race Car", desc: "全日本GT選手権(JGTC)を席巻したカストロールカラーのモンスター。" },
+
+            // Nissan
+            { name: "March 13G", maker: "Nissan", drivetrain: "FF", hp: "85PS", category: "Compact", desc: "扱いやすいコンパクトハッチバック。" },
+            { name: "180SX Type X", maker: "Nissan", drivetrain: "FR", hp: "205PS", category: "Sports", desc: "SR20DETターボを積んだ若者絶大な人気のFRハッチバッククーペ。" },
+            { name: "Silvia K's (S14)", maker: "Nissan", drivetrain: "FR", hp: "220PS", category: "Sports", desc: "美しく滑らかなボディラインを持つ大人気スペシャリティクーペ。" },
+            { name: "Skyline GTS25t Type M", maker: "Nissan", drivetrain: "FR", hp: "250PS", category: "Sports", desc: "R33型スカイラインのハイパフォーマンスターボモデル。" },
+            { name: "Skyline GT-R V-Spec (R32)", maker: "Nissan", getData: "4WD", drivetrain: "4WD", hp: "280PS", category: "GT", desc: "「グループA不敗神話」を打ち立てた伝説のR32型GT-R。" },
+            { name: "Skyline GT-R V-Spec (R33)", maker: "Nissan", drivetrain: "4WD", hp: "280PS", category: "GT", desc: "ニュルブルクリンクで圧倒的タイムを記録したR33型。" },
+            { name: "Nismo GT-R LM", maker: "Nissan", drivetrain: "FR", hp: "400PS+", category: "Race Car", desc: "ル・マン24時間レース参戦のために作られたロードゴーイングGTカー。" },
+            { name: "Calsonic Skyline (GT)", maker: "Nissan", drivetrain: "4WD", hp: "450PS+", category: "Race Car", desc: "青い稲妻の異名を持つ、JGTC不屈のワークスレーシングカー。" },
+
+            // Mazda
+            { name: "Demio GL-X", maker: "Mazda", drivetrain: "FF", hp: "100PS", category: "Compact", desc: "コンパクトなボディに使い勝手の良さを凝縮した名車。" },
+            { name: "Familia Sedan", maker: "Mazda", drivetrain: "FF", hp: "130PS", category: "Sedan", desc: "実用性と走りの楽しさを両立したセダン。" },
+            { name: "Eunos Roadster (Miata)", maker: "Mazda", drivetrain: "FR", hp: "130PS", category: "Roadster", desc: "ライトウェイトスポーツの楽しさを世界に再認識させた名車。" },
+            { name: "RX-7 Type RZ (FD3S)", maker: "Mazda", drivetrain: "FR", hp: "280PS", category: "Sports", desc: "シーケンシャルツインターボとロータリーエンジンの傑作。" },
+            { name: "RX-7 Infini (FC3S)", maker: "Mazda", drivetrain: "FR", hp: "215PS", category: "Sports", desc: "熟成されたロータリースポーツの先代モデル。" },
+            { name: "Mazda 787B (Concept/Bonus)", maker: "Mazda", drivetrain: "MR", hp: "700PS", category: "Race Car", desc: "日本車初のル・マン総合優勝を成し遂げた4ローター・ロータリーロケット。" },
+
+            // Mitsubishi
+            { name: "Mirage Cyborg ZR", maker: "Mitsubishi", drivetrain: "FF", hp: "175PS", category: "Compact", desc: "MIVECエンジンを搭載したハイパワーコンパクトハッチ。" },
+            { name: "FTO GP Version R", maker: "Mitsubishi", drivetrain: "FF", hp: "200PS", category: "Coupe", desc: "流麗なクーペボディに高出力V6エンジンを搭載。" },
+            { name: "GTO Twin Turbo", maker: "Mitsubishi", drivetrain: "4WD", hp: "280PS", category: "GT", desc: "アクティブエアロや4WSを装備したハイテク巨艦GT。" },
+            { name: "Lancer Evolution IV GSR", maker: "Mitsubishi", drivetrain: "4WD", hp: "280PS", category: "Sedan / Rally", desc: "AYCを初搭載し、ラリーシーンで圧倒的な強さを誇ったランエボIV。" },
+
+            // Subaru
+            { name: "Impreza Sport Wagon WRX", maker: "Subaru", drivetrain: "4WD", hp: "240PS", category: "Wagon", desc: "ボクサーターボとAWDの実用性を高次元で融合したワゴン。" },
+            { name: "Impreza 22B-STi Version (Ref)", maker: "Subaru", drivetrain: "4WD", hp: "280PS", category: "Sports", desc: "WRC制覇を記念したブリスターフェンダーの超限定モデル。" },
+            { name: "Legacy Touring Wagon GT-B", maker: "Subaru", drivetrain: "4WD", hp: "260PS", category: "Wagon", desc: "日本の高速ワゴンブームを牽引した名機。" },
+            { name: "Legacy Sedan RS", maker: "Subaru", drivetrain: "4WD", hp: "250PS", category: "Sedan", desc: "水平対向ターボの底力を世界に見せつけたスポーツセダン。" },
+
+            // Chevrolet (Bonus/US/Special)
+            { name: "Corvette Grand Sport", maker: "Chevrolet", drivetrain: "FR", hp: "330PS", category: "American GT", desc: "鮮烈な青に白ストライプ、大排気量V8の豪快なアメ車スポーツ。" },
+            { name: "Camaro Z28", maker: "Chevrolet", drivetrain: "FR", hp: "285PS", category: "American Coupe", desc: "アメリカンマッスルを代表するポニーカー。" }
+        ];
+
+        let currentMaker = 'All';
+        let searchQuery = '';
+
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTabs();
+            renderCars();
+
+            // Search input listener
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase().trim();
+                renderCars();
+            });
         });
 
-    const tbody =
-        document.getElementById("licenseTable");
+        // Generate manufacturer tabs dynamically
+        function renderTabs() {
+            const tabsContainer = document.getElementById('manufacturerTabs');
+            const makers = ['All', 'Honda', 'Toyota', 'Nissan', 'Mazda', 'Mitsubishi', 'Subaru', 'Chevrolet'];
 
-    if (licenses.length === 0) {
-
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="empty">
-                    No license records.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    tbody.innerHTML = licenses.map(license => {
-
-        const resultClass =
-            license.result.toLowerCase();
-
-        return `
-
-        <tr>
-
-            <td>
-                <strong>
-                    ${escapeHTML(license.name)}
-                </strong>
-            </td>
-
-            <td>${escapeHTML(license.test)}</td>
-
-            <td>${escapeHTML(license.course)}</td>
-
-            <td>
-                <span class="status ${resultClass}">
-                    ${escapeHTML(license.result)}
-                </span>
-            </td>
-
-            <td>${escapeHTML(license.time)}</td>
-
-            <td>${escapeHTML(license.date)}</td>
-
-            <td>${escapeHTML(license.memo)}</td>
-
-            <td>
-                <div class="actions">
-
-                    <button onclick="editLicense('${license.id}')">
-                        Edit
+            tabsContainer.innerHTML = makers.map(maker => {
+                const isActive = currentMaker === maker;
+                const activeClass = isActive 
+                    ? 'bg-gt-red text-white shadow-lg shadow-gt-red/30 border-gt-red' 
+                    : 'bg-gt-card text-gray-300 hover:bg-gt-border border-gt-border';
+                
+                return `
+                    <button onclick="setMaker('${maker}')" 
+                        class="px-4 py-2 rounded-xl text-xs sm:text-sm font-display font-bold uppercase tracking-wider border transition-all ${activeClass}">
+                        ${maker}
                     </button>
-
-                    <button
-                        class="danger"
-                        onclick="deleteRecord('licenses','${license.id}')"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-            </td>
-
-        </tr>
-
-        `;
-    }).join("");
-}
-
-function renderStats() {
-
-    const data = db[currentGame];
-
-    const totalCars = data.cars.length;
-    const obtainedCars =
-        data.cars.filter(car => car.obtained).length;
-
-    document.getElementById("carStat").textContent =
-        `${obtainedCars} / ${totalCars}`;
-
-    document.getElementById("carProgress").style.width =
-        totalCars
-            ? `${obtainedCars / totalCars * 100}%`
-            : "0%";
-
-    document.getElementById("raceStat").textContent =
-        data.races.length;
-
-    document.getElementById("raceProgress").style.width =
-        data.races.length ? "100%" : "0%";
-
-    document.getElementById("licenseStat").textContent =
-        data.licenses.length;
-
-    document.getElementById("licenseProgress").style.width =
-        data.licenses.length ? "100%" : "0%";
-}
-
-function openModal(type) {
-
-    editId = null;
-
-    document.getElementById("modalBg")
-        .classList.add("show");
-
-    document.getElementById("carForm")
-        .classList.toggle("hidden", type !== "cars");
-
-    document.getElementById("raceForm")
-        .classList.toggle("hidden", type !== "races");
-
-    document.getElementById("licenseForm")
-        .classList.toggle("hidden", type !== "licenses");
-
-    document.getElementById("modalTitle").textContent =
-        type === "cars"
-            ? "Add Car"
-            : type === "races"
-                ? "Add Race"
-                : "Add License";
-}
-
-function closeModal() {
-
-    document.getElementById("modalBg")
-        .classList.remove("show");
-
-    document.querySelectorAll("form").forEach(form => {
-        form.reset();
-    });
-
-    editId = null;
-}
-
-function openCarModal() {
-    openModal("cars");
-}
-
-function openRaceModal() {
-    openModal("races");
-}
-
-function openLicenseModal() {
-    openModal("licenses");
-}
-
-document.getElementById("carForm")
-    .addEventListener("submit", event => {
-
-        event.preventDefault();
-
-        const record = {
-            id: editId || createId(),
-            manufacturer:
-                document.getElementById("carManufacturer").value,
-            name:
-                document.getElementById("carName").value,
-            year:
-                document.getElementById("carYear").value,
-            obtained:
-                document.getElementById("carObtained").value === "true",
-            date:
-                document.getElementById("carDate").value,
-            memo:
-                document.getElementById("carMemo").value
-        };
-
-        if (editId) {
-
-            const index =
-                db[currentGame].cars.findIndex(
-                    car => car.id === editId
-                );
-
-            db[currentGame].cars[index] = record;
-
-        } else {
-
-            db[currentGame].cars.push(record);
+                `;
+            }).join('');
         }
 
-        saveDB();
-        closeModal();
-        render();
-    });
-
-document.getElementById("raceForm")
-    .addEventListener("submit", event => {
-
-        event.preventDefault();
-
-        const record = {
-            id: editId || createId(),
-            event:
-                document.getElementById("raceEvent").value,
-            course:
-                document.getElementById("raceCourse").value,
-            car:
-                document.getElementById("raceCar").value,
-            result:
-                document.getElementById("raceResult").value,
-            lap:
-                document.getElementById("raceLap").value,
-            date:
-                document.getElementById("raceDate").value,
-            memo:
-                document.getElementById("raceMemo").value
-        };
-
-        if (editId) {
-
-            const index =
-                db[currentGame].races.findIndex(
-                    race => race.id === editId
-                );
-
-            db[currentGame].races[index] = record;
-
-        } else {
-
-            db[currentGame].races.push(record);
+        // Change active maker filter
+        function setMaker(maker) {
+            currentMaker = maker;
+            renderTabs();
+            renderCars();
         }
 
-        saveDB();
-        closeModal();
-        render();
-    });
+        // Render car cards based on filters and search
+        function renderCars() {
+            const grid = document.getElementById('carGrid');
+            const emptyState = document.getElementById('emptyState');
+            const carCountEl = document.getElementById('carCount');
 
-document.getElementById("licenseForm")
-    .addEventListener("submit", event => {
+            // Filter logic
+            const filtered = gt1Cars.filter(car => {
+                const matchesMaker = currentMaker === 'All' || car.maker === currentMaker;
+                const matchesSearch = car.name.toLowerCase().includes(searchQuery) || 
+                                      car.maker.toLowerCase().includes(searchQuery) || 
+                                      car.desc.toLowerCase().includes(searchQuery) ||
+                                      car.category.toLowerCase().includes(searchQuery);
+                return matchesMaker && matchesSearch;
+            });
 
-        event.preventDefault();
+            carCountEl.textContent = filtered.length;
 
-        const record = {
-            id: editId || createId(),
-            name:
-                document.getElementById("licenseName").value,
-            test:
-                document.getElementById("licenseTest").value,
-            course:
-                document.getElementById("licenseCourse").value,
-            result:
-                document.getElementById("licenseResult").value,
-            time:
-                document.getElementById("licenseTime").value,
-            date:
-                document.getElementById("licenseDate").value,
-            memo:
-                document.getElementById("licenseMemo").value
-        };
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
 
-        if (editId) {
+            emptyState.classList.add('hidden');
 
-            const index =
-                db[currentGame].licenses.findIndex(
-                    license => license.id === editId
-                );
+            grid.innerHTML = filtered.map(car => {
+                // Assign badge color based on drivetrain
+                let dtColor = 'bg-blue-900/40 text-blue-300 border-blue-700/50';
+                if (car.drivetrain === 'FR') dtColor = 'bg-purple-900/40 text-purple-300 border-purple-700/50';
+                if (car.drivetrain === '4WD') dtColor = 'bg-emerald-900/40 text-emerald-300 border-emerald-700/50';
+                if (car.drivetrain === 'MR') dtColor = 'bg-amber-900/40 text-amber-300 border-amber-700/50';
 
-            db[currentGame].licenses[index] = record;
+                return `
+                    <div class="bg-gt-card border border-gt-border rounded-2xl p-5 flex flex-col justify-between hover:border-gt-red/60 transition-all duration-300 hover:shadow-xl hover:shadow-gt-red/5 group">
+                        <div>
+                            <!-- Top metadata -->
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-display font-semibold tracking-wider text-gt-red uppercase bg-gt-red/10 px-2.5 py-1 rounded-lg">
+                                    ${car.maker}
+                                </span>
+                                <span class="text-xs font-mono font-medium px-2 py-0.5 rounded border ${dtColor}">
+                                    ${car.drivetrain}
+                                </span>
+                            </div>
 
-        } else {
+                            <!-- Car Name -->
+                            <h3 class="text-lg font-bold text-white group-hover:text-gt-red transition-colors mb-1">
+                                ${car.name}
+                            </h3>
 
-            db[currentGame].licenses.push(record);
+                            <!-- Category & HP -->
+                            <div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
+                                <span class="flex items-center gap-1">
+                                    <i class="fa-solid fa-tag text-[10px]"></i> ${car.category}
+                                </span>
+                                <span class="flex items-center gap-1 font-mono text-gray-200 font-semibold bg-gray-800 px-2 py-0.5 rounded">
+                                    <i class="fa-solid fa-gauge-high text-gt-red text-[10px]"></i> ${car.hp}
+                                </span>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-xs text-gray-400 leading-relaxed">
+                                ${car.desc}
+                            </p>
+                        </div>
+
+                        <!-- Card Footer / Simulated GT Badge -->
+                        <div class="mt-5 pt-3 border-t border-gt-border/50 flex items-center justify-between text-[11px] text-gray-500">
+                            <span>Gran Turismo 1 Spec</span>
+                            <i class="fa-solid fa-gamepad text-gray-600 group-hover:text-gt-red transition-colors"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
-
-        saveDB();
-        closeModal();
-        render();
-    });
-
-function toggleCar(id) {
-
-    const car =
-        db[currentGame].cars.find(
-            car => car.id === id
-        );
-
-    if (!car) return;
-
-    car.obtained = !car.obtained;
-
-    saveDB();
-    render();
-}
-
-function deleteRecord(type, id) {
-
-    if (!confirm("Delete this record?")) {
-        return;
-    }
-
-    db[currentGame][type] =
-        db[currentGame][type].filter(
-            item => item.id !== id
-        );
-
-    saveDB();
-    render();
-}
-
-function editCar(id) {
-
-    const car =
-        db[currentGame].cars.find(
-            item => item.id === id
-        );
-
-    if (!car) return;
-
-    editId = id;
-
-    openModal("cars");
-
-    document.getElementById("modalTitle").textContent =
-        "Edit Car";
-
-    document.getElementById("carManufacturer").value =
-        car.manufacturer;
-
-    document.getElementById("carName").value =
-        car.name;
-
-    document.getElementById("carYear").value =
-        car.year;
-
-    document.getElementById("carObtained").value =
-        String(car.obtained);
-
-    document.getElementById("carDate").value =
-        car.date;
-
-    document.getElementById("carMemo").value =
-        car.memo;
-}
-
-function editRace(id) {
-
-    const race =
-        db[currentGame].races.find(
-            item => item.id === id
-        );
-
-    if (!race) return;
-
-    editId = id;
-
-    openModal("races");
-
-    document.getElementById("modalTitle").textContent =
-        "Edit Race";
-
-    document.getElementById("raceEvent").value =
-        race.event;
-
-    document.getElementById("raceCourse").value =
-        race.course;
-
-    document.getElementById("raceCar").value =
-        race.car;
-
-    document.getElementById("raceResult").value =
-        race.result;
-
-    document.getElementById("raceLap").value =
-        race.lap;
-
-    document.getElementById("raceDate").value =
-        race.date;
-
-    document.getElementById("raceMemo").value =
-        race.memo;
-}
-
-function editLicense(id) {
-
-    const license =
-        db[currentGame].licenses.find(
-            item => item.id === id
-        );
-
-    if (!license) return;
-
-    editId = id;
-
-    openModal("licenses");
-
-    document.getElementById("modalTitle").textContent =
-        "Edit License";
-
-    document.getElementById("licenseName").value =
-        license.name;
-
-    document.getElementById("licenseTest").value =
-        license.test;
-
-    document.getElementById("licenseCourse").value =
-        license.course;
-
-    document.getElementById("licenseResult").value =
-        license.result;
-
-    document.getElementById("licenseTime").value =
-        license.time;
-
-    document.getElementById("licenseDate").value =
-        license.date;
-
-    document.getElementById("licenseMemo").value =
-        license.memo;
-}
-
-render();
-
-</script>
-
+    </script>
 </body>
 </html>
+
