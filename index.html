@@ -2,309 +2,183 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gran Turismo 1 - Car Archive</title>
-    <!-- Tailwind CSS for modern styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Rajdhani for racing HUD vibe -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Rajdhani', 'sans-serif'],
-                    },
-                    colors: {
-                        gt: {
-                            red: '#e50914',
-                            dark: '#0b0f19',
-                            card: '#161e2e',
-                            border: '#2a374a',
-                            accent: '#3b82f6'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>初代グランツーリスモ (GT1) 車種一覧</title>
     <style>
         body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
         }
-        /* Custom scrollbar for game HUD look */
-        ::-webkit-scrollbar {
-            width: 8px;
+        h1 {
+            text-align: center;
+            color: #1a1a1a;
         }
-        ::-webkit-scrollbar-track {
-            background: #0b0f19;
+        p.subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #2a374a;
-            border-radius: 4px;
+        table {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3b82f6;
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #2c3e50;
+            color: #fff;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .maker {
+            font-weight: bold;
+            color: #2980b9;
+            width: 120px;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans selection:bg-gt-red selection:text-white">
+<body>
 
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-gt-dark via-gray-900 to-gt-dark border-b border-gt-border sticky top-0 z-50 shadow-2xl backdrop-blur-md bg-opacity-95">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-gt-red text-white p-2.5 rounded-xl shadow-lg shadow-gt-red/30 flex items-center justify-center">
-                    <i class="fa-solid fa-flag-checkered text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-display font-bold tracking-wider text-white uppercase flex items-center gap-2">
-                        Gran Turismo <span class="text-xs bg-gt-red px-2 py-0.5 rounded text-white font-sans font-semibold tracking-normal">GT1 Archive</span>
-                    </h1>
-                    <p class="text-xs text-gray-400">初代「グランツーリスモ」(1997) 登場車種データベース</p>
-                </div>
-            </div>
+    <h1>初代グランツーリスモ (GT1) 車種一覧</h1>
+    <p class="subtitle">PlayStation® / 1997年発売</p>
 
-            <!-- Search Bar -->
-            <div class="w-full md:w-80 relative">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" id="searchInput" placeholder="車名・メーカーで検索 (例: Skyline, Honda)..." 
-                    class="w-full pl-10 pr-4 py-2.5 bg-gt-card border border-gt-border rounded-xl text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-gt-red focus:ring-1 focus:ring-gt-red transition-all shadow-inner">
-            </div>
-        </div>
-    </header>
+    <table>
+        <thead>
+            <tr>
+                <th>メーカー</th>
+                <th>車種名・グレード</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 日産 -->
+            <tr><td class="maker" rowspan="25">日産 (NISSAN)</td><td>スカイライン GT-R (R32) '89</td></tr>
+            <tr><td>スカイライン GT-R NISMO (R32) '90</td></tr>
+            <tr><td>スカイライン GT-R (R32) '91</td></tr>
+            <tr><td>スカイライン GT-R Vスペック (R32) '93</td></tr>
+            <tr><td>スカイライン GT-R Vスペック II (R32) '94</td></tr>
+            <tr><td>スカイライン GTS-t Type M (R32) '91</td></tr>
+            <tr><td>スカイライン GTS25 Type S (R32) '91</td></tr>
+            <tr><td>スカイライン GTS4 (R32) '91</td></tr>
+            <tr><td>スカイライン GT-R (R33) '95</td></tr>
+            <tr><td>スカイライン GT-R Vスペック (R33) '95</td></tr>
+            <tr><td>スカイライン GT-R (R33) '97</td></tr>
+            <tr><td>スカイライン GT-R Vスペック (R33) '97</td></tr>
+            <tr><td>スカイライン GTS25t Type M (R33)</td></tr>
+            <tr><td>シルビア Q's (S13) '88</td></tr>
+            <tr><td>シルビア K's (S13) '88</td></tr>
+            <tr><td>シルビア Q's (S13) '91</td></tr>
+            <tr><td>シルビア K's (S13) '91</td></tr>
+            <tr><td>シルビア Q's (S14) '96</td></tr>
+            <tr><td>シルビア K's (S14) '96</td></tr>
+            <tr><td>180SX Type X '94</td></tr>
+            <tr><td>180SX Type S '96</td></tr>
+            <tr><td>180SX Type X '96</td></tr>
+            <tr><td>パルサー GTi-R '91</td></tr>
+            <tr><td>フェアレディZ 300ZX Ver.S ツインターボ 2by2 '94</td></tr>
+            <tr><td>プリメーラ 2.0Te '90 / '95</td></tr>
 
-    <!-- Manufacturer Filter Tabs -->
-    <nav class="bg-gray-900/80 border-b border-gt-border py-3 shadow-inner">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto">
-            <div id="manufacturerTabs" class="flex space-x-2 min-w-max pb-1">
-                <!-- Dynamically populated via JS -->
-            </div>
-        </div>
-    </nav>
+            <!-- トヨタ -->
+            <tr><td class="maker" rowspan="20">トヨタ (TOYOTA)</td><td>スープラ 3.0GT ターボリミテッド '88</td></tr>
+            <tr><td>スープラ 2.5GT ツインターボ R '90</td></tr>
+            <tr><td>スープラ SZ-R '95</td></tr>
+            <tr><td>スープラ RZ '95</td></tr>
+            <tr><td>カローラレビン GT-APEX (AE86) '85</td></tr>
+            <tr><td>カローラレビン BZ-G '96</td></tr>
+            <tr><td>スプリンタートレノ BZ-G '96</td></tr>
+            <tr><td>セリカ SS-II (ST202) '95</td></tr>
+            <tr><td>セリカ GT-FOUR (ST205) '95</td></tr>
+            <tr><td>MR2 G-Limited '96</td></tr>
+            <tr><td>MR2 GT-S '96</td></tr>
+            <tr><td>マークII Tourer S '92</td></tr>
+            <tr><td>マークII Tourer V '92</td></tr>
+            <tr><td>チェイサー Tourer S '96</td></tr>
+            <tr><td>チェイサー Tourer V '96</td></tr>
+            <tr><td>ソアラ 2.5GT-T '95</td></tr>
+            <tr><td>ソアラ 2.5GT-T VVT-i '96</td></tr>
+            <tr><td>スターレット グランツァ V '96</td></tr>
+            <tr><td>コロナ Exiv 200GT '96</td></tr>
+            <tr><td>カストロール スープラ GT (JGTC)</td></tr>
 
-    <!-- Main Content -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Stats / Count Bar -->
-        <div class="flex items-center justify-between mb-6 bg-gt-card/50 border border-gt-border/60 p-4 rounded-xl backdrop-blur">
-            <div class="flex items-center space-x-2 text-sm text-gray-300">
-                <i class="fa-solid fa-car text-gt-red"></i>
-                <span>表示中車両: <strong id="carCount" class="text-white font-display text-lg">0</strong> 台</span>
-            </div>
-            <div class="text-xs text-gray-400 hidden sm:block">
-                ※初代グランツーリスモ（日本版ベース）の代表的な収録車種を網羅
-            </div>
-        </div>
+            <!-- ホンダ -->
+            <tr><td class="maker" rowspan="16">ホンダ (HONDA)</td><td>NSX '90</td></tr>
+            <tr><td>NSX Type R '92</td></tr>
+            <tr><td>NSX '97</td></tr>
+            <tr><td>NSX Type S '97</td></tr>
+            <tr><td>NSX Type S Zero '97</td></tr>
+            <tr><td>インテグラ SiR-G (DC2) '95</td></tr>
+            <tr><td>インテグラ Type R (DC2) '95</td></tr>
+            <tr><td>シビック SiR-II (EG) '93</td></tr>
+            <tr><td>シビックフェリオ SiR (EG) '93</td></tr>
+            <tr><td>シビック SiR-II (EK) '97</td></tr>
+            <tr><td>シビック Type R (EK) '97</td></tr>
+            <tr><td>プレリュード Si '91 / Si VTEC '91</td></tr>
+            <tr><td>アコードセダン SiR '96</td></tr>
+            <tr><td>アコードワゴン SiR '96</td></tr>
+            <tr><td>CR-X SiR '90 / デルソル '92・'95</td></tr>
+            <tr><td>NSX GT1 TURBO</td></tr>
 
-        <!-- Car Cards Grid -->
-        <div id="carGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Dynamically populated via JS -->
-        </div>
+            <!-- マツダ -->
+            <tr><td class="maker" rowspan="10">マツダ (MAZDA)</td><td>サバンナ RX-7 GT-X (FC) '90</td></tr>
+            <tr><td>サバンナ RX-7 アンフィニ III (FC) '90</td></tr>
+            <tr><td>アンフィニ RX-7 タイプRB (FD) '96</td></tr>
+            <tr><td>アンフィニ RX-7 ツーリング-X (FD) '96</td></tr>
+            <tr><td>アンフィニ RX-7 タイプRZ (FD) '96</td></tr>
+            <tr><td>ユーノス コスモ 13B TypeS / 20B TypeE CCS</td></tr>
+            <tr><td>ユーノス ロードスター 1600 (NA) '89 / 1800 '93</td></tr>
+            <tr><td>ランティス クーペ 2000 タイプ R '93</td></tr>
+            <tr><td>デミオ GL-X / GL / LX-G パッケージ '96</td></tr>
+            <tr><td>RX-7 LM Edition</td></tr>
 
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-20">
-            <div class="inline-block p-4 rounded-full bg-gt-card text-gray-500 mb-4 text-4xl">
-                <i class="fa-solid fa-ghost"></i>
-            </div>
-            <h3 class="text-lg font-bold text-gray-300">該当する車両が見つかりませんでした</h3>
-            <p class="text-sm text-gray-500 mt-1">検索条件を変更するか、フィルターをリセットしてください。</p>
-        </div>
-    </main>
+            <!-- 三菱 -->
+            <tr><td class="maker" rowspan="7">三菱 (MITSUBISHI)</td><td>GTO ツインターボ '92 / '95</td></tr>
+            <tr><td>GTO ツインターボ MR '95</td></tr>
+            <tr><td>GTO SR '95 / '96</td></tr>
+            <tr><td>ランサーエボリューション III GSR '95</td></tr>
+            <tr><td>ランサーエボリューション IV GSR '96</td></tr>
+            <tr><td>FTO GP Version R '97</td></tr>
+            <tr><td>エクリプス GT '95</td></tr>
 
-    <!-- Footer -->
-    <footer class="bg-gt-dark border-t border-gt-border py-6 text-center text-xs text-gray-500">
-        <div class="max-w-7xl mx-auto px-4">
-            <p>Gran Turismo 1 Car Archive Fan App &bull; Data sourced from the classic 1997 PlayStation masterpiece.</p>
-        </div>
-    </footer>
+            <!-- スバル -->
+            <tr><td class="maker" rowspan="6">スバル (SUBARU)</td><td>インプレッサ セダン / ワゴン WRX '94</td></tr>
+            <tr><td>インプレッサ セダン WRX STi バージョン II '95</td></tr>
+            <tr><td>インプレッサ ワゴン WRX STi バージョン III '96</td></tr>
+            <tr><td>インプレッサ WRX-STi TypeR '96</td></tr>
+            <tr><td>アルシオーネ SVX バージョンL / S4</td></tr>
+            <tr><td>レガシィ ツーリングワゴン GT-B '96</td></tr>
 
-    <!-- JavaScript Application Logic -->
-    <script>
-        // GT1 Car Dataset (Representative and complete list of models featured in Gran Turismo 1)
-        const gt1Cars = [
-            // Honda
-            { name: "Civic SiR-II", maker: "Honda", drivetrain: "FF", hp: "170PS", category: "Compact / Sports", desc: "シビックスポーツの代名詞。高回転型B16A VTECエンジンを搭載。" },
-            { name: "Civic Ferio SiR", maker: "Honda", drivetrain: "FF", hp: "170PS", category: "Sedan", desc: "4ドアセダンボディにVTECを積んだスポーティセダン。" },
-            { name: "CR-X del Sol SiR", maker: "Honda", drivetrain: "FF", hp: "170PS", category: "Compact / Targa", desc: "電動オープントップルーフを持つコンパクトスポーツ。" },
-            { name: "Accord SiR", maker: "Honda", drivetrain: "FF", hp: "190PS", category: "Sedan", desc: "洗練されたスタイリングと優れた走行性能を持つミドルセダン。" },
-            { name: "Prelude SiR", maker: "Honda", drivetrain: "FF", hp: "200PS", category: "Coupe", desc: "当時のホンダ前輪駆動スポーツのフラッグシップクーペ。" },
-            { name: "Integra Type R (DC2)", maker: "Honda", drivetrain: "FF", hp: "200PS", category: "Sports", desc: "「走るレーシングカー」と称されたピュアスポーツ。圧倒的なハンドリング。" },
-            { name: "NSX (NA1)", maker: "Honda", drivetrain: "MR", hp: "280PS", category: "Supercar", desc: "アルミモノコックボディを採用した日本が誇るスーパースポーツ。" },
-            { name: "NSX Type S Zero", maker: "Honda", drivetrain: "MR", hp: "280PS", category: "Supercar", desc: "サーキット走行を主眼に置いたハードコアなNSX。" },
-            { name: "NSX GT2", maker: "Honda", drivetrain: "MR", hp: "350PS+", category: "Race Car", desc: "ル・マン等のGT2クラスを戦ったレース仕様のNSX。" },
+            <!--  Аストンマーティン -->
+            <tr><td class="maker" rowspan="1">アストンマーティン</td><td>DB7 Volante / Coupe</td></tr>
 
-            // Toyota
-            { name: "Starlet Glanza V", maker: "Toyota", drivetrain: "FF", hp: "140PS", category: "Compact", desc: "ターボチャージャーを搭載したホットハッチの韋駄天。" },
-            { name: "Corolla Levin BZ-G", maker: "Toyota", drivetrain: "FF", hp: "165PS", category: "Coupe", desc: "4A-GE 20バルブエンジンを搭載した伝統のAE111レビン。" },
-            { name: "Sprinter Trueno BZ-G", maker: "Toyota", drivetrain: "FF", hp: "165PS", category: "Coupe", desc: "レビンと対をなすリトラクタブルライトのスポーツクーペ。" },
-            { name: "MR2 G-Limited", maker: "Toyota", drivetrain: "MR", hp: "200PS", category: "Sports", desc: "手頃なミッドシップスポーツとして人気を博したSW20型。" },
-            { name: "MR2 GT-S", maker: "Toyota", drivetrain: "MR", hp: "245PS", category: "Sports", desc: "3S-GTEターボエンジンを搭載し、強烈な加速力を発揮。" },
-            { name: "Celica GT-Four", maker: "Toyota", drivetrain: "4WD", hp: "255PS", category: "Sports / Rally", desc: "WRC制覇を狙って開発された本格フルタイム4WDスポーツ。" },
-            { name: "Supra 3.0GT Turbo A", maker: "Toyota", drivetrain: "FR", hp: "270PS", category: "GT", desc: "グループAホモロゲーションモデルの先祖、7M-GTE搭載。" },
-            { name: "Supra RZ", maker: "Toyota", drivetrain: "FR", hp: "280PS", category: "GT", desc: "2JZ-GTEツインターボを搭載する国産最強GTの1台。" },
-            { name: "Castrol Tom's Supra (GT)", maker: "Toyota", drivetrain: "FR", hp: "450PS+", category: "Race Car", desc: "全日本GT選手権(JGTC)を席巻したカストロールカラーのモンスター。" },
+            <!-- クライスラー / ダッジ -->
+            <tr><td class="maker" rowspan="3">クライスラー / ダッジ</td><td>バイパー RT/10 '96</td></tr>
+            <tr><td>バイパー GTS '96</td></tr>
+            <tr><td>バイパー GTS-R '96</td></tr>
 
-            // Nissan
-            { name: "March 13G", maker: "Nissan", drivetrain: "FF", hp: "85PS", category: "Compact", desc: "扱いやすいコンパクトハッチバック。" },
-            { name: "180SX Type X", maker: "Nissan", drivetrain: "FR", hp: "205PS", category: "Sports", desc: "SR20DETターボを積んだ若者絶大な人気のFRハッチバッククーペ。" },
-            { name: "Silvia K's (S14)", maker: "Nissan", drivetrain: "FR", hp: "220PS", category: "Sports", desc: "美しく滑らかなボディラインを持つ大人気スペシャリティクーペ。" },
-            { name: "Skyline GTS25t Type M", maker: "Nissan", drivetrain: "FR", hp: "250PS", category: "Sports", desc: "R33型スカイラインのハイパフォーマンスターボモデル。" },
-            { name: "Skyline GT-R V-Spec (R32)", maker: "Nissan", getData: "4WD", drivetrain: "4WD", hp: "280PS", category: "GT", desc: "「グループA不敗神話」を打ち立てた伝説のR32型GT-R。" },
-            { name: "Skyline GT-R V-Spec (R33)", maker: "Nissan", drivetrain: "4WD", hp: "280PS", category: "GT", desc: "ニュルブルクリンクで圧倒的タイムを記録したR33型。" },
-            { name: "Nismo GT-R LM", maker: "Nissan", drivetrain: "FR", hp: "400PS+", category: "Race Car", desc: "ル・マン24時間レース参戦のために作られたロードゴーイングGTカー。" },
-            { name: "Calsonic Skyline (GT)", maker: "Nissan", drivetrain: "4WD", hp: "450PS+", category: "Race Car", desc: "青い稲妻の異名を持つ、JGTC不屈のワークスレーシングカー。" },
+            <!-- シボレー -->
+            <tr><td class="maker" rowspan="4">シボレー (CHEVROLET)</td><td>カマロ Z28 '96</td></tr>
+            <tr><td>カマロ 30th Anniversary '96</td></tr>
+            <tr><td>コルベット Coupe (C4) '96</td></tr>
+            <tr><td>コルベット Grand Sport (C4) '96</td></tr>
 
-            // Mazda
-            { name: "Demio GL-X", maker: "Mazda", drivetrain: "FF", hp: "100PS", category: "Compact", desc: "コンパクトなボディに使い勝手の良さを凝縮した名車。" },
-            { name: "Familia Sedan", maker: "Mazda", drivetrain: "FF", hp: "130PS", category: "Sedan", desc: "実用性と走りの楽しさを両立したセダン。" },
-            { name: "Eunos Roadster (Miata)", maker: "Mazda", drivetrain: "FR", hp: "130PS", category: "Roadster", desc: "ライトウェイトスポーツの楽しさを世界に再認識させた名車。" },
-            { name: "RX-7 Type RZ (FD3S)", maker: "Mazda", drivetrain: "FR", hp: "280PS", category: "Sports", desc: "シーケンシャルツインターボとロータリーエンジンの傑作。" },
-            { name: "RX-7 Infini (FC3S)", maker: "Mazda", drivetrain: "FR", hp: "215PS", category: "Sports", desc: "熟成されたロータリースポーツの先代モデル。" },
-            { name: "Mazda 787B (Concept/Bonus)", maker: "Mazda", drivetrain: "MR", hp: "700PS", category: "Race Car", desc: "日本車初のル・マン総合優勝を成し遂げた4ローター・ロータリーロケット。" },
+            <!-- TVR -->
+            <tr><td class="maker" rowspan="3">TVR</td><td>グリフィス 500</td></tr>
+            <tr><td>サーブラウ 4.2</td></tr>
+            <tr><td>サーブラウ LMエディション</td></tr>
+        </tbody>
+    </body>
+    </table>
 
-            // Mitsubishi
-            { name: "Mirage Cyborg ZR", maker: "Mitsubishi", drivetrain: "FF", hp: "175PS", category: "Compact", desc: "MIVECエンジンを搭載したハイパワーコンパクトハッチ。" },
-            { name: "FTO GP Version R", maker: "Mitsubishi", drivetrain: "FF", hp: "200PS", category: "Coupe", desc: "流麗なクーペボディに高出力V6エンジンを搭載。" },
-            { name: "GTO Twin Turbo", maker: "Mitsubishi", drivetrain: "4WD", hp: "280PS", category: "GT", desc: "アクティブエアロや4WSを装備したハイテク巨艦GT。" },
-            { name: "Lancer Evolution IV GSR", maker: "Mitsubishi", drivetrain: "4WD", hp: "280PS", category: "Sedan / Rally", desc: "AYCを初搭載し、ラリーシーンで圧倒的な強さを誇ったランエボIV。" },
-
-            // Subaru
-            { name: "Impreza Sport Wagon WRX", maker: "Subaru", drivetrain: "4WD", hp: "240PS", category: "Wagon", desc: "ボクサーターボとAWDの実用性を高次元で融合したワゴン。" },
-            { name: "Impreza 22B-STi Version (Ref)", maker: "Subaru", drivetrain: "4WD", hp: "280PS", category: "Sports", desc: "WRC制覇を記念したブリスターフェンダーの超限定モデル。" },
-            { name: "Legacy Touring Wagon GT-B", maker: "Subaru", drivetrain: "4WD", hp: "260PS", category: "Wagon", desc: "日本の高速ワゴンブームを牽引した名機。" },
-            { name: "Legacy Sedan RS", maker: "Subaru", drivetrain: "4WD", hp: "250PS", category: "Sedan", desc: "水平対向ターボの底力を世界に見せつけたスポーツセダン。" },
-
-            // Chevrolet (Bonus/US/Special)
-            { name: "Corvette Grand Sport", maker: "Chevrolet", drivetrain: "FR", hp: "330PS", category: "American GT", desc: "鮮烈な青に白ストライプ、大排気量V8の豪快なアメ車スポーツ。" },
-            { name: "Camaro Z28", maker: "Chevrolet", drivetrain: "FR", hp: "285PS", category: "American Coupe", desc: "アメリカンマッスルを代表するポニーカー。" }
-        ];
-
-        let currentMaker = 'All';
-        let searchQuery = '';
-
-        // Initialize UI
-        document.addEventListener('DOMContentLoaded', () => {
-            renderTabs();
-            renderCars();
-
-            // Search input listener
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase().trim();
-                renderCars();
-            });
-        });
-
-        // Generate manufacturer tabs dynamically
-        function renderTabs() {
-            const tabsContainer = document.getElementById('manufacturerTabs');
-            const makers = ['All', 'Honda', 'Toyota', 'Nissan', 'Mazda', 'Mitsubishi', 'Subaru', 'Chevrolet'];
-
-            tabsContainer.innerHTML = makers.map(maker => {
-                const isActive = currentMaker === maker;
-                const activeClass = isActive 
-                    ? 'bg-gt-red text-white shadow-lg shadow-gt-red/30 border-gt-red' 
-                    : 'bg-gt-card text-gray-300 hover:bg-gt-border border-gt-border';
-                
-                return `
-                    <button onclick="setMaker('${maker}')" 
-                        class="px-4 py-2 rounded-xl text-xs sm:text-sm font-display font-bold uppercase tracking-wider border transition-all ${activeClass}">
-                        ${maker}
-                    </button>
-                `;
-            }).join('');
-        }
-
-        // Change active maker filter
-        function setMaker(maker) {
-            currentMaker = maker;
-            renderTabs();
-            renderCars();
-        }
-
-        // Render car cards based on filters and search
-        function renderCars() {
-            const grid = document.getElementById('carGrid');
-            const emptyState = document.getElementById('emptyState');
-            const carCountEl = document.getElementById('carCount');
-
-            // Filter logic
-            const filtered = gt1Cars.filter(car => {
-                const matchesMaker = currentMaker === 'All' || car.maker === currentMaker;
-                const matchesSearch = car.name.toLowerCase().includes(searchQuery) || 
-                                      car.maker.toLowerCase().includes(searchQuery) || 
-                                      car.desc.toLowerCase().includes(searchQuery) ||
-                                      car.category.toLowerCase().includes(searchQuery);
-                return matchesMaker && matchesSearch;
-            });
-
-            carCountEl.textContent = filtered.length;
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-
-            emptyState.classList.add('hidden');
-
-            grid.innerHTML = filtered.map(car => {
-                // Assign badge color based on drivetrain
-                let dtColor = 'bg-blue-900/40 text-blue-300 border-blue-700/50';
-                if (car.drivetrain === 'FR') dtColor = 'bg-purple-900/40 text-purple-300 border-purple-700/50';
-                if (car.drivetrain === '4WD') dtColor = 'bg-emerald-900/40 text-emerald-300 border-emerald-700/50';
-                if (car.drivetrain === 'MR') dtColor = 'bg-amber-900/40 text-amber-300 border-amber-700/50';
-
-                return `
-                    <div class="bg-gt-card border border-gt-border rounded-2xl p-5 flex flex-col justify-between hover:border-gt-red/60 transition-all duration-300 hover:shadow-xl hover:shadow-gt-red/5 group">
-                        <div>
-                            <!-- Top metadata -->
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-display font-semibold tracking-wider text-gt-red uppercase bg-gt-red/10 px-2.5 py-1 rounded-lg">
-                                    ${car.maker}
-                                </span>
-                                <span class="text-xs font-mono font-medium px-2 py-0.5 rounded border ${dtColor}">
-                                    ${car.drivetrain}
-                                </span>
-                            </div>
-
-                            <!-- Car Name -->
-                            <h3 class="text-lg font-bold text-white group-hover:text-gt-red transition-colors mb-1">
-                                ${car.name}
-                            </h3>
-
-                            <!-- Category & HP -->
-                            <div class="flex items-center gap-3 text-xs text-gray-400 mb-3">
-                                <span class="flex items-center gap-1">
-                                    <i class="fa-solid fa-tag text-[10px]"></i> ${car.category}
-                                </span>
-                                <span class="flex items-center gap-1 font-mono text-gray-200 font-semibold bg-gray-800 px-2 py-0.5 rounded">
-                                    <i class="fa-solid fa-gauge-high text-gt-red text-[10px]"></i> ${car.hp}
-                                </span>
-                            </div>
-
-                            <!-- Description -->
-                            <p class="text-xs text-gray-400 leading-relaxed">
-                                ${car.desc}
-                            </p>
-                        </div>
-
-                        <!-- Card Footer / Simulated GT Badge -->
-                        <div class="mt-5 pt-3 border-t border-gt-border/50 flex items-center justify-between text-[11px] text-gray-500">
-                            <span>Gran Turismo 1 Spec</span>
-                            <i class="fa-solid fa-gamepad text-gray-600 group-hover:text-gt-red transition-colors"></i>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-    </script>
-</body>
 </html>
-
