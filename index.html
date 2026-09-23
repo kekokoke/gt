@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>初代グランツーリスモ (GT1) 車種一覧</title>
+    <title>Gran Turismo Series Car List (GT1, GT2, GT3)</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -18,6 +18,32 @@
             text-align: center;
             color: #666;
             margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            background-color: #ddd;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .tab-button.active {
+            background-color: #2c3e50;
+            color: #fff;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
         table {
             width: 100%;
@@ -46,139 +72,165 @@
         .maker {
             font-weight: bold;
             color: #2980b9;
-            width: 120px;
+            width: 150px;
         }
     </style>
 </head>
 <body>
 
-    <h1>初代グランツーリスモ (GT1) 車種一覧</h1>
-    <p class="subtitle">PlayStation® / 1997年発売</p>
+    <h1>Gran Turismo Series Car List</h1>
+    <p class="subtitle">Select a title to view representative vehicles</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>メーカー</th>
-                <th>車種名・グレード</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- 日産 -->
-            <tr><td class="maker" rowspan="25">日産 (NISSAN)</td><td>スカイライン GT-R (R32) '89</td></tr>
-            <tr><td>スカイライン GT-R NISMO (R32) '90</td></tr>
-            <tr><td>スカイライン GT-R (R32) '91</td></tr>
-            <tr><td>スカイライン GT-R Vスペック (R32) '93</td></tr>
-            <tr><td>スカイライン GT-R Vスペック II (R32) '94</td></tr>
-            <tr><td>スカイライン GTS-t Type M (R32) '91</td></tr>
-            <tr><td>スカイライン GTS25 Type S (R32) '91</td></tr>
-            <tr><td>スカイライン GTS4 (R32) '91</td></tr>
-            <tr><td>スカイライン GT-R (R33) '95</td></tr>
-            <tr><td>スカイライン GT-R Vスペック (R33) '95</td></tr>
-            <tr><td>スカイライン GT-R (R33) '97</td></tr>
-            <tr><td>スカイライン GT-R Vスペック (R33) '97</td></tr>
-            <tr><td>スカイライン GTS25t Type M (R33)</td></tr>
-            <tr><td>シルビア Q's (S13) '88</td></tr>
-            <tr><td>シルビア K's (S13) '88</td></tr>
-            <tr><td>シルビア Q's (S13) '91</td></tr>
-            <tr><td>シルビア K's (S13) '91</td></tr>
-            <tr><td>シルビア Q's (S14) '96</td></tr>
-            <tr><td>シルビア K's (S14) '96</td></tr>
-            <tr><td>180SX Type X '94</td></tr>
-            <tr><td>180SX Type S '96</td></tr>
-            <tr><td>180SX Type X '96</td></tr>
-            <tr><td>パルサー GTi-R '91</td></tr>
-            <tr><td>フェアレディZ 300ZX Ver.S ツインターボ 2by2 '94</td></tr>
-            <tr><td>プリメーラ 2.0Te '90 / '95</td></tr>
+    <div class="tabs">
+        <button class="tab-button active" onclick="switchTab('gt1')">Gran Turismo 1</button>
+        <button class="tab-button" onclick="switchTab('gt2')">Gran Turismo 2</button>
+        <button class="tab-button" onclick="switchTab('gt3')">Gran Turismo 3: A-spec</button>
+    </div>
 
-            <!-- トヨタ -->
-            <tr><td class="maker" rowspan="20">トヨタ (TOYOTA)</td><td>スープラ 3.0GT ターボリミテッド '88</td></tr>
-            <tr><td>スープラ 2.5GT ツインターボ R '90</td></tr>
-            <tr><td>スープラ SZ-R '95</td></tr>
-            <tr><td>スープラ RZ '95</td></tr>
-            <tr><td>カローラレビン GT-APEX (AE86) '85</td></tr>
-            <tr><td>カローラレビン BZ-G '96</td></tr>
-            <tr><td>スプリンタートレノ BZ-G '96</td></tr>
-            <tr><td>セリカ SS-II (ST202) '95</td></tr>
-            <tr><td>セリカ GT-FOUR (ST205) '95</td></tr>
-            <tr><td>MR2 G-Limited '96</td></tr>
-            <tr><td>MR2 GT-S '96</td></tr>
-            <tr><td>マークII Tourer S '92</td></tr>
-            <tr><td>マークII Tourer V '92</td></tr>
-            <tr><td>チェイサー Tourer S '96</td></tr>
-            <tr><td>チェイサー Tourer V '96</td></tr>
-            <tr><td>ソアラ 2.5GT-T '95</td></tr>
-            <tr><td>ソアラ 2.5GT-T VVT-i '96</td></tr>
-            <tr><td>スターレット グランツァ V '96</td></tr>
-            <tr><td>コロナ Exiv 200GT '96</td></tr>
-            <tr><td>カストロール スープラ GT (JGTC)</td></tr>
+    <!-- GT1 -->
+    <div id="gt1" class="tab-content active">
+        <table>
+            <thead>
+                <tr>
+                    <th>Manufacturer</th>
+                    <th>Car Model & Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="maker" rowspan="5">NISSAN</td><td>Skyline GT-R V-spec (R32) '94</td></tr>
+                <tr><td>Skyline GT-R V-spec (R33) '97</td></tr>
+                <tr><td>Silvia K's (S14) '96</td></tr>
+                <tr><td>180SX Type X '96</td></tr>
+                <tr><td>Fairlady Z 300ZX Twin Turbo '94</td></tr>
+                <tr><td class="maker" rowspan="4">TOYOTA</td><td>Supra RZ '95</td></tr>
+                <tr><td>Castrol TOM'S Supra (JGTC)</td></tr>
+                <tr><td>Corolla Levin GT-APEX (AE86) '85</td></tr>
+                <tr><td>MR2 GT-S '96</td></tr>
+                <tr><td class="maker" rowspan="4">HONDA</td><td>NSX Type S Zero '97</td></tr>
+                <tr><td>Civic Type R (EK) '97</td></tr>
+                <tr><td>Integra Type R (DC2) '95</td></tr>
+                <tr><td>NSX GT1 Turbo</td></tr>
+                <tr><td class="maker" rowspan="3">MAZDA</td><td>Eunos RX-7 Type RZ (FD) '96</td></tr>
+                <tr><td>Eunos Roadster 1.8 '93</td></tr>
+                <tr><td>RX-7 LM Edition</td></tr>
+                <tr><td class="maker" rowspan="3">MITSUBISHI</td><td>Lancer Evolution IV GSR '96</td></tr>
+                <tr><td>GTO Twin Turbo MR '95</td></tr>
+                <tr><td>FTO GP Version R '97</td></tr>
+                <tr><td class="maker" rowspan="2">SUBARU</td><td>Impreza WRX STi Version III '96</td></tr>
+                <tr><td>Legacy Touring Wagon GT-B '96</td></tr>
+                <tr><td class="maker" rowspan="2">CHEVROLET</td><td>Corvette Grand Sport (C4) '96</td></tr>
+                <tr><td>Camaro Z28 '96</td></tr>
+                <tr><td class="maker" rowspan="2">DODGE</td><td>Viper GTS '96</td></tr>
+                <tr><td>Viper RT/10 '96</td></tr>
+                <tr><td class="maker" rowspan="2">TVR</td><td>Cerbera 4.2</td></tr>
+                <tr><td>Griffith 500</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-            <!-- ホンダ -->
-            <tr><td class="maker" rowspan="16">ホンダ (HONDA)</td><td>NSX '90</td></tr>
-            <tr><td>NSX Type R '92</td></tr>
-            <tr><td>NSX '97</td></tr>
-            <tr><td>NSX Type S '97</td></tr>
-            <tr><td>NSX Type S Zero '97</td></tr>
-            <tr><td>インテグラ SiR-G (DC2) '95</td></tr>
-            <tr><td>インテグラ Type R (DC2) '95</td></tr>
-            <tr><td>シビック SiR-II (EG) '93</td></tr>
-            <tr><td>シビックフェリオ SiR (EG) '93</td></tr>
-            <tr><td>シビック SiR-II (EK) '97</td></tr>
-            <tr><td>シビック Type R (EK) '97</td></tr>
-            <tr><td>プレリュード Si '91 / Si VTEC '91</td></tr>
-            <tr><td>アコードセダン SiR '96</td></tr>
-            <tr><td>アコードワゴン SiR '96</td></tr>
-            <tr><td>CR-X SiR '90 / デルソル '92・'95</td></tr>
-            <tr><td>NSX GT1 TURBO</td></tr>
-
-            <!-- マツダ -->
-            <tr><td class="maker" rowspan="10">マツダ (MAZDA)</td><td>サバンナ RX-7 GT-X (FC) '90</td></tr>
-            <tr><td>サバンナ RX-7 アンフィニ III (FC) '90</td></tr>
-            <tr><td>アンフィニ RX-7 タイプRB (FD) '96</td></tr>
-            <tr><td>アンフィニ RX-7 ツーリング-X (FD) '96</td></tr>
-            <tr><td>アンフィニ RX-7 タイプRZ (FD) '96</td></tr>
-            <tr><td>ユーノス コスモ 13B TypeS / 20B TypeE CCS</td></tr>
-            <tr><td>ユーノス ロードスター 1600 (NA) '89 / 1800 '93</td></tr>
-            <tr><td>ランティス クーペ 2000 タイプ R '93</td></tr>
-            <tr><td>デミオ GL-X / GL / LX-G パッケージ '96</td></tr>
-            <tr><td>RX-7 LM Edition</td></tr>
-
-            <!-- 三菱 -->
-            <tr><td class="maker" rowspan="7">三菱 (MITSUBISHI)</td><td>GTO ツインターボ '92 / '95</td></tr>
-            <tr><td>GTO ツインターボ MR '95</td></tr>
-            <tr><td>GTO SR '95 / '96</td></tr>
-            <tr><td>ランサーエボリューション III GSR '95</td></tr>
-            <tr><td>ランサーエボリューション IV GSR '96</td></tr>
-            <tr><td>FTO GP Version R '97</td></tr>
-            <tr><td>エクリプス GT '95</td></tr>
-
-            <!-- スバル -->
-            <tr><td class="maker" rowspan="6">スバル (SUBARU)</td><td>インプレッサ セダン / ワゴン WRX '94</td></tr>
-            <tr><td>インプレッサ セダン WRX STi バージョン II '95</td></tr>
-            <tr><td>インプレッサ ワゴン WRX STi バージョン III '96</td></tr>
-            <tr><td>インプレッサ WRX-STi TypeR '96</td></tr>
-            <tr><td>アルシオーネ SVX バージョンL / S4</td></tr>
-            <tr><td>レガシィ ツーリングワゴン GT-B '96</td></tr>
-
-            <!--  Аストンマーティン -->
-            <tr><td class="maker" rowspan="1">アストンマーティン</td><td>DB7 Volante / Coupe</td></tr>
-
-            <!-- クライスラー / ダッジ -->
-            <tr><td class="maker" rowspan="3">クライスラー / ダッジ</td><td>バイパー RT/10 '96</td></tr>
-            <tr><td>バイパー GTS '96</td></tr>
-            <tr><td>バイパー GTS-R '96</td></tr>
-
-            <!-- シボレー -->
-            <tr><td class="maker" rowspan="4">シボレー (CHEVROLET)</td><td>カマロ Z28 '96</td></tr>
-            <tr><td>カマロ 30th Anniversary '96</td></tr>
-            <tr><td>コルベット Coupe (C4) '96</td></tr>
-            <tr><td>コルベット Grand Sport (C4) '96</td></tr>
-
-            <!-- TVR -->
-            <tr><td class="maker" rowspan="3">TVR</td><td>グリフィス 500</td></tr>
-            <tr><td>サーブラウ 4.2</td></tr>
-            <tr><td>サーブラウ LMエディション</td></tr>
+    <!-- GT2 -->
+    <div id="gt2" class="tab-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Manufacturer</th>
+                    <th>Car Model & Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="maker" rowspan="5">NISSAN</td><td>R390 GT1 Road Car '98</td></tr>
+                <tr><td>Skyline GT-R V-spec II (R34) '00</td></tr>
+                <tr><td>Silvia Spec-R Aero (S15) '99</td></tr>
+                <tr><td>Pennzoil Zexel GT-R (JGTC) '99</td></tr>
+                <tr><td>Stagea 260RS Autech Version '98</td></tr>
+                <tr><td class="maker" rowspan="5">TOYOTA</td><td>GT-One Road Version (TS020) '98</td></tr>
+                <tr><td>スープラ (Supra) Castrol Tom's JGTC '99</td></tr>
+                <tr><td>Celica GT-FOUR Rally Car '95</td></tr>
+                <tr><td>Vitz RS '00</td></tr>
+                <tr><td>MR-S S Edition '99</td></tr>
+                <tr><td class="maker" rowspan="4">HONDA</td><td>S2000 '99</td></tr>
+                <tr><td>Civic Type R (EK) '98</td></tr>
+                <tr><td>NSX Type S '99</td></tr>
+                <tr><td>Mobil 1 NSX (JGTC) '99</td></tr>
+                <tr><td class="maker" rowspan="4">MAZDA</td><td>RX-7 Type R Bathurst (FD) '01</td></tr>
+                <tr><td>RX-8 Concept '01</td></tr>
+                <tr><td>Roadster RS (NB) '00</td></tr>
+                <tr><td>Demio GL-X '99</td></tr>
+                <tr><td class="maker" rowspan="3">MITSUBISHI</td><td>Lancer Evolution VI GSR Tommi Makinen Edition '00</td></tr>
+                <tr><td>Legnum VR-4 Type S '98</td></tr>
+                <tr><td>Mirage Cyborg ZR '97</td></tr>
+                <tr><td class="maker" rowspan="3">SUBARU</td><td>Impreza 22B-STi Version '98</td></tr>
+                <tr><td>Impreza Sedan WRX STi Version VI '99</td></tr>
+                <tr><td>Legacy B4 RSK '98</td></tr>
+                <tr><td class="maker" rowspan="3">RUF</td><td>RUF CTR 'Yellow Bird' '87</td></tr>
+            <tr><td>RUF CTR2 '96</td></tr>
+            <tr><td>RUF 3400S '99</td></tr>
+            <tr><td class="maker" rowspan="3">ASTON MARTIN</td><td>DB7 Vantage Coupe '00</td></tr>
+            <tr><td>V8 Vantage V600 '98</td></tr>
+            <tr><td>LM18 '99</td></tr>
+            <tr><td class="maker" rowspan="2">VENTURI</td><td>Atlantique 300 Biturbo '99</td></tr>
+            <tr><td>Atlantique 400GT '95</td></tr>
         </tbody>
-    </body>
     </table>
+    </div>
 
+    <!-- GT3 -->
+    <div id="gt3" class="tab-content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Manufacturer</th>
+                    <th>Car Model & Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td class="maker" rowspan="5">NISSAN</td><td>Skyline GT-R V-spec II (R34) '00</td></tr>
+                <tr><td>Fairlady Z Concept '01</td></tr>
+                <tr><td>Calsonic Skyline (JGTC) '2000</td></tr>
+                <tr><td>Silvia Spec-R Aero (S15) '99</td></tr>
+                <tr><td>R390 GT1 Race Car '98</td></tr>
+                <tr><td class="maker" rowspan="4">TOYOTA</td><td>Supra Super Autobacs JGTC '2000</td></tr>
+                <tr><td>Celica SS-II '99</td></tr>
+                <tr><td>Weds Sport Celica (JGTC) '2000</td></tr>
+                <tr><td>GT-One Race Car (TS020) '99</td></tr>
+                <tr><td class="maker" rowspan="4">HONDA</td><td>S2000 Type V '00</td></tr>
+                <tr><td>NSX (JGTC) '2000</td></tr>
+                <tr><td>Integra Type R '99</td></tr>
+                <tr><td>Castrol Mugen NSX (JGTC) '2000</td></tr>
+                <tr><td class="maker" rowspan="3">MAZDA</td><td>RX-7 Spirit R Type A (FD) '02</td></tr>
+                <tr><td>Mazda6 24V '02</td></tr>
+                <tr><td>RX-8 '03</td></tr>
+                <tr><td class="maker" rowspan="3">MITSUBISHI</td><td>Lancer Evolution VII GSR '01</td></tr>
+                <tr><td>Lancer Evolution VII Rally Car '02</td></tr>
+                <tr><td>Starlet Glanza V '97</td></tr>
+                <tr><td class="maker" rowspan="2">SUBARU</td><td>Impreza WRX STi Prototype '01</td></tr>
+                <tr><td>Impreza Rally Car '2001</td></tr>
+                <tr><td class="maker" rowspan="2">RUF</td><td>RUF RGT '00</td></tr>
+                <tr><td>RUF CTR2 '96</td></tr>
+                <tr><td class="maker" rowspan="3">CHEVROLET</td><td>Corvette C5R '2000</td></tr>
+                <tr><td>Camaro SS '00</td></tr>
+                <tr><td>Corvette Z06 '01</td></tr>
+                <tr><td class="maker" rowspan="3">ASTON MARTIN</td><td>V12 Vanquish '01</td></tr>
+                <tr><td>DB7 Vantage '00</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            // Hide all contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show target content and activate button
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+</body>
 </html>
