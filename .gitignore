@@ -1,0 +1,27 @@
+# ~/obsidian/.gitignore
+
+# 頻繁に変更されるUI状態ファイルを無視
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/graph.json
+.obsidian/cache/
+.obsidian/app.json
+
+# Home Managerで管理しているVimrcリンクを除外
+.obsidian.vimrc
+
+# プラグイン本体（バイナリやスクリプト）を除外
+.obsidian/plugins/
+
+# pc vault の端末依存 Obsidian UI 状態
+pc/.obsidian/workspace.json
+pc/.obsidian/workspace-mobile.json
+pc/.obsidian/graph.json
+pc/.obsidian/cache/
+
+# pc vault の端末固有 Vim 設定
+pc/.obsidian.vimrc
+
+# pc vault ではプラグイン本体を追跡しない場合
+pc/.obsidian/plugins/
+
