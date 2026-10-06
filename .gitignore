@@ -14,10 +14,10 @@
 .obsidian/plugins/
 
 # pc vault の端末依存 Obsidian UI 状態
-pc/.obsidian/workspace.json
-pc/.obsidian/workspace-mobile.json
-pc/.obsidian/graph.json
-pc/.obsidian/cache/
+gt/.obsidian/workspace.json
+gt/.obsidian/workspace-mobile.json
+gt/.obsidian/graph.json
+gt/.obsidian/cache/
 
 # pc vault の端末固有 Vim 設定
 pc/.obsidian.vimrc
