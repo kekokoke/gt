@@ -281,12 +281,13 @@
         <div class="driver-name">AIドライバー「レン」</div>
         <div class="driver-meta" id="driver-meta">出走 0回 ／ 優勝 0回 ／ 表彰台 0回</div>
         <div class="driver-meta">レースを走るたびに経験値が入り、能力が少しずつ伸びる。</div>
+        <div class="driver-meta" id="field-info">出走台数：6台（A〜F）</div>
       </div>
       <div id="driver-stats"></div>
     </div>
 
     <h2 class="sec">レース形式</h2>
-    <p class="sec-note">単発レース、または全5戦のチャンピオンシップ（コースは自動で巡回、ポイント制）。</p>
+    <p class="sec-note">単発レース、または全5戦のチャンピオンシップ（コースは自動で巡回、ポイント制）。出走台数はドライバーレベルで増える：Lv.1〜2＝6台（A〜F）／ Lv.3〜4＝8台（A〜H）／ Lv.5〜＝10台（A〜J）。</p>
     <div class="mode-row">
       <button class="mode-btn on" id="mode-single" type="button"><span class="t">SINGLE RACE（単発）</span><span class="d">1レースだけ走って賞金を稼ぐ</span></button>
       <button class="mode-btn" id="mode-champ" type="button"><span class="t">CHAMPIONSHIP（全5戦）</span><span class="d">ポイント合計で年間王者を決める</span></button>
@@ -306,7 +307,8 @@
     </div>
 
     <div class="foot">
-      遊び方：あなたは運転しない「監督」。レース中はペース指示（1〜5）、追い越し指示、ピット指示だけを出す。タイヤと燃料は周回ごとに減り、ピットの判断が勝敗を分ける。早送り ×1／×2／×4 対応。<br>
+      遊び方：あなたは運転しない「監督」。レース中はペース指示（1〜5）、追い越し指示、ピット指示だけを出す。タイヤと燃料は周回ごとに減り、ピットの判断が勝敗を分ける。早送り ×1／×2／×3 対応。<br>
+      レース画面の「🎙 実況」をONにすると、ブラウザの音声合成が実況と解説の2役でレースを喋る（スタート、順位変動、ピット、ファイナルラップ、チェッカーなど）。環境によっては音声が出ない場合がある。<br>
       ※ 本作は非公式のファンメイド作品です。実在のゲーム・車名・コース名とは関係のないオリジナル名称を使用しています。
     </div>
   </section>
@@ -319,10 +321,11 @@
           <span class="bspec-badge">B-SPEC&nbsp;MONITOR</span>
           <div class="race-title" id="race-title">—</div>
         </div>
-        <div class="speed-row" role="group" aria-label="早送り">
+        <div class="speed-row" role="group" aria-label="早送りと実況">
+          <button class="speed-btn" id="btn-tts" type="button" aria-pressed="false" title="ブラウザの音声合成で実況と解説を読み上げます">🎙 実況 OFF</button>
           <button class="speed-btn on" data-speed="1" type="button">×1</button>
           <button class="speed-btn" data-speed="2" type="button">×2</button>
-          <button class="speed-btn" data-speed="4" type="button">×4</button>
+          <button class="speed-btn" data-speed="3" type="button">×3</button>
           <button class="speed-btn" id="btn-pause" type="button">II</button>
         </div>
       </div>
@@ -348,8 +351,8 @@
           </div>
 
           <div class="sil-box">
-            <div class="sil-head"><span>SIDE VIEW（真横シルエット表示）</span><span>◀ 進行方向（右→左）／ 1 LAP = <span class="mono" id="sil-lap-dist">—</span></span></div>
-            <div class="sil-stage" id="sil-stage" role="img" aria-label="真横から見た車の位置と車間距離（右から左へ進行）">
+            <div class="sil-head"><span>SIDE VIEW（真横シルエット表示）</span><span>◀ 進行方向（右→左）／ リーダー基準の相対距離 ・ 1周 = <span class="mono" id="sil-lap-dist">—</span> でループ</span></div>
+            <div class="sil-stage" id="sil-stage" role="img" aria-label="真横から見た各車の相対距離表示（リーダーを基準に1周分でループ表示、右から左へ進行）">
               <div class="sil-dir">◀◀ RACE</div>
               <div class="sil-finish" aria-hidden="true"></div>
               <div class="sil-road"></div>
@@ -369,7 +372,7 @@
       <div class="bspec-deck">
         <div class="player-panel">
           <div class="pp-head">
-            <div class="pp-pos"><span id="pp-pos">8</span><small> / 8台中</small></div>
+            <div class="pp-pos"><span id="pp-pos">6</span><small> / <span id="pp-total">6</span>台中</small></div>
             <div class="mono" style="font-size:13px;color:var(--muted);">GAP 前車 <b id="pp-gap-up" style="color:#fff">—</b> ／ 後車 <b id="pp-gap-dn" style="color:#fff">—</b></div>
           </div>
           <div class="status-flex">
@@ -567,9 +570,17 @@ var RIVALS = [
   { name:"K. Sato", color:"#3d9bff" }, { name:"M. Weber", color:"#9b59d0" },
   { name:"J. Costa", color:"#2fbf71" }, { name:"T. Novak", color:"#ff9f1a" },
   { name:"R. Finn", color:"#e8e8e8" }, { name:"A. Diallo", color:"#ffd23e" },
-  { name:"S. Berg", color:"#4dd0e1" }
+  { name:"S. Berg", color:"#4dd0e1" }, { name:"H. Park", color:"#ff6b9d" },
+  { name:"L. Moreau", color:"#a3e635" }
 ];
-var PTS_TABLE = [10,8,6,5,4,3,2,1];
+var PTS_TABLE = [10,8,6,5,4,3,2,1,0,0];
+/* Field size grows with driver level, like the real B-Spec grid opening up:
+   Lv.1-2 = 6 cars (A-F), Lv.3-4 = 8 cars (A-H), Lv.5+ = 10 cars (A-J). */
+function fieldSizeForLevel(level){
+  if(level >= 5) return 10;
+  if(level >= 3) return 8;
+  return 6;
+}
 
 /* ================= SAVE ================= */
 var SAVE_KEY = "bspecDirectorSaveV1";
@@ -599,6 +610,66 @@ function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function fmtTime(s){ if(!isFinite(s)) return "--:--.---"; var m=Math.floor(s/60), ss=s-m*60; return m+":"+(ss<10?"0":"")+ss.toFixed(3); }
 function fmtClock(s){ var m=Math.floor(s/60), ss=Math.floor(s-m*60); return m+":"+(ss<10?"0":"")+ss; }
 
+/* ================= TTS COMMENTARY（実況＋解説） =================
+   Browser speechSynthesis, two roles like the ADV listening mode:
+   実況 = higher/faster, 解説 = lower/calm. Event-driven with a priority
+   queue so it never talks over itself; low-priority lines are dropped
+   when the queue is busy. Default OFF. */
+var ttsOn = false, ttsQueue = [], ttsSpeaking = false, ttsVoices = [];
+function ttsLoadVoices(){
+  if(!("speechSynthesis" in window)) return;
+  var vs = speechSynthesis.getVoices() || [];
+  ttsVoices = vs.filter(function(v){ return (v.lang || "").toLowerCase().indexOf("ja") === 0; });
+  if(!ttsVoices.length) ttsVoices = vs;
+}
+if("speechSynthesis" in window){
+  ttsLoadVoices();
+  if(speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = ttsLoadVoices;
+}
+function ttsStyle(role){
+  if(role === "kaisetsu") return { voice: ttsVoices[1] || ttsVoices[0] || null, pitch: 0.75, rate: 0.95 };
+  return { voice: ttsVoices[0] || null, pitch: 1.25, rate: 1.12 }; /* jikkyou */
+}
+function ttsProcess(){
+  if(ttsSpeaking || !ttsQueue.length) return;
+  var item = ttsQueue.shift();
+  var st = ttsStyle(item.role);
+  var u = new SpeechSynthesisUtterance(item.text);
+  u.lang = "ja-JP";
+  if(st.voice) u.voice = st.voice;
+  u.pitch = st.pitch; u.rate = st.rate;
+  ttsSpeaking = true;
+  u.onend = u.onerror = function(){ ttsSpeaking = false; ttsProcess(); };
+  try{ speechSynthesis.speak(u); }catch(e){ ttsSpeaking = false; }
+}
+/* pri: 3 = must-say (start/finish/final lap), 2 = race action, 1 = colour */
+function say(text, role, pri){
+  if(!ttsOn || !("speechSynthesis" in window)) return;
+  pri = pri || 2;
+  if(ttsQueue.length >= 2 && pri <= 1) return;
+  if(ttsQueue.length >= 4 && pri <= 2) return;
+  ttsQueue.push({ text: text, role: role || "jikkyou", pri: pri });
+  ttsProcess();
+}
+function ttsStop(){
+  ttsQueue = []; ttsSpeaking = false;
+  if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
+}
+$("btn-tts").addEventListener("click", function(){
+  ttsOn = !ttsOn;
+  this.textContent = ttsOn ? "🎙 実況 ON" : "🎙 実況 OFF";
+  this.classList.toggle("on", ttsOn);
+  this.setAttribute("aria-pressed", ttsOn ? "true" : "false");
+  if(ttsOn){
+    if(!("speechSynthesis" in window)){ logMsg("このブラウザは音声合成に対応していないため、実況は出ません。", "hot"); return; }
+    say("実況を開始します。", "jikkyou", 3);
+    say("解説です。よろしくお願いします。", "kaisetsu", 3);
+    if(race && !race.over) say("現在レンは" + race.playerPos + "位を走行中です。", "jikkyou", 2);
+  } else {
+    ttsStop();
+  }
+});
+
 /* ================= SETUP UI ================= */
 $("ticker").textContent = ("SUNSET COAST ◆ REDLINE TOUGE ◆ METRO CITY ◆ VELOCITY RING ◆ FOREST VALLEY ◆ LAKESIDE GP ◆ B-SPEC DIRECTOR ◆ ").repeat(3);
 
@@ -607,6 +678,9 @@ function renderDriver(){
   $("ui-money").textContent = fmt(save.money);
   $("ui-lv").textContent = d.level;
   $("driver-meta").textContent = "出走 "+d.races+"回 ／ 優勝 "+d.wins+"回 ／ 表彰台 "+d.podiums+"回 ／ EXP "+fmt(d.exp);
+  var fsNow = fieldSizeForLevel(d.level), fsLast = String.fromCharCode(64 + fsNow);
+  var fsNext = d.level < 3 ? " ／ 次は Lv.3 で 8台（A〜H）" : (d.level < 5 ? " ／ 次は Lv.5 で 10台（A〜J）" : " ／ 最大台数");
+  $("field-info").textContent = "出走台数：現在 Lv."+d.level+" ＝ "+fsNow+"台（A〜"+fsLast+"）"+fsNext;
   var rows = [
     ["PACE（速さ）", d.pace, ""], ["BATTLE（勝負強さ）", d.battle, "b2"], ["MENTAL（安定感）", d.mental, "b3"]
   ];
@@ -681,25 +755,35 @@ function buildGrid(course, playerCar){
     return slowest - (slowest-fastest)*eff;
   }
   var pSkill = (drv.pace*0.5 + drv.battle*0.25 + drv.mental*0.25) / 100;
+  var fieldSize = fieldSizeForLevel(drv.level);
   entries.push({
     name:"REN（あなた）", car:playerCar, me:true, color:"#e10600",
     baseLap: baseLapTime(playerCar, pSkill), skill:pSkill,
-    dist:-152, lap:1, lapStart:0, lastLap:null, bestLap:null,
+    dist:0, lap:1, lapStart:0, lastLap:null, bestLap:null,
     tire:100, fuel:100, pace:3, overtake:false, pitQueued:false, inPit:0, pitCount:0,
     finished:false, finishTime:null, mistakeCd:0, seed:Math.random()*10
   });
   var playerIdx = CARS.indexOf(playerCar);
-  for(var i=0;i<RIVALS.length;i++){
+  for(var i=0;i<fieldSize-1;i++){
     var idx = clamp(playerIdx + Math.round(Math.random()*2-1), 0, CARS.length-1);
     var rc = CARS[idx];
     var sk = clamp(0.36 + Math.random()*0.32, 0.3, 0.9);
     entries.push({
       name:RIVALS[i].name, car:rc, me:false, color:RIVALS[i].color,
       baseLap: baseLapTime(rc, sk), skill:sk,
-      dist: -i*38, lap:1, lapStart:0, lastLap:null, bestLap:null,
+      dist: 0, lap:1, lapStart:0, lastLap:null, bestLap:null,
       tire:100, fuel:100, pace:3, overtake:false, pitQueued:false, inPit:0, pitCount:0,
       finished:false, finishTime:null, mistakeCd:0, seed:Math.random()*10
     });
+  }
+  /* Grid slots, front to back: the player starts mid-pack, rivals fill the rest.
+     Each slot gets a GT4-style letter (A = pole) used on the course map and tower. */
+  var playerSlot = Math.floor(fieldSize/2);
+  var rivalQueue = entries.slice(1);
+  for(var s=0; s<fieldSize; s++){
+    var ent = (s === playerSlot) ? entries[0] : rivalQueue.shift();
+    ent.dist = -s*32;
+    ent.letter = String.fromCharCode(65 + s);
   }
   return entries;
 }
@@ -716,11 +800,15 @@ function logMsg(html, cls){
 function startRace(courseIdx){
   var course = COURSES[courseIdx];
   var playerCar = carById(selCar);
+  var gridEntries = buildGrid(course, playerCar);
   race = {
     course: course, courseIdx: courseIdx, time:0,
     totalDist: course.km*1000*course.laps, lapDist: course.km*1000,
-    entries: buildGrid(course, playerCar), over:false, playerPos:8
+    entries: gridEntries, over:false, playerPos: gridEntries.length,
+    prevPos: 0, prevLeader: null, lastPosSay: -99, lastFastSay: -99, tireWarned: false, fuelWarned: false
   };
+  race.prevPos = sortedEntries().indexOf(gridEntries[0]) + 1;
+  $("pp-total").textContent = gridEntries.length;
   paused = false; simSpeed = 1;
   var sp = document.querySelectorAll(".speed-btn[data-speed]");
   for(var i=0;i<sp.length;i++) sp[i].classList.toggle("on", sp[i].getAttribute("data-speed")==="1");
@@ -738,10 +826,18 @@ function startRace(courseIdx){
   sl.setAttribute("x2", p0.x+nx); sl.setAttribute("y2", p0.y+ny);
   var dots = $("map-dots"); dots.innerHTML = "";
   race.entries.forEach(function(e){
+    var g = document.createElementNS("http://www.w3.org/2000/svg","g");
     var c = document.createElementNS("http://www.w3.org/2000/svg","circle");
-    c.setAttribute("r", e.me ? 8 : 6); c.setAttribute("fill", e.color);
+    c.setAttribute("r", e.me ? 9 : 7.5); c.setAttribute("fill", e.color);
     c.setAttribute("class", "dot"+(e.me?" player":""));
-    dots.appendChild(c); e.dot = c;
+    var t = document.createElementNS("http://www.w3.org/2000/svg","text");
+    t.setAttribute("text-anchor", "middle"); t.setAttribute("dy", "0.36em");
+    t.setAttribute("font-size", e.me ? "10" : "9"); t.setAttribute("font-weight", "900");
+    t.setAttribute("fill", "#ffffff"); t.setAttribute("stroke", "#0a0a0b"); t.setAttribute("stroke-width", "2.4");
+    t.setAttribute("paint-order", "stroke"); t.setAttribute("style", "font-family:'DotGothic16',sans-serif;pointer-events:none;");
+    t.textContent = e.letter || "";
+    g.appendChild(c); g.appendChild(t);
+    dots.appendChild(g); e.dot = g;
   });
   /* side silhouette cars — travel RIGHT -> LEFT like the real B-Spec monitor */
   $("sil-lap-dist").textContent = course.km.toFixed(1) + " km";
@@ -750,14 +846,14 @@ function startRace(courseIdx){
   for(var tm = 0; tm <= course.km*1000; tm += tickEvery){
     var frac = tm/(course.km*1000);
     var sp = document.createElement("span"); sp.style.left = (95 - frac*90) + "%";
-    sp.innerHTML = "<i></i>" + (tm === 0 ? "S/F" : (tm/1000) + "km");
+    sp.innerHTML = "<i></i>" + (tm === 0 ? "LEADER" : "+" + (tm/1000) + "km");
     ruler.appendChild(sp);
   }
   var silBox = $("sil-cars"); silBox.innerHTML = "";
   race.entries.forEach(function(e){
     var d = document.createElement("div");
     d.className = "sil-car" + (e.me ? " me" : "");
-    var short = e.me ? "REN" : e.name.split(" ").pop().toUpperCase();
+    var short = (e.letter ? e.letter + " · " : "") + (e.me ? "REN" : e.name.split(" ").pop().toUpperCase());
     d.innerHTML = '<span class="lb">' + short + '</span>' + silSVG(e.car.id, e.color);
     silBox.appendChild(d); e.silEl = d;
   });
@@ -771,8 +867,11 @@ function startRace(courseIdx){
   var roundTxt = (mode==="champ" && champ) ? "ROUND "+(champ.round+1)+" / 5　" : "";
   $("race-title").innerHTML = roundTxt + course.name + '<small>（'+course.jp+'） '+course.laps+' LAPS</small>';
   $("race-log").innerHTML = "";
-  logMsg("グリッド整列完了。"+course.name+"、"+course.laps+"周のレース。監督の指示で勝負が決まる。", "hot");
+  logMsg("グリッド整列完了。出走 "+gridEntries.length+"台（A〜"+String.fromCharCode(64+gridEntries.length)+"、あなたは "+race.entries[0].letter+"）。"+course.name+"、"+course.laps+"周のレース。監督の指示で勝負が決まる。", "hot");
   logMsg("タイヤと燃料の残量に注意。ピットは「次の周回終わり」に入る。");
+  ttsStop();
+  say("スタート！ " + course.name + "、" + course.laps + "周のレースが始まりました！ レンは" + race.prevPos + "番手から追い上げます！", "jikkyou", 3);
+  say("解説です。カギはタイヤと燃料のマネジメント。ピットのタイミングが勝敗を分けます。", "kaisetsu", 1);
   show("race");
   lastTs = performance.now();
   if(timer) cancelAnimationFrame(timer);
@@ -831,7 +930,7 @@ function step(dt){
     if(e.finished) return;
     if(e.inPit > 0){
       e.inPit -= dt;
-      if(e.inPit <= 0){ e.tire = 100; e.fuel = 100; if(e.me) logMsg("ピット完了。タイヤ交換＋給油してコース復帰！", "good"); }
+      if(e.inPit <= 0){ e.tire = 100; e.fuel = 100; if(e.me){ logMsg("ピット完了。タイヤ交換＋給油してコース復帰！", "good"); say("ピット作業完了！ レン、コースに戻ります！", "jikkyou", 2); race.tireWarned = false; race.fuelWarned = false; } }
       return;
     }
     /* AI brain */
@@ -857,7 +956,7 @@ function step(dt){
         var canPass = e.overtake && Math.random() < (0.010 + (e.me ? save.driver.battle/100*0.012 : e.skill*0.010));
         if(canPass){
           battleF = 1.10;
-          if(e.me) logMsg("オーバーテイク成功！ 前車を抜いた。", "good");
+          if(e.me){ logMsg("オーバーテイク成功！ 前車を抜いた。", "good"); say("抜いた！ レン、オーバーテイク成功です！", "jikkyou", 2); }
         } else {
           battleF = 0.965; /* stuck behind */
           if(e.me && e.overtake && Math.random() < 0.006) logMsg("前車に詰まっている…追い越し指示が効いていない。", "hot");
@@ -871,7 +970,7 @@ function step(dt){
       var risk = (e.pace >= 5 ? 0.0035 : e.pace === 4 ? 0.0016 : 0.0005) * (e.me ? (1.25 - save.driver.mental/100*0.55) : 1);
       if(Math.random() < risk * dt * 10){
         mistakeF = 0.55; e.mistakeCd = 2.2;
-        if(e.me) logMsg("ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot");
+        if(e.me){ logMsg("ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot"); say("おっと、レンがコースアウト気味だ！ 大きくタイムを失いました。", "jikkyou", 2); say("無理なペースかもしれません。少し落として立て直したいところです。", "kaisetsu", 1); }
         else if(Math.random()<0.5) logMsg(e.name+" がミス。順位が入れ替わるかも。", "");
       }
     }
@@ -886,20 +985,58 @@ function step(dt){
     var lapProgress = e.dist - (e.lap-1)*race.lapDist;
     if(lapProgress >= race.lapDist){
       var lapTime = race.time - e.lapStart;
+      var wasBest = e.bestLap;
       e.lastLap = lapTime; if(!e.bestLap || lapTime < e.bestLap) e.bestLap = lapTime;
       e.lap++; e.lapStart = race.time;
-      if(e.me) logMsg("LAP "+(e.lap-1)+" 完了： "+fmtTime(lapTime)+"（ベスト "+fmtTime(e.bestLap)+"）");
+      if(e.me){
+        logMsg("LAP "+(e.lap-1)+" 完了： "+fmtTime(lapTime)+"（ベスト "+fmtTime(e.bestLap)+"）");
+        if(wasBest && lapTime < wasBest && e.lap >= 3 && race.time - race.lastFastSay > 25){
+          race.lastFastSay = race.time;
+          say("レン、自己ベスト更新です。いいペースで回っています。", "kaisetsu", 1);
+        }
+        if(e.lap === course.laps && course.laps > 1){
+          say("ファイナルラップ！ 残り1周です！ レンは現在" + race.playerPos + "位！", "jikkyou", 3);
+          say("最後までタイヤが持つかどうか。ピットに入る余裕はもうありません。", "kaisetsu", 1);
+        }
+      }
       if(e.lap > course.laps){
         e.finished = true; e.finishTime = race.time;
         if(e.me) logMsg("チェッカーフラッグ！ フィニッシュ。", "hot");
       } else if(e.pitQueued){
         e.pitQueued = false; e.inPit = 9 + Math.random()*3.5; e.pitCount++;
-        if(e.me){ setPit(false); logMsg("ピットイン…タイヤ交換中。", "good"); }
+        if(e.me){ setPit(false); logMsg("ピットイン…タイヤ交換中。", "good"); say("レン、ピットイン！ タイヤ交換と給油に入ります。", "jikkyou", 2); }
       }
     }
   });
   var me = race.entries[0];
-  race.playerPos = sortedEntries().indexOf(me) + 1;
+  var newSorted = sortedEntries();
+  race.playerPos = newSorted.indexOf(me) + 1;
+  /* --- commentary: position swings, leader change, wear warnings --- */
+  var leadNow = newSorted[0];
+  if(!me.finished){
+    if(ttsOn && race.prevLeader && leadNow !== race.prevLeader && race.time > 20){
+      say("トップが入れ替わりました！ 首位は" + (leadNow.me ? "レン" : leadNow.name) + "です！", "jikkyou", 1);
+    }
+    race.prevLeader = leadNow;
+    if(ttsOn && race.prevPos && race.playerPos !== race.prevPos && me.inPit <= 0 && race.time - race.lastPosSay > 10){
+      race.lastPosSay = race.time;
+      if(race.playerPos < race.prevPos){
+        say(race.playerPos === 1 ? "レン、トップに立ちました！" : "レン、" + race.playerPos + "位に浮上です！", "jikkyou", 2);
+      } else {
+        say("レン、" + race.playerPos + "位に後退しました。", "jikkyou", 2);
+        if(me.tire < 35) say("タイヤの消耗が順位にも響いています。", "kaisetsu", 1);
+      }
+    }
+    race.prevPos = race.playerPos;
+    if(!race.tireWarned && me.tire <= 30 && me.tire > 0 && me.pitQueued === false){
+      race.tireWarned = true;
+      say("タイヤがかなり厳しくなってきました。そろそろピットを考えたいところです。", "kaisetsu", 1);
+    }
+    if(!race.fuelWarned && me.fuel <= 18){
+      race.fuelWarned = true;
+      say("燃料も残りわずかです。このままだとガス欠の危険があります。", "kaisetsu", 1);
+    }
+  }
   if(me.finished || race.entries.every(function(e){ return e.finished; })){
     finishRace();
   }
@@ -920,13 +1057,19 @@ function frame(ts){
 function render(){
   var course = race.course, me = race.entries[0];
   var path = $("map-track"), L = path.getTotalLength();
+  var leadE = sortedEntries()[0];
   race.entries.forEach(function(e){
     var prog = ((e.dist % race.lapDist) + race.lapDist) % race.lapDist / race.lapDist;
     if(e.inPit > 0) prog = 0.995;
     var pt = path.getPointAtLength(prog * L);
-    e.dot.setAttribute("cx", pt.x); e.dot.setAttribute("cy", pt.y);
+    e.dot.setAttribute("transform", "translate(" + pt.x + "," + pt.y + ")");
     if(e.silEl){
-      e._sx = 95 - prog * 90; /* right -> left */
+      /* GT4 B-Spec style: the strip shows each car's distance RELATIVE to the leader,
+         wrapped over exactly one lap, so the field loops around the strip every lap.
+         Leader is pinned at the right edge; everyone else trails to the left by their
+         real gap. A car in the pits stands still, so it visibly slides backwards. */
+      var rel = (((leadE.dist - e.dist) % race.lapDist) + race.lapDist) % race.lapDist;
+      e._sx = 95 - (rel / race.lapDist) * 90; /* right -> left */
       e.silEl.style.left = e._sx + "%";
       e.silEl.style.opacity = e.inPit > 0 ? "0.45" : "1";
     }
@@ -974,7 +1117,7 @@ function render(){
     if(i!==0 && !(e.finished && leader.finished) && e.dist < 0) gap = "—";
     var tag = e.inPit > 0 ? '<span class="pit-tag">PIT</span>' : (e.pitQueued ? '<span class="pit-tag">IN</span>' : "");
     return '<tr class="'+(e.me?"me":"")+'"><td class="pos mono">'+(i+1)+'</td>'
-      + '<td><span style="color:'+e.color+'">●</span> '+e.name+tag+'<br><span style="font-size:10px;color:#9a9da6">'+e.car.name+'</span></td>'
+      + '<td><span style="color:'+e.color+'">●</span> <b class="mono" style="color:#f5c518">['+(e.letter||"")+']</b> '+e.name+tag+'<br><span style="font-size:10px;color:#9a9da6">'+e.car.name+'</span></td>'
       + '<td class="gap mono">'+gap+'</td><td class="lt mono">'+(e.lastLap?fmtTime(e.lastLap):"—")+'</td></tr>';
   }).join("");
   /* player panel */
@@ -1002,11 +1145,15 @@ function finishRace(){
   var me = race.entries[0];
   var pos = sorted.indexOf(me) + 1;
   var course = race.course;
+  say("チェッカー！ レン、" + pos + "位でフィニッシュです！", "jikkyou", 3);
+  say(pos === 1 ? "解説です。見事なレース運びでした。マネジメントが完璧に決まりましたね。" :
+      pos <= 3 ? "解説です。表彰台獲得。ピット戦略が実を結びました。" :
+      "解説です。あと一歩でした。タイヤと燃料の使い方に、次への課題が残りました。", "kaisetsu", 3);
   /* prize by class value of player car + position */
   var base = 4000 + (carById(selCar).price * 0.06);
-  var posMul = [1, 1.6, 1.3, 1.1, 0.9, 0.75, 0.6, 0.5, 0.4][pos] || 0.4;
+  var posMul = [1, 1.6, 1.3, 1.1, 0.9, 0.75, 0.6, 0.5, 0.4, 0.35, 0.3][pos] || 0.3;
   var prize = Math.round(base * posMul / 100) * 100;
-  var exp = Math.round(30 + (8-pos)*8 + sorted.filter(function(e){return e!==me;}).length*1 + (pos===1?25:pos<=3?12:0));
+  var exp = Math.round(30 + (sorted.length-pos)*8 + sorted.filter(function(e){return e!==me;}).length*1 + (pos===1?25:pos<=3?12:0));
   /* driver growth */
   var d = save.driver;
   var before = { pace:d.pace, battle:d.battle, mental:d.mental, level:d.level };
@@ -1034,7 +1181,7 @@ function finishRace(){
   storeSave(); renderDriver();
   /* result UI */
   $("res-fin").textContent = (mode==="champ" && champ) ? ("ROUND "+(champ.round+1)+" FINISH") : "FINISH";
-  $("res-pos").innerHTML = (pos===1 ? '<span class="win">'+pos+'</span>' : pos) + '<span class="u">位 / 8台</span>';
+  $("res-pos").innerHTML = (pos===1 ? '<span class="win">'+pos+'</span>' : pos) + '<span class="u">位 / '+sorted.length+'台</span>';
   $("res-sub").textContent = course.name+"（"+course.jp+"） ― "+me.car.name+" ／ ベストラップ "+fmtTime(me.bestLap||0)+" ／ ピット "+me.pitCount+"回";
   $("res-prize").textContent = fmt(prize);
   $("res-exp").textContent = "+" + exp;
@@ -1086,7 +1233,7 @@ $("btn-again").addEventListener("click", function(){
   if(mode === "champ"){ champ = { round:0, points:{} }; startRace(0); }
   else startRace(race ? race.courseIdx : selCourse);
 });
-$("btn-garage").addEventListener("click", function(){ champ = null; renderDriver(); renderCars(); show("setup"); });
+$("btn-garage").addEventListener("click", function(){ ttsStop(); champ = null; renderDriver(); renderCars(); show("setup"); });
 
 renderDriver(); renderCourses(); renderCars();
 </script>
