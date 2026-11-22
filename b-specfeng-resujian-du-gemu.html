@@ -125,6 +125,15 @@
   .speed-row{display:flex;gap:6px;}
   .speed-btn{background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:900;padding:8px 14px;min-width:52px;}
   .speed-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
+  /* Historic Replay watch mode: extra fast-forward steps (a full-distance
+     race lasts as long as the real one at x1, so x10-x60 matter), a note
+     bar, and NO control panels — it is a pure simulation to watch. */
+  .speed-btn.hist-spd{display:none;}
+  body.hist-watch .speed-btn.hist-spd{display:block;}
+  .hist-note{display:none;background:#141519;border-bottom:1px solid #232429;color:#c9ccd4;font-size:11.5px;line-height:1.6;padding:7px 10px;}
+  body.hist-watch .hist-note{display:block;}
+  body.hist-watch .race-layout .ctrl,
+  body.hist-watch .race-layout .tire-panel{display:none;}
   /* race layout: course-first grid. Mobile stacks map -> side view -> controls ->
      status -> tower so the race fits a phone screen; desktop puts the controls
      in a column right beside the course (tower | course | controls). */
@@ -309,6 +318,14 @@
   .bm-panel table{margin-top:8px;}
   .bm-panel .src{font-size:11px;color:var(--faint);margin-top:8px;line-height:1.7;}
   .bm-panel .src a{color:var(--blue);}
+  /* Historic Replay scenario picker */
+  .hist-list{display:grid;grid-template-columns:1fr;gap:6px;margin:10px 0 4px;}
+  @media(min-width:640px){.hist-list{grid-template-columns:1fr 1fr;}}
+  .hist-btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 11px;text-align:left;}
+  .hist-btn .t{font-weight:900;font-size:13.5px;display:block;}
+  .hist-btn .d{font-size:11px;color:var(--muted);display:block;margin-top:2px;line-height:1.5;}
+  .hist-btn.on{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold);}
+  .hist-btn.on .t{color:var(--gold);}
 </style>
 </head>
 <body>
@@ -348,6 +365,7 @@
       <button class="mode-btn on" id="mode-single" type="button"><span class="t">SINGLE RACE（単発）</span><span class="d">1レースだけ走って賞金を稼ぐ</span></button>
       <button class="mode-btn" id="mode-champ" type="button"><span class="t">CHAMPIONSHIP（全5戦）</span><span class="d">ポイント合計で年間王者を決める</span></button>
       <button class="mode-btn" id="mode-bm" type="button"><span class="t">BEST MOTORING 再現（筑波）</span><span class="d">実在ドライバー＆実車で90年代スーパーバトルを再現</span></button>
+      <button class="mode-btn" id="mode-hist" type="button"><span class="t">HISTORIC REPLAY（歴史的レース再現デモ）</span><span class="d">1976富士F1／1982筑波シルエット／1989鈴鹿F1／1994富士JGTCを、実周回数・実時間・史実ペースで完全再現（操作不要の観戦シミュレーション）</span></button>
     </div>
 
     <div class="bm-panel hidden" id="bm-panel">
@@ -358,6 +376,18 @@
         <tbody id="bm-body"></tbody>
       </table>
       <div class="src">ベストラップ出典：ベストモータリング筑波スーパーバトルの映像内表示タイムを記録した記事（<a href="https://minkara.carview.co.jp/userid/327116/blog/29048102/" target="_blank" rel="noopener">みんカラ「筑波サーキット、20年一昔」</a>）、グリッド構成の参考（<a href="https://rennlist.com/forums/996-turbo-forum/338016-ot-ruf-yellowbird-in-best-motoring-race.html" target="_blank" rel="noopener">Rennlist の視聴者レポート</a>）。ドライバーと車の組み合わせは当時のBMキャスター陣を基にした再構成で、映像そのもののコピーではありません。</div>
+    </div>
+
+    <div class="bm-panel hidden" id="hist-panel">
+      <div class="bm-title"><span class="en">HISTORIC REPLAY</span> 歴史的レース再現デモ</div>
+      <p>実在の名レースを、実在ドライバーと車、史実のラップタイム、そしてレースの転機となる出来事（棄権・接触・ノーズ交換ピット・猛追）まで脚本で再現する観戦専用モード。<b>操作は一切不要</b>で、全車が史実ペースのまま自動で走り切る。<b>周回数は実戦どおりのフルディスタンス</b>（富士76＝73周／鈴鹿89＝53周／JGTC94＝68周／筑波シルエット＝20周）、<b>×1は実時間</b>——実際のレースとほぼ同じ時間をかけて進行し、タイヤ・燃料の消耗でペースが落ちることもない。長丁場は倍速ボタン（×2〜×60）で早送りできる。実況もそのレース専用の内容で喋り、車は8bitシルエットながら当時のマシンの色と形を再現してある。ラップタイムと順位の推移を、歴史そのままに眺めるためのモード。</p>
+      <div class="hist-list" id="hist-list"></div>
+      <p id="hist-desc"></p>
+      <table class="plain">
+        <thead><tr><th>GRID</th><th>DRIVER</th><th>CAR</th><th>PACE（史実ベース）</th></tr></thead>
+        <tbody id="hist-body"></tbody>
+      </table>
+      <div class="src" id="hist-src"></div>
     </div>
 
     <h2 class="sec">コース選択</h2>
@@ -374,7 +404,7 @@
     </div>
 
     <div class="foot">
-      遊び方：あなたは運転しない「監督」。レース中はペース指示（1〜5）、追い越し指示、ピット指示だけを出す。タイヤと燃料は周回ごとに減り、ピットの判断が勝敗を分ける。早送り ×1／×2／×3 対応。<br>
+      遊び方：あなたは運転しない「監督」。レース中はペース指示（1〜5）、追い越し指示、ピット指示だけを出す。タイヤと燃料は周回ごとに減り、ピットの判断が勝敗を分ける。早送り ×1／×2／×3 対応。HISTORIC REPLAYだけは例外で、操作不要の観戦シミュレーション：全車が史実のラップタイムで自動走行し、実戦どおりの周回数を実時間（×1）で進行、倍速は×60まで対応。<br>
       レース画面の「🎙 実況」をONにすると、ブラウザの音声合成が実況と解説の2役でレースを喋る（スタート、自車とライバル全員の順位変動・追い越し・ミス・ピット・ファステストラップ、ファイナルラップ、チェッカーなど）。同じセリフは続けて読み上げないよう制御している。環境によっては音声が出ない場合がある。<br>
       ※ 本作は非公式のファンメイド作品です。コースは実在サーキットと名作レースゲームの名コースをオマージュして再現したもので、各公式とは関係ありません。車名はオリジナル名称を使用しています。ライバルドライバー名は実在のレーシングドライバーへのオマージュとして、イニシャル＋姓の表記にしています。
     </div>
@@ -393,9 +423,14 @@
           <button class="speed-btn on" data-speed="1" type="button">×1</button>
           <button class="speed-btn" data-speed="2" type="button">×2</button>
           <button class="speed-btn" data-speed="3" type="button">×3</button>
+          <button class="speed-btn hist-spd" data-speed="10" type="button">×10</button>
+          <button class="speed-btn hist-spd" data-speed="30" type="button">×30</button>
+          <button class="speed-btn hist-spd" data-speed="60" type="button">×60</button>
           <button class="speed-btn" id="btn-pause" type="button">II</button>
         </div>
       </div>
+
+      <div class="hist-note" id="hist-note">HISTORIC REPLAY 観戦モード：操作は不要です。全車（主役車を含む）が史実のラップタイムで自動走行し、実戦どおりの周回数を実時間（×1＝実際のレースと同じ時間）で進行します。長丁場は倍速ボタン（×2〜×60）で早送りできます。</div>
 
       <div class="race-layout">
         <div class="tower">
@@ -647,7 +682,59 @@ var PIXCARS = {
     "..L....###################....",
     "..########################....",
     "...##KKK##.......##KKK##......",
-    "....KKKK...........KKKK......."]
+    "....KKKK...........KKKK......."],
+  f1_76:[ /* 1970s F1: tall airbox, huge rear wing, wide rear tyres */
+    "................####................",
+    "................#GG#.........####...",
+    "................####.........#..#...",
+    "..L......#####################..#...",
+    "..#############################.....",
+    "...##KKK##............##KKKK##......",
+    "....KKKK................KKKKK......."],
+  f1_89:[ /* late-80s F1: low nose, wide body, tall rear wing */
+    ".............................#####..",
+    ".............................#...#..",
+    "..................######.....#...#..",
+    ".................#GGGGG#.....#####..",
+    "..L......########################...",
+    "..##############################....",
+    "...##KKK##.............##KKK##......",
+    "....KKKK.................KKKK......."],
+  gtr94:[ /* R32 GT-R GT1: boxy coupe, wide fenders, GT wing */
+    "...............................##...",
+    "..............................####..",
+    ".........###########...........#....",
+    "........#GGGGG##GGGGG#..............",
+    "..L....####################.........",
+    "..#########################.........",
+    "...##KKK##.........##KKK##..........",
+    "....KKKK.............KKKK..........."],
+  silvia:[ /* S110 Silvia super silhouette: hatch + giant rear wing */
+    "..............................#####.",
+    "..............................#.....",
+    "........##########............#.....",
+    ".......#GGGGG##GGGGG#.........####..",
+    "..L...###################...........",
+    ".##########################.........",
+    "...##KKK##.........##KKK##..........",
+    "....KKKK.............KKKK..........."],
+  skyline:[ /* DR30 Skyline super silhouette: boxy sedan + giant wing */
+    "..............................#####.",
+    "..............................#.....",
+    ".........############.........#.....",
+    "........#GGGGG##GGGGGG#.......####..",
+    "..L....###################..........",
+    ".##########################.........",
+    "...##KKK##.........##KKK##..........",
+    "....KKKK.............KKKK..........."],
+  p911:[ /* Porsche 911 RSR: round fenders + whale tail */
+    ".............................####...",
+    "..........#########..........#..#...",
+    ".........#GGGGGGGG##.........#......",
+    "..L....##################....####...",
+    "..#######################...........",
+    "...##KKK##.........##KKK##..........",
+    "....KKKK.............KKKK..........."]
 };
 function silSVG(carId, color){
   var rows = PIXCARS[carId] || PIXCARS.coupe;
@@ -694,6 +781,136 @@ var BM_TSUKUBA = {
     { driver:"M. Kurosawa", jp:"黒沢元治", carName:"Ferrari F40",               best:65.73, color:"#e10600", sil:"gt500"  }
   ]
 };
+/* ===== HISTORIC REPLAY: real Japanese races, reproduced as watch-only
+   full-distance simulations =====
+   Each scenario: the real drivers and cars, base pace set from the period's
+   actual lap times, the REAL lap count of the historical race, and the
+   race's turning points scripted as lap-triggered events (retirements, the
+   Senna/Prost chicane clash + nose-change pit stop + charge, Lauda's rain
+   withdrawal, the Zexel GT-R's fastest-lap retirement). There are NO
+   controls in this mode: every car — the hero included — runs automatically
+   at its historical pace, tyre/fuel wear is switched off so the lap times
+   stay the historical ones for the whole distance, and the clock runs at
+   real time (x1 = the race takes as long as the real one did). The speed
+   buttons multiply from there (up to x60), so a full-length race can also
+   be fast-forwarded. */
+var HISTORIC = [
+  { id:"fuji76", course:"fuji", laps:73, wet:true, player:1, heroJp:"ハント",
+    title:"1976 F1 日本GP 富士 ― 雨の王座決戦",
+    event:"1976年10月24日 ／ 富士スピードウェイ ／ 日本初のF1世界選手権",
+    desc:"日本で初めて開催されたF1世界選手権。豪雨の富士で、王座を争うラウダは「命の危険がある」と2周で走行を拒否し棄権。ハントは3位でフィニッシュし、僅か1点差でワールドチャンピオンを掴んだ。優勝はアンドレッティ（ロータス）。注目はハントのマクラーレンM23。雨でミスが増えるコンディション——3位以内で史実どおり王座が決まる。実戦どおり73周フルディスタンス、×1では実時間（優勝タイム1:43:58.86とほぼ同じ時間）で進行する観戦シミュレーション。",
+    note:"優勝アンドレッティ、2位デパイユ、3位ハント。ラウダは2周で棄権し、ハントが1点差で王座を獲得した。",
+    introJ:"日本初のF1グランプリ、富士でスタート！ しかし雨が強まっています！",
+    introK:"解説です。王座はハントとラウダ、僅差の争い。ラウダの様子が気になります。",
+    finK:"解説です。史実ではハントは3位で王座を掴みました。雨の中の判断と走りが全てを決めた一日でした。",
+    color:["豪雨の富士。視界は最悪で、水しぶきで前車の姿もかすみます。","路面は川のようになっています。各車、慎重な走りです。","王座の行方はハントの順位次第。3位以内ならタイトルが転がり込みます。","{L}が雨のレースをリードしています。スピンに注意です。"],
+    entries:[
+      { driver:"M. Andretti", jp:"マリオ・アンドレッティ", carName:"Lotus 77", best:86.0, color:"#c9a227", sil:"f1_76" },
+      { driver:"J. Hunt", jp:"ジェームス・ハント", carName:"McLaren M23", best:87.4, color:"#e10600", sil:"f1_76" },
+      { driver:"N. Lauda", jp:"ニキ・ラウダ", carName:"Ferrari 312T2", best:88.0, color:"#ff6b6b", sil:"f1_76" },
+      { driver:"P. Depailler", jp:"パトリック・デパイユ", carName:"Tyrrell P34", best:87.0, color:"#3d9bff", sil:"f1_76" },
+      { driver:"J. Scheckter", jp:"ジョディ・シェクター", carName:"Tyrrell P34", best:89.0, color:"#4dd0e1", sil:"f1_76" },
+      { driver:"R. Peterson", jp:"ロニー・ピーターソン", carName:"March 761", best:90.0, color:"#ff9f1a", sil:"f1_76" },
+      { driver:"J. Mass", jp:"ヨッヘン・マス", carName:"McLaren M23", best:91.0, color:"#e8e8e8", sil:"f1_76" },
+      { driver:"A. Jones", jp:"アラン・ジョーンズ", carName:"Surtees TS19", best:92.0, color:"#a3e635", sil:"f1_76" }
+    ],
+    events:[
+      { lapOf:2, lap:2,
+        log:"【史実イベント】ラウダがピットイン……そのままマシンを降りた！ 豪雨と視界不良の中、走行を拒否。2か月前のニュルブルクリンクの大事故から復帰したばかりの王者が、姿を消した。",
+        jik:"ラウダがピットに帰ってきた、そのままマシンを降ります！ リタイアです！ 信じられない光景です！",
+        kai:"解説です。ニュルブルクリンクの大事故で大火傷を負いながら復帰したラウダ。命を懸けてまで走ることはできない、という判断でしょう。王座はハントの順位次第となりました。",
+        do:[{ t:"retire", k:2 }] }
+    ],
+    srcHtml:"史実メモ：1976年10月24日、富士スピードウェイ。日本初のF1世界選手権公式戦。優勝アンドレッティ（ロータス77）、2位デパイユ、3位ハント。ラウダは豪雨と視界不良を理由に2周で棄権。ハントが1点差でワールドチャンピオンに。当時の富士は現行とは異なるレイアウトだったため、本再現は現行コース図の上で、実戦どおり73周フルディスタンスで行う。ペースは優勝タイム1:43:58.86（73周）を基準に各車の実力を配分した再構成で、×1再生では実戦とほぼ同じ約1時間44分でレースが進行する。" },
+  { id:"silhouette82", course:"tsukuba", laps:20, player:1, heroJp:"星野",
+    title:"1982 スーパーシルエット 筑波決戦",
+    event:"1982年 ／ 筑波サーキット ／ 日産ターボ軍団 vs BMW M1",
+    desc:"シルエットフォーミュラ（スーパーシルエット）は、市販車の輪郭だけを残した570馬力級の怪物マシンたちのカテゴリー。1982年、日産はシルビアターボ（星野一義）、スカイラインRSターボ（長谷見昌弘）、ブルーバードターボ（柳田春人）の「日産ターボ軍団」を投入し、富士や筑波で社会現象級の人気を博した。星野のシルビアターボと僚友スカイラインの身内対決が見どころ。当時の実戦同様、20周のスプリントで争われる。",
+    note:"スーパーシルエットは1983年でシリーズ終了。最後のレースは1984年12月9日の筑波チャレンジカップ第5戦で、この熱狂が1984年のニスモ設立につながった。",
+    introJ:"スーパーシルエット、筑波決戦スタート！ 日産ターボ軍団が火花を散らします！",
+    introK:"解説です。市販車の姿をした570馬力の怪物たち。星野のシルビアがスカイラインにどこまで食らいつけるか。",
+    finK:"解説です。減速でマフラーから火を噴く姿が名物でした。この熱狂こそ、日本のターボ時代の幕開けです。",
+    color:["シルビアターボのLZ20Bターボは570馬力以上。減速ではマフラーから火を噴くのが名物です。","大観衆が詰めかけています。日産ターボ軍団の火炎を目当てに来たファンも多いはずです。","{L}がレースを引っ張ります。スーパーシルエットらしい豪快な争いです。","筑波のバックストレートではターボ軍団の加速勝負。スリップストリームの応酬です。"],
+    entries:[
+      { driver:"M. Hasemi", jp:"長谷見昌弘", carName:"トミカ スカイライン RSターボ", best:57.3, color:"#e10600", sil:"skyline" },
+      { driver:"K. Hoshino", jp:"星野一義", carName:"ニチラ シルビア ターボ（S110）", best:57.6, color:"#2f6bff", sil:"silvia" },
+      { driver:"H. Yanagida", jp:"柳田春人", carName:"ブルーバード ターボ（910）", best:58.6, color:"#ff9f1a", sil:"skyline" },
+      { driver:"BMW M1", jp:"ワークス", carName:"BMW M1 プロカー", best:58.9, color:"#e8e8e8", sil:"p911" },
+      { driver:"N. Tachi", jp:"舘信秀", carName:"トムス セリカ ターボ", best:59.6, color:"#9b59d0", sil:"supra" },
+      { driver:"Y. Terada", jp:"寺田陽次郎", carName:"マツダ サバンナ RX-3", best:60.8, color:"#a3e635", sil:"rally" }
+    ],
+    events:[
+      { lapOf:"player", lap:12,
+        log:"【筑波名物】シルビアとスカイライン、日産ターボ軍団同士の真っ向勝負が続く。バックストレートでは火花ならぬ火炎の応酬。",
+        jik:"バックストレート、シルビアとスカイラインが並んで最終コーナーへ！ 日産ターボ軍団同士、譲らない戦いです！",
+        kai:"解説です。星野と長谷見、普段は僚友でもコース上では真剣勝負。570馬力級マシン同士の意地の張り合いです。",
+        do:[] }
+    ],
+    srcHtml:"出典・参考：NISMO「Racing GT-R HISTORY 〜熱狂のスーパーシルエット〜」（<a href=\"https://www.nismo.co.jp/motorsports/entertainment/GT-R_HISTORY2017/vol4.html\" target=\"_blank\" rel=\"noopener\">nismo.co.jp</a>）。スーパーシルエットは富士グランチャンピオンのサポートとして始まり富士・筑波で開催され、最後のレースは1984年12月9日の筑波チャレンジカップ第5戦。エントリーとペースは1982年の日産ターボ軍団を中心とした顔ぶれを基にした再構成。スーパーシルエットのレースは20周程度のスプリント形式が標準だったため、本再現も実戦同様20周とした。" },
+  { id:"suzuka89", course:"suzuka", laps:53, player:1, heroJp:"セナ",
+    title:"1989 F1 日本GP 鈴鹿 ― セナ vs プロスト",
+    event:"1989年10月22日 ／ 鈴鹿サーキット ／ 同僚対決の接触と大逆転劇",
+    desc:"タイトルを争うマクラーレンの同僚、セナとプロスト。プロストが先行し、セナが猛追。そして47周目、シケインで両者が接触——プロストは止まり、セナはピットでノーズを交換して猛烈に追い上げ、トップでチェッカーを受けた（後に失格となり優勝はナンニーニ）。接触とピット劇、そして奇跡の追い上げまでを、実戦どおり53周フルディスタンス・実時間で再現する。",
+    note:"セナは接触後ピットでノーズを交換し猛追、ナンニーニを抜いてトップでチェッカーを受けたが、シケイン不通過により失格。公式優勝はナンニーニで、プロストのワールドチャンピオンが決定した。",
+    introJ:"日本グランプリ、鈴鹿スタート！ プロストがホールショット、セナは2番手で追います！",
+    introK:"解説です。勝った方が王者に王手をかける大一番。セナは勝つしかありません。",
+    finK:"解説です。史実では、この後セナは失格となり優勝はナンニーニへ。プロストのタイトルが決まりました。物議を醸した結末でした。",
+    color:["プロストは計算された走り。セナはリスクを取って攻め続けます。","鈴鹿の観衆は総立ちです。同僚対決の行方に釘付けになっています。","{L}がレースをコントロールしています。この順位のままではタイトルはプロストのものになります。","セナが勝てばタイトル争いは最終戦へ。負ければプロストの王座が決まります。"],
+    entries:[
+      { driver:"A. Prost", jp:"アラン・プロスト", carName:"McLaren MP4/5", best:107.4, color:"#f2f2f0", sil:"f1_89" },
+      { driver:"A. Senna", jp:"アイルトン・セナ", carName:"McLaren MP4/5", best:107.0, color:"#e10600", sil:"f1_89" },
+      { driver:"G. Berger", jp:"ゲルハルト・ベルガー", carName:"Ferrari 640", best:108.4, color:"#ff9f1a", sil:"f1_89" },
+      { driver:"N. Mansell", jp:"ナイジェル・マンセル", carName:"Ferrari 640", best:109.0, color:"#ffd23e", sil:"f1_89" },
+      { driver:"R. Patrese", jp:"リカルド・パトレーゼ", carName:"Williams FW13", best:109.6, color:"#3d9bff", sil:"f1_89" },
+      { driver:"T. Boutsen", jp:"ティエリー・ブーツェン", carName:"Williams FW13", best:110.2, color:"#4dd0e1", sil:"f1_89" },
+      { driver:"A. Nannini", jp:"アレッサンドロ・ナンニーニ", carName:"Benetton B189", best:110.6, color:"#2fbf71", sil:"f1_89" },
+      { driver:"J. Alesi", jp:"ジャン・アレジ", carName:"Tyrrell 018", best:111.4, color:"#a3e635", sil:"f1_89" }
+    ],
+    events:[
+      { lapOf:"player", lap:40,
+        log:"【鈴鹿】セナがプロストの背後に迫る。シケインへのアプローチで明らかに速い。鈴鹿の観衆がどよめく。",
+        jik:"セナ、プロストの背後にじわじわと迫ります。シケインへのアプローチが速い！",
+        kai:"解説です。セナのペースが上回っています。問題は抜く場所です。鈴鹿でチームメイトを抜くのは至難の業ですよ。",
+        do:[] },
+      { lapOf:"player", lap:47,
+        log:"【シケイン】セナとプロストが接触！ プロストはマシンを止めた。セナはコースに復帰し、ノーズ交換のためピットへ向かう！",
+        jik:"ああっ、シケインで接触！ セナとプロストが絡んだ！ プロストはストップ、セナはピットへ向かいます！",
+        kai:"解説です。両雄の戦いは、まさかこんな形で決着するとは。セナはノーズ交換で大きくタイムを失います。ここから追い上げられるかどうかです。",
+        do:[{ t:"retire", k:0 }, { t:"pitnow", k:"player", time:17 }, { t:"boost", k:"player", f:1.05 }] }
+    ],
+    srcHtml:"史実メモ：1989年10月22日、鈴鹿サーキット。接触は53周中の47周目、最終シケインで発生。本再現も実戦どおり53周フルディスタンスとし、接触は47周目に配置した。セナはピットでノーズを交換し、ナンニーニを抜いてトップでチェッカーを受けたが、シケイン不通過により失格。公式優勝はナンニーニ、2位パトレーゼ、3位ブーツェン。ペースは当時のレースラップを基にした再構成（優勝タイム1:35:06.277＝53周の平均約1:47.7に整合）。" },
+  { id:"jgtc94", course:"fuji", laps:68, player:1, heroJp:"影山",
+    title:"1994 JGTC 開幕戦 富士 ― GT-R同士の初陣",
+    event:"1994年5月1日 ／ 富士スピードウェイ ／ 全日本GT選手権 記念すべき第1戦",
+    desc:"現在のSUPER GTの前身、全日本GT選手権（JGTC）の本格初年度開幕戦。GT1クラスはGr.A転用のR32型スカイラインGT-Rが中心で、フェラーリF40やポルシェ911RSRも参戦する異種格闘技戦だった。開幕戦はカルソニックスカイラインの影山正彦が、GT-R同士の対決を制して優勝。公式記録どおり68周（303.960km）・実時間で、カルソニックGT-Rの走りを中心に再現する。",
+    note:"開幕戦は影山正彦のカルソニックGT-Rが優勝。影山はそのまま初代GT1チャンピオンにも輝いた。",
+    introJ:"全日本GT選手権、記念すべき開幕戦が富士でスタート！",
+    introK:"解説です。主役はR32型GT-Rの群れ。カルソニックの影山に注目です。",
+    finK:"解説です。史実でも影山のカルソニックGT-Rが開幕戦を制し、初代王者に輝きました。ここから日本のGTレースの黄金期が始まります。",
+    color:["JGTC元年。GT-RにF40、ポルシェが入り乱れる異種格闘技戦です。","{L}がレースをリード。富士の長いストレートではスリップストリームの応酬です。","カルソニックGT-Rは4WD仕様。開幕戦から速さを見せています。","ゼクセルはFR化されたGT-R。同じR32でも仕様は対照的です。"],
+    entries:[
+      { driver:"T. Suzuki", jp:"鈴木利男", carName:"Zexel スカイライン GT-R（R32）", best:99.0, color:"#e8e8e8", sil:"gtr94" },
+      { driver:"M. Kageyama", jp:"影山正彦", carName:"カルソニック スカイライン GT-R（R32）", best:100.9, color:"#2f6bff", sil:"gtr94" },
+      { driver:"M. Hasemi", jp:"長谷見昌弘", carName:"ユニシアジェックス スカイライン GT-R", best:102.8, color:"#e10600", sil:"gtr94" },
+      { driver:"S. Yamaji", jp:"山路慎一", carName:"コクピット館林 GT-R", best:102.4, color:"#ff9f1a", sil:"gtr94" },
+      { driver:"A. Iida", jp:"飯田章", carName:"ジョンソン スカイライン", best:108.5, color:"#2fbf71", sil:"gtr94" },
+      { driver:"T. Ota", jp:"太田哲也", carName:"タイサン フェラーリ F40", best:103.5, color:"#f5c518", sil:"gt500" },
+      { driver:"M. Martini", jp:"マウロ・マルティニ", carName:"acom ポルシェ 911 RSR（964）", best:107.0, color:"#4dd0e1", sil:"p911" }
+    ],
+    events:[
+      { lapOf:"player", lap:20,
+        log:"【富士】GT-R同士のトップ争いが続く。カルソニック、ゼクセル、ユニシアジェックス——R32三つ巴の激戦。",
+        jik:"GT-R同士のトップ争いが続いています！ カルソニックとゼクセル、一歩も譲りません！",
+        kai:"解説です。4WDのカルソニックと、FR化されたゼクセル。同じGT-Rでも仕様は対照的です。",
+        do:[] },
+      { lapOf:0, lap:32,
+        log:"【史実イベント】ゼクセルの鈴木利男がスローダウン……マシンを止めた！ このレースのファステストラップ1'35\"720を記録した最速のGT-Rが、32周で姿を消した（公式記録どおり）。",
+        jik:"ゼクセルGT-Rが止まった！ 鈴木利男、リタイアです！ ファステストラップを叩き出しながらの無念のストップ！",
+        kai:"解説です。速さは文句なしだっただけに悔しいリタイアです。これでトップ争いはカルソニックが一歩抜け出す形になりました。",
+        do:[{ t:"retire", k:0 }] }
+    ],
+    srcHtml:"出典：SUPER GT公式アーカイブ「JGTC.net | 1994 Round1」（<a href=\"https://supergt.net/wp-content/archive/classic/supergt.net/jgtc/race/1994/9401.htm\" target=\"_blank\" rel=\"noopener\">supergt.net</a>）／autosport web「手探りの異種格闘技だったJGTC初年度」（<a href=\"https://www.as-web.jp/supergt/1269435?all\" target=\"_blank\" rel=\"noopener\">as-web.jp</a>）／NISMO「新たなレース全日本GT選手権（JGTC）開幕」（<a href=\"https://www.nismo.co.jp/nismo_40th/domestic_race/vol_07/\" target=\"_blank\" rel=\"noopener\">nismo.co.jp</a>）。公式記録：決勝は当時の富士4.470km×68周＝303.960km、優勝は影山正彦（カルソニックGT-R）でタイムは1:52'03.626、ファステストラップは鈴木利男（ゼクセル）1'35.720、ゼクセルは32周でリタイア、2位はコクピット館林GT-R（-1周）、3位はタイサンF40（-2周）。本再現のペースは公式予選タイム（影山1'34.913／鈴木1'35.019／長谷見1'36.101ほか）を本作コース（4.563km）に換算し、優勝タイムの平均ペースに合わせて配分した。ポルシェRSRは開幕戦の実エントリーに合わせ、M.マルティニ（acomポルシェ964 RSR）に変更している。" }
+];
 var PTS_TABLE = [10,8,6,5,4,3,2,1,0,0];
 /* Field size grows with driver level, like the real B-Spec grid opening up:
    Lv.1-2 = 6 cars (A-F), Lv.3-4 = 8 cars (A-H), Lv.5+ = 10 cars (A-J). */
@@ -768,8 +985,9 @@ function ttsProcess(){
     var text = item.fn ? item.fn() : item.text;
     if(!text) continue;
     /* The commentary scripts are written with the placeholder name レン;
-       speak them with the player's chosen driver name instead. */
-    text = text.replace(/レン/g, pName());
+       speak them with the player's chosen driver name instead — or, in a
+       Historic Replay, with the historical hero's name (セナ, ハント…). */
+    text = text.replace(/レン/g, (race && race.heroName) ? race.heroName : pName());
     /* Never repeat a recently spoken sentence: drop it and move on. */
     if(spokenRecent.indexOf(text) >= 0) continue;
     spokenRecent.push(text);
@@ -894,12 +1112,19 @@ function colorLine(){
   var notPitted = race.entries.filter(function(e){ return !e.me && e.pitCount === 0 && !e.finished; });
   if(pitted.length && notPitted.length && race.time > 120) cands.push("ピットを終えたのは" + pitted.map(function(e){ return e.name; }).join("、") + "。" + notPitted[0].name + "らはまだピットに入っていません。戦略が分かれています。");
   var lapsLeft = race.course.laps - Math.min(me.lap, race.course.laps);
-  if(lapsLeft > 1) cands.push("残り" + lapsLeft + "周です。タイヤの残りは" + Math.round(me.tire) + "パーセント、燃料は" + Math.round(me.fuel) + "パーセント。");
+  if(lapsLeft > 1) cands.push(race.hist ? "残り" + lapsLeft + "周です。" : "残り" + lapsLeft + "周です。タイヤの残りは" + Math.round(me.tire) + "パーセント、燃料は" + Math.round(me.fuel) + "パーセント。");
   if(leader && !leader.me && (leader.dist - me.dist)/refV > 12) cands.push("トップの" + leader.name + "は独走態勢。レンは自分のレースに集中したいところです。");
   var fl = null;
   race.entries.forEach(function(e){ if(e.bestLap && (!fl || e.bestLap < fl.bestLap)) fl = e; });
   if(fl && race.time > 60) cands.push("現在のファステストラップは" + (fl.me ? "レン" : fl.name) + "、" + fmtTime(fl.bestLap) + "です。");
-  cands.push("レンはここまでピット" + me.pitCount + "回。現在のペース指示は" + me.pace + "です。");
+  /* Historic Replay: scenario-specific colour lines (period flavour,
+     title stakes, the hero's situation), {L} = current leader */
+  if(race.hist && race.hist.color){
+    race.hist.color.forEach(function(s){
+      cands.push(s.replace(/\{L\}/g, leader.me ? (race.heroName || leader.name) : leader.name).replace(/\{H\}/g, race.heroName || ""));
+    });
+  }
+  if(!race.hist) cands.push("レンはここまでピット" + me.pitCount + "回。現在のペース指示は" + me.pace + "です。");
   if(me.tire < 55 && me.tire > 30) cands.push("タイヤは" + Math.round(me.tire) + "パーセントまで消耗。終盤の落ち込みに注意です。");
   if(idx >= 2 && ahead && sorted[idx-2]) cands.push("前では" + sorted[idx-2].name + "と" + ahead.name + "がバトル中。その隙を突きたいところです。");
   if(!cands.length) return null;
@@ -1058,12 +1283,31 @@ function setMode(m){
   $("mode-single").classList.toggle("on", m==="single");
   $("mode-champ").classList.toggle("on", m==="champ");
   $("mode-bm").classList.toggle("on", m==="bm");
+  $("mode-hist").classList.toggle("on", m==="hist");
   $("bm-panel").classList.toggle("hidden", m!=="bm");
-  $("btn-start").textContent = m==="bm" ? "▶ 筑波スーパーバトル開始（F40を監督）" : "▶ レース開始（グリッドへ）";
+  $("hist-panel").classList.toggle("hidden", m!=="hist");
+  $("btn-start").textContent = m==="bm" ? "▶ 筑波スーパーバトル開始（F40を監督）" : (m==="hist" ? "▶ 歴史的レース再現シミュレーション開始（観戦・操作不要）" : "▶ レース開始（グリッドへ）");
 }
 $("mode-single").addEventListener("click", function(){ setMode("single"); });
 $("mode-champ").addEventListener("click", function(){ setMode("champ"); });
 $("mode-bm").addEventListener("click", function(){ setMode("bm"); });
+$("mode-hist").addEventListener("click", function(){ setMode("hist"); });
+/* Historic Replay scenario picker */
+var selHist = 2; /* 1989 Suzuka is the headline scenario */
+function renderHist(){
+  $("hist-list").innerHTML = HISTORIC.map(function(h, i){
+    return '<button class="hist-btn'+(i===selHist?" on":"")+'" data-hist="'+i+'" type="button"><span class="t">'+h.title+'</span><span class="d">'+h.event+'</span></button>';
+  }).join("");
+  var btns = $("hist-list").querySelectorAll("[data-hist]");
+  for(var i=0;i<btns.length;i++) btns[i].addEventListener("click", function(){ selHist = +this.getAttribute("data-hist"); renderHist(); });
+  var h = HISTORIC[selHist];
+  $("hist-desc").textContent = h.desc;
+  $("hist-body").innerHTML = h.entries.map(function(b, i){
+    var you = i === h.player;
+    return '<tr'+(you?' class="me"':'')+'><td class="mono"><b>'+String.fromCharCode(65+i)+'</b></td><td>'+b.driver+'（'+b.jp+'）'+(you?' ← 史実の主役（観戦対象）':'')+'</td><td>'+b.carName+'</td><td class="mono">'+fmtTime(b.best)+'</td></tr>';
+  }).join("");
+  $("hist-src").innerHTML = h.srcHtml || "";
+}
 $("bm-body").innerHTML = BM_TSUKUBA.entries.map(function(b, i){
   var you = i === BM_TSUKUBA.entries.length - 1;
   return '<tr'+(you?' class="me"':'')+'><td class="mono"><b>'+String.fromCharCode(65+i)+'</b></td><td>'+b.driver+'（'+b.jp+'）'+(you?' ← あなたが監督':'')+'</td><td>'+b.carName+'</td><td class="mono">'+fmtTime(b.best)+'</td></tr>';
@@ -1075,7 +1319,7 @@ $("inp-name").addEventListener("change", function(){
   this.value = v; renderDriver();
 });
 $("btn-reset").addEventListener("click", function(){
-  save = defaultSave(); storeSave(); selCar="kei"; selCourse=0; renderDriver(); renderCourses(); renderCars();
+  save = defaultSave(); storeSave(); selCar="kei"; selCourse=0; renderDriver(); renderCourses(); renderCars(); renderHist();
 });
 function show(view){
   $("view-setup").classList.toggle("hidden", view!=="setup");
@@ -1153,6 +1397,62 @@ function buildGridBM(){
   return [player].concat(all.slice(0, all.length - 1));
 }
 
+/* Historic Replay grid: real drivers/cars, base pace = the period lap times
+   baked into the scenario. The hero (scenario.player) is moved to entries[0]
+   because the engine expects the player there; grid letters and start
+   distances keep the historical grid order. hkey = index in the scenario's
+   entry list, used by the scripted events. */
+function buildGridHist(hist){
+  var all = hist.entries.map(function(b, i){
+    var isPlayer = i === hist.player;
+    return {
+      name: b.driver,
+      car: { id: b.sil, name: b.carName }, me: isPlayer, color: b.color,
+      baseLap: b.best, skill: 0.85,
+      dist: -i * 32, lap: 1, lapStart: 0, lastLap: null, bestLap: null,
+      tire: 100, fuel: 100, pace: 3, overtake: false, pitQueued: false, inPit: 0, pitCount: 0,
+      finished: false, finishTime: null, mistakeCd: 0, seed: Math.random() * 10,
+      letter: String.fromCharCode(65 + i), hkey: i, boost: 1, dnf: false
+    };
+  });
+  var player = all[hist.player];
+  return [player].concat(all.filter(function(_, i){ return i !== hist.player; }));
+}
+function histEntryByKey(k){
+  if(k === "player") return race.entries[0];
+  for(var j = 0; j < race.entries.length; j++) if(race.entries[j].hkey === k) return race.entries[j];
+  return null;
+}
+/* Scripted turning points of the historical race, fired when the watched
+   entry completes the scripted lap: retirements (Lauda, Prost), the hero's
+   forced nose-change pit stop, the post-incident charge boost, and pure
+   broadcast moments. Runs inside step()'s lap-crossing block. */
+function histEventCheck(e, lapDone){
+  if(!race || !race.histEvents || race.over) return;
+  for(var i = 0; i < race.histEvents.length; i++){
+    var ev = race.histEvents[i];
+    if(ev._done) continue;
+    if(histEntryByKey(ev.lapOf) !== e || lapDone !== ev.lap) continue;
+    ev._done = true;
+    if(ev.log) logMsg(ev.log, "hot");
+    if(ev.jik) say(ev.jik, "jikkyou", 3);
+    if(ev.kai) say(ev.kai, "kaisetsu", 2);
+    (ev.do || []).forEach(function(a){
+      var t = histEntryByKey(a.k);
+      if(!t) return;
+      if(a.t === "retire"){
+        t.dnf = true; t.finished = true; t.finishTime = 1e7 + race.time; t.inPit = 0; t.pitQueued = false;
+        logMsg(t.name + " はリタイア。マシンを止めた。", "hot");
+      } else if(a.t === "pitnow"){
+        t.inPit = t.pitTotal = a.time || 14; t.pitCount++;
+        if(t.me){ setPit(false); logMsg("ピットイン…作業中。通常より長いストップになる。", "good"); }
+      } else if(a.t === "boost"){
+        t.boost = a.f;
+      }
+    });
+  }
+}
+
 function logMsg(html, cls){
   var el = $("race-log");
   var line = document.createElement("div");
@@ -1225,11 +1525,17 @@ function updateSilRuler(leadDist, spanM, myFrac){
   }
 }
 
-function startRace(courseIdx, bm){
+function courseIdxById(id){ for(var i=0;i<COURSES.length;i++) if(COURSES[i].id===id) return i; return 0; }
+function startRace(courseIdx, bm, hist){
   var course = COURSES[courseIdx];
   var playerCar = carById(selCar);
   var gridEntries;
-  if(bm){
+  if(hist){
+    /* Historic Replay: the scenario fixes the course and lap count; the
+       grid is the real field with period pace (buildGridHist). */
+    course = { id:course.id, name:course.name, jp:course.jp, laps:hist.laps, km:course.km, wP:course.wP, wH:course.wH, d:course.d, sf:course.sf, pit:course.pit };
+    gridEntries = buildGridHist(hist);
+  } else if(bm){
     /* Tsukuba with the real battle's lap count; pace comes from BM_TSUKUBA */
     course = { id:course.id, name:course.name, jp:course.jp, laps:BM_TSUKUBA.laps, km:course.km, wP:course.wP, wH:course.wH, d:course.d, sf:course.sf, pit:course.pit };
     gridEntries = buildGridBM();
@@ -1238,6 +1544,8 @@ function startRace(courseIdx, bm){
   }
   race = {
     course: course, courseIdx: courseIdx, time:0, bm: !!bm,
+    hist: hist || null, heroName: hist ? (hist.heroJp || null) : null,
+    histEvents: hist ? (hist.events || []).map(function(ev){ var c = {}; for(var k in ev) c[k] = ev[k]; return c; }) : null,
     totalDist: course.km*1000*course.laps, lapDist: course.km*1000,
     entries: gridEntries, over:false, playerPos: gridEntries.length,
     prevPos: 0, flags: {}, cPos: 0, cLeader: null, lastPosAt: 0, lastColorAt: 0, nextColorIn: 15000,
@@ -1248,6 +1556,9 @@ function startRace(courseIdx, bm){
   race.cPos = race.prevPos;
   race.lastPosAt = performance.now();
   race.lastColorAt = performance.now();
+  /* Historic Replay = watch-only: body class hides the pace/pit controls
+     and the tyre/fuel panel, and reveals the x10/x30/x60 speed buttons. */
+  document.body.classList.toggle("hist-watch", !!hist);
   $("pp-total").textContent = gridEntries.length;
   paused = false; simSpeed = 1;
   var sp = document.querySelectorAll(".speed-btn[data-speed]");
@@ -1302,7 +1613,7 @@ function startRace(courseIdx, bm){
   race.entries.forEach(function(e){
     var d = document.createElement("div");
     d.className = "sil-car" + (e.me ? " me" : "");
-    var short = (e.letter ? e.letter + " · " : "") + (e.me ? pName().toUpperCase() : e.name.split(" ").pop().toUpperCase());
+    var short = (e.letter ? e.letter + " · " : "") + (hist ? e.name.split(" ").pop().toUpperCase() : (e.me ? pName().toUpperCase() : e.name.split(" ").pop().toUpperCase()));
     e._silLabel = short;
     d.innerHTML = '<span class="lb">' + short + '</span>' + silSVG(e.car.id, e.color);
     silBox.appendChild(d); e.silEl = d;
@@ -1315,11 +1626,18 @@ function startRace(courseIdx, bm){
     glBox.appendChild(gd); race.gapLabels.push(gd);
   }
   var roundTxt = (mode==="champ" && champ) ? "ROUND "+(champ.round+1)+" / 5　" : "";
-  $("race-title").innerHTML = bm
+  $("race-title").innerHTML = hist
+    ? hist.title + '<small>（'+course.jp+'） '+course.laps+' LAPS フルディスタンス再現（実時間・観戦）</small>'
+    : bm
     ? 'BEST MOTORING 筑波スーパーバトル再現<small>（'+course.jp+'） '+course.laps+' LAPS</small>'
     : roundTxt + course.name + '<small>（'+course.jp+'） '+course.laps+' LAPS</small>';
   $("race-log").innerHTML = "";
-  if(bm){
+  if(hist){
+    logMsg("【HISTORIC REPLAY】"+hist.title+"。"+hist.event+"。", "hot");
+    logMsg(hist.desc, "");
+    logMsg("グリッド： "+gridEntries.slice().sort(function(a,b){ return (a.letter||"").localeCompare(b.letter||""); }).map(function(e){ return e.letter+" "+e.name.replace("（あなた）","")+"（"+e.car.name+"）"; }).join(" ／ "), "");
+    logMsg("観戦モード：操作は一切不要。全車が史実のラップタイムで自動走行し、実戦どおり"+course.laps+"周を走り切る。×1は実時間（実際のレースとほぼ同じ時間で進行）、倍速は×60まで。注目車は "+gridEntries[0].name.replace("（あなた）","")+"（"+gridEntries[0].car.name+"）。", "good");
+  } else if(bm){
     logMsg("【BEST MOTORING再現】90年代筑波スーパーバトル。出走7台、全車のペースは映像に表示された実測ベストラップで再現。", "hot");
     logMsg("グリッド： A NSX（土屋圭市 1'10\"40）／ B RX-7（清水和夫 1'10\"27）／ C MR2（桂伸一 1'10\"01）／ D GT-R R32（服部尚貴 1'09\"59）／ E 512TR（中谷明彦 1'09\"26）／ F RUF CTR（大井貴之 1'08\"35）／ G F40（本来は黒沢元治 1'05\"73）＝ あなた。", "");
     logMsg("実戦では最後尾スタートのF40が優勝。5周・ピットなしの短期決戦、ペース指示と追い越し指示だけで再現を目指せ。", "good");
@@ -1329,11 +1647,16 @@ function startRace(courseIdx, bm){
     logMsg("ピットレーンはコースマップ内側の専用レーン（PIT LANE表記）。ピット中はマップ上の車がそちらを走って止まる。");
   }
   ttsStop();
-  say("スタート！ " + course.name + "、" + course.laps + "周のレースが始まりました！ レンは" + race.prevPos + "番手から追い上げます！", "jikkyou", 3);
-  say("解説です。カギはタイヤと燃料のマネジメント。ピットのタイミングが勝敗を分けます。", "kaisetsu", 1);
-  var poleE = null;
-  gridEntries.forEach(function(e){ if(e.letter === "A") poleE = e; });
-  if(poleE && !poleE.me) say("ポールポジションは" + poleE.name + "、" + poleE.car.name + "です。この1台をどう崩すかが焦点になります。", "kaisetsu", 1);
+  if(hist){
+    say(hist.introJ, "jikkyou", 3);
+    if(hist.introK) say(hist.introK, "kaisetsu", 1);
+  } else {
+    say("スタート！ " + course.name + "、" + course.laps + "周のレースが始まりました！ レンは" + race.prevPos + "番手から追い上げます！", "jikkyou", 3);
+    say("解説です。カギはタイヤと燃料のマネジメント。ピットのタイミングが勝敗を分けます。", "kaisetsu", 1);
+    var poleE = null;
+    gridEntries.forEach(function(e){ if(e.letter === "A") poleE = e; });
+    if(poleE && !poleE.me) say("ポールポジションは" + poleE.name + "、" + poleE.car.name + "です。この1台をどう崩すかが焦点になります。", "kaisetsu", 1);
+  }
   show("race");
   lastTs = performance.now();
   if(timer) cancelAnimationFrame(timer);
@@ -1356,11 +1679,12 @@ function setPit(on){
   $("btn-pit").firstChild.textContent = on ? "ピット予約済み" : "ピットイン指示";
 }
 $("pace-row").addEventListener("click", function(ev){
+  if(race && race.hist) return; /* watch-only mode: no instructions */
   var b = ev.target.closest("[data-pace]"); if(b) setPace(+b.getAttribute("data-pace"));
 });
-$("btn-overtake").addEventListener("click", function(){ if(race && !race.over) setOvertake(!race.entries[0].overtake); });
+$("btn-overtake").addEventListener("click", function(){ if(race && !race.over && !race.hist) setOvertake(!race.entries[0].overtake); });
 $("btn-pit").addEventListener("click", function(){
-  if(!race || race.over) return;
+  if(!race || race.over || race.hist) return;
   var me = race.entries[0];
   if(me.inPit>0) return;
   setPit(!me.pitQueued);
@@ -1381,6 +1705,10 @@ $("btn-pause").addEventListener("click", function(){
 
 function sortedEntries(){
   return race.entries.slice().sort(function(a,b){
+    /* retirements (Historic script events) always rank below cars still
+       running or properly finished, ordered by when they stopped */
+    if(a.dnf && b.dnf) return a.finishTime - b.finishTime;
+    if(a.dnf) return 1; if(b.dnf) return -1;
     if(a.finished && b.finished) return a.finishTime - b.finishTime;
     if(a.finished) return -1; if(b.finished) return 1;
     return b.dist - a.dist;
@@ -1408,9 +1736,11 @@ function step(dt){
       return;
     }
     /* AI brain */
-    if(!e.me && race.bm){
-      /* BM reproduction: everyone runs at their real best-lap pace (pace 3 =
-         x1.00) for the whole 5 laps, no pit stops, just the battle. */
+    if(race.hist || (!e.me && race.bm)){
+      /* Reproduction modes: everyone runs at their real period pace
+         (pace 3 = x1.00) for the whole race, just the battle; pit stops
+         come from the scenario script only. In Historic Replay this also
+         covers the hero car — the mode is watch-only, no instructions. */
       e.pace = 3;
       var aheadBM = sorted[sorted.indexOf(e)-1];
       e.overtake = !!(aheadBM && (aheadBM.dist - e.dist) < 60);
@@ -1448,20 +1778,23 @@ function step(dt){
     e.mistakeCd -= dt;
     var mistakeF = 1;
     if(e.mistakeCd <= 0){
-      var risk = (e.pace >= 5 ? 0.0035 : e.pace === 4 ? 0.0016 : 0.0005) * (e.me ? (1.25 - save.driver.mental/100*0.55) : 1) * (race.bm ? 0.3 : 1);
+      var risk = (e.pace >= 5 ? 0.0035 : e.pace === 4 ? 0.0016 : 0.0005) * (e.me ? (1.25 - save.driver.mental/100*0.55) : 1) * (race.bm ? 0.3 : race.hist ? (race.hist.wet ? 1.7 : 0.55) : 1);
       if(Math.random() < risk * dt * 10){
         mistakeF = 0.55; e.mistakeCd = 2.2;
-        if(e.me){ logMsg("ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot"); race.flags.mistake = true; }
+        if(e.me){ logMsg(race.hist ? "注目車がコースアウト気味に！ タイムを失った。" : "ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot"); race.flags.mistake = true; }
         else { if(Math.random()<0.5) logMsg(e.name+" がミス。順位が入れ替わるかも。", ""); if(Math.random()<0.6) pushRivalEvent("mistake", e.name); }
       }
     }
     var wobble = 1 + Math.sin(race.time*0.7 + e.seed)*0.006;
-    var speed = (race.lapDist / e.baseLap) * paceF * tireF * fuelF * battleF * mistakeF * wobble; /* m/s */
+    var speed = (race.lapDist / e.baseLap) * paceF * tireF * fuelF * battleF * mistakeF * wobble * (e.boost || 1) * ((race.hist && race.hist.wet) ? 0.985 : 1); /* m/s; boost = scripted charge (Senna '89), wet = 1976 Fuji rain */
     e.dist += speed * dt;
-    /* wear: pace3 ≈ 18pts/lap, pace5 ≈ 34pts/lap on a ~160s lap; fuel ≈ 9pts/lap */
-    var wearBase = [0, 0.55, 0.8, 1.05, 1.45, 1.95][e.pace] * (e.overtake ? 1.3 : 1) * (race.bm ? 0.12 : 1);
+    /* wear: pace3 ≈ 18pts/lap, pace5 ≈ 34pts/lap on a ~160s lap; fuel ≈ 9pts/lap.
+       Historic Replay: wear is ZERO — over a full real distance (53-73 laps)
+       any wear would drag the cars away from their historical lap times,
+       and this mode is a lap-time simulation, not a management game. */
+    var wearBase = [0, 0.55, 0.8, 1.05, 1.45, 1.95][e.pace] * (e.overtake ? 1.3 : 1) * (race.bm ? 0.12 : race.hist ? 0 : 1);
     e.tire = clamp(e.tire - wearBase * dt * 0.11, 0, 100);
-    e.fuel = clamp(e.fuel - [0,0.7,0.9,1.05,1.25,1.5][e.pace] * dt * 0.055 * (3.4/course.km) * (race.bm ? 0.3 : 1), 0, 100);
+    e.fuel = clamp(e.fuel - [0,0.7,0.9,1.05,1.25,1.5][e.pace] * dt * 0.055 * (3.4/course.km) * (race.bm ? 0.3 : race.hist ? 0 : 1), 0, 100);
     /* lap crossing */
     var lapProgress = e.dist - (e.lap-1)*race.lapDist;
     if(lapProgress >= race.lapDist){
@@ -1488,6 +1821,10 @@ function step(dt){
         if(e.me){ setPit(false); logMsg("ピットイン…ピットレーンを走行中。", "good"); race.flags.pitIn = true; }
         else pushRivalEvent("pitin", e.name);
       }
+      /* Historic Replay: fire the scenario's scripted turning point when
+         this entry completes the scripted lap (retirements, the chicane
+         clash, the hero's charge boost). */
+      histEventCheck(e, e.lap - 1);
     }
   });
   var me = race.entries[0];
@@ -1505,8 +1842,18 @@ function frame(ts){
   var real = Math.min(0.05, (ts - lastTs)/1000); lastTs = ts;
   race._frameReal = real;
   if(!paused){
-    var simDt = real * 10 * simSpeed; /* base rate ×10, fast-forward multiplies further */
-    var steps = Math.max(1, Math.round(simDt / 0.1));
+    /* Historic Replay runs at TRUE real time: x1 = the historical race
+       takes as long as it really took, and the speed buttons multiply from
+       there (x2..x60). Other modes keep the classic x10 base rate. The
+       accumulator keeps the average rate exact even when one frame's worth
+       of sim time is smaller than one 0.1s step (at x1 real time a frame is
+       only ~0.017s, which naive rounding would inflate to 6x speed). */
+    var simDt = real * (race.hist ? 1 : 10) * simSpeed;
+    race._acc = (race._acc || 0) + simDt;
+    var steps = Math.floor(race._acc / 0.1);
+    if(steps > 600) steps = 600;
+    race._acc -= steps * 0.1;
+    if(steps <= 0) race._acc = Math.min(race._acc, 0.1);
     for(var i=0;i<steps;i++){ step(0.1); if(!race || race.over) break; }
     render();
     commentaryTick();
@@ -1556,6 +1903,7 @@ function render(){
       pt = path.getPointAtLength(prog * L);
     }
     e.dot.setAttribute("transform", "translate(" + pt.x + "," + pt.y + ")");
+    if(e.dnf && !e._dnfStyled){ e._dnfStyled = true; var dc = e.dot.querySelector("circle"); if(dc) dc.setAttribute("fill", "#5a5d63"); }
     if(e.silEl){
       /* relative position inside the whole field: leader = left edge of the
          band, last car = right edge (travel is right -> left, so ahead is
@@ -1568,9 +1916,9 @@ function render(){
       e._sx = e._sxSmooth;
       e.silEl.style.display = "";
       e.silEl.style.left = e._sx + "%";
-      e.silEl.style.opacity = e.inPit > 0 ? "0.45" : "1";
-      var inPitNow = e.inPit > 0;
-      if(!!e._pitTag !== inPitNow){ e._pitTag = inPitNow; e.silEl.firstChild.textContent = (e._silLabel || "") + (inPitNow ? " [PIT]" : ""); }
+      e.silEl.style.opacity = e.dnf ? "0.3" : (e.inPit > 0 ? "0.45" : "1");
+      var tagNow = e.dnf ? " [OUT]" : (e.inPit > 0 ? " [PIT]" : "");
+      if(e._tagNow !== tagNow){ e._tagNow = tagNow; e.silEl.firstChild.textContent = (e._silLabel || "") + tagNow; }
     }
   });
   /* the start/finish gantry sits at the leader's slot whenever the leader
@@ -1595,7 +1943,7 @@ function render(){
   if(race.gapLabels){
     for(var gi = 0; gi < race.gapLabels.length; gi++){
       var lab = race.gapLabels[gi], ea = srt[gi], eb = srt[gi+1];
-      if(!ea || !eb || ea._sx == null || eb._sx == null || ea.inPit > 0 || eb.inPit > 0 || ea._sx < -11 || ea._sx > 111 || eb._sx < -11 || eb._sx > 111 || Math.abs(ea._sx - eb._sx) < 10){
+      if(!ea || !eb || ea._sx == null || eb._sx == null || ea.dnf || eb.dnf || ea.inPit > 0 || eb.inPit > 0 || ea._sx < -11 || ea._sx > 111 || eb._sx < -11 || eb._sx > 111 || Math.abs(ea._sx - eb._sx) < 10){
         lab.style.display = "none"; continue;
       }
       var gSec = (ea.dist - eb.dist) / refS, gM = Math.round(ea.dist - eb.dist);
@@ -1623,7 +1971,8 @@ function render(){
     var refV = Math.max(8, race.lapDist/leader.baseLap);
     var gap = (i===0) ? "LEADER" : (e.finished && leader.finished ? "+"+fmtTime(e.finishTime-leader.finishTime).replace(/^0:/,"") : "+"+((leader.dist - e.dist) / refV).toFixed(1));
     if(i!==0 && !(e.finished && leader.finished) && e.dist < 0) gap = "—";
-    var tag = e.inPit > 0 ? '<span class="pit-tag">PIT</span>' : (e.pitQueued ? '<span class="pit-tag">IN</span>' : "");
+    if(e.dnf) gap = "OUT";
+    var tag = e.dnf ? '<span class="out-tag">OUT</span>' : (e.inPit > 0 ? '<span class="pit-tag">PIT</span>' : (e.pitQueued ? '<span class="pit-tag">IN</span>' : ""));
     return '<tr class="'+(e.me?"me":"")+'"><td class="pos mono">'+(i+1)+'</td>'
       + '<td><span style="color:'+e.color+'">●</span> <b class="mono" style="color:#f5c518">['+(e.letter||"")+']</b> '+e.name+tag+'<br><span style="font-size:10px;color:#9a9da6">'+e.car.name+'</span></td>'
       + '<td class="gap mono">'+gap+'</td><td class="lt mono">'+(e.lastLap?fmtLapShort(e.lastLap):"—")+'</td></tr>';
@@ -1657,9 +2006,10 @@ function finishRace(){
   var winnerE = sorted[0];
   if(pos === 1) say(pickLine("finj", ["チェッカー！ レン、優勝です！ 見事な勝利！", "チェッカー！ レンがトップで帰ってきました、優勝です！", "チェッカーフラッグ！ レン、文句なしの優勝です！"]), "jikkyou", 3);
   else say("チェッカー！ 優勝は" + winnerE.name + "！ レンは" + pos + "位でフィニッシュです！", "jikkyou", 3);
-  say(pickLine("fink", pos === 1 ? POOL.finWinK : (pos <= 3 ? POOL.finPodiumK : POOL.finOtherK)).replace("{n}", winnerE.name), "kaisetsu", 3);
+  if(race.hist && race.hist.finK) say(race.hist.finK, "kaisetsu", 3);
+  else say(pickLine("fink", pos === 1 ? POOL.finWinK : (pos <= 3 ? POOL.finPodiumK : POOL.finOtherK)).replace("{n}", winnerE.name), "kaisetsu", 3);
   /* prize by class value of player car + position */
-  var base = race.bm ? 30000 : 4000 + (carById(selCar).price * 0.06);
+  var base = (race.bm || race.hist) ? 30000 : 4000 + (carById(selCar).price * 0.06);
   var posMul = [1, 1.6, 1.3, 1.1, 0.9, 0.75, 0.6, 0.5, 0.4, 0.35, 0.3][pos] || 0.3;
   var prize = Math.round(base * posMul / 100) * 100;
   var exp = Math.round(30 + (sorted.length-pos)*8 + sorted.filter(function(e){return e!==me;}).length*1 + (pos===1?25:pos<=3?12:0));
@@ -1692,6 +2042,7 @@ function finishRace(){
   $("res-fin").textContent = (mode==="champ" && champ) ? ("ROUND "+(champ.round+1)+" FINISH") : "FINISH";
   $("res-pos").innerHTML = (pos===1 ? '<span class="win">'+pos+'</span>' : pos) + '<span class="u">位 / '+sorted.length+'台</span>';
   $("res-sub").textContent = course.name+"（"+course.jp+"） ― "+me.car.name+" ／ ベストラップ "+fmtTime(me.bestLap||0)+" ／ ピット "+me.pitCount+"回";
+  if(race.hist && race.hist.note) $("res-sub").textContent += " ― 【史実メモ】" + race.hist.note;
   $("res-prize").textContent = fmt(prize);
   $("res-exp").textContent = "+" + exp;
   $("res-pts-chip").classList.toggle("hidden", mode!=="champ");
@@ -1699,7 +2050,7 @@ function finishRace(){
   $("res-pts-head").classList.toggle("hidden", mode!=="champ");
   $("res-growth").innerHTML = "ドライバー成長： <b>"+(gained.join(" ／ ") || "—")+"</b><br>所持金： <b class='mono'>"+fmt(save.money)+" Cr</b>（PACE "+Math.round(before.pace)+"→"+Math.round(d.pace)+"）";
   $("res-body").innerHTML = sorted.map(function(e,i){
-    var t = e.finished ? (i===0 ? fmtTime(e.finishTime) : "+"+((e.finishTime-sorted[0].finishTime)).toFixed(1)+"s") : "走行中（距離順）";
+    var t = e.dnf ? "DNF（リタイア）" : (e.finished ? (i===0 ? fmtTime(e.finishTime) : "+"+((e.finishTime-sorted[0].finishTime)).toFixed(1)+"s") : "走行中（距離順）");
     var p = (mode==="champ") ? '<td class="mono">'+(PTS_TABLE[i]||0)+'</td>' : "";
     return '<tr class="'+(e.me?"me":"")+'"><td class="mono"><b>'+(i+1)+'</b></td><td>'+e.name+'<br><span style="font-size:11px;color:var(--muted)">'+e.car.name+' ／ PIT '+e.pitCount+'回</span></td><td class="mono">'+t+'</td>'+p+'</tr>';
   }).join("");
@@ -1729,6 +2080,8 @@ function tsukubaIdx(){ for(var i=0;i<COURSES.length;i++) if(COURSES[i].id==="tsu
 $("btn-start").addEventListener("click", function(){
   if(mode === "bm"){
     champ = null; startRace(tsukubaIdx(), true);
+  } else if(mode === "hist"){
+    champ = null; var h = HISTORIC[selHist]; startRace(courseIdxById(h.course), false, h);
   } else if(mode === "champ"){
     champ = { round:0, points:{} };
     startRace(0);
@@ -1742,13 +2095,14 @@ $("btn-next-round").addEventListener("click", function(){
   startRace(champ.round % COURSES.length);
 });
 $("btn-again").addEventListener("click", function(){
-  if(race && race.bm){ startRace(tsukubaIdx(), true); }
+  if(race && race.hist){ startRace(courseIdxById(race.hist.course), false, race.hist); }
+  else if(race && race.bm){ startRace(tsukubaIdx(), true); }
   else if(mode === "champ"){ champ = { round:0, points:{} }; startRace(0); }
   else startRace(race ? race.courseIdx : selCourse);
 });
-$("btn-garage").addEventListener("click", function(){ ttsStop(); champ = null; renderDriver(); renderCars(); show("setup"); });
+$("btn-garage").addEventListener("click", function(){ ttsStop(); champ = null; document.body.classList.remove("hist-watch"); renderDriver(); renderCars(); show("setup"); });
 
-renderDriver(); renderCourses(); renderCars();
+renderDriver(); renderCourses(); renderCars(); renderHist();
 </script>
 </body>
 </html>
