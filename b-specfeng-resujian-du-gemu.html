@@ -63,6 +63,8 @@
   @media(min-width:720px){.driver-card{grid-template-columns:220px 1fr;}}
   .driver-name{font-size:19px;font-weight:900;}
   .driver-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+  .name-edit{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted);margin-top:10px;}
+  .name-edit input{background:var(--bg2);border:1px solid var(--line);color:var(--text);padding:8px 10px;font-weight:900;letter-spacing:.06em;width:180px;min-height:40px;text-transform:uppercase;}
   .stat-row{display:grid;grid-template-columns:86px 1fr 34px;align-items:center;gap:10px;font-size:12px;margin:5px 0;}
   .stat-row .nm{font-weight:700;letter-spacing:.05em;}
   .bar{height:10px;background:var(--bg2);border:1px solid var(--line);position:relative;}
@@ -121,8 +123,31 @@
   .speed-row{display:flex;gap:6px;}
   .speed-btn{background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:900;padding:8px 14px;min-width:52px;}
   .speed-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
-  .race-grid{display:grid;grid-template-columns:1fr;gap:0;margin-top:0;}
-  @media(min-width:900px){.race-grid{grid-template-columns:330px 1fr;}}
+  /* race layout: course-first grid. Mobile stacks map -> side view -> controls ->
+     status -> tower so the race fits a phone screen; desktop puts the controls
+     in a column right beside the course (tower | course | controls). */
+  .race-layout{display:grid;grid-template-columns:1fr;gap:0;grid-template-areas:"map" "side" "ctrl" "status" "tower";}
+  .race-layout .tower{grid-area:tower;}
+  .race-layout .map-box{grid-area:map;}
+  .race-layout .sil-box{grid-area:side;}
+  .race-layout .player-panel{grid-area:status;}
+  .race-layout .ctrl{grid-area:ctrl;}
+  @media(min-width:900px){
+    .race-layout{grid-template-columns:318px minmax(0,1fr) 300px;grid-template-areas:"tower map ctrl" "tower side ctrl" "tower side status";align-items:start;}
+  }
+  /* compact page chrome while racing so the monitor fits the phone screen */
+  body.racing .ticker{display:none;}
+  body.racing .topbar{padding:6px 0 2px;}
+  body.racing .brand h1{font-size:16px;}
+  body.racing .brand .sub{display:none;}
+  @media(max-width:560px){
+    .sil-stage{height:98px;}
+    .sil-car{width:80px;} .sil-car svg{width:80px;height:27px;} .sil-car .lb{max-width:80px;}
+    .bspec .tower td{padding:4px 6px;} .bspec .tower table{font-size:12px;}
+    .bspec .log{height:76px;}
+    .bspec .player-panel{padding:9px 12px;}
+    .bspec .ctrl{padding:9px 12px;}
+  }
 
   /* ===== GT4 B-Spec race monitor ===== */
   .bspec{background:#07080a;color:#e8e9ec;border:1px solid #2a2c31;margin-top:12px;font-family:"DotGothic16","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;}
@@ -134,15 +159,15 @@
   .bspec .speed-btn{background:#17181c;border-color:#33363e;color:#eee;}
   .bspec .speed-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
   .bspec .tower{border:none;border-right:1px solid #232429;background:#0a0b0d;}
-  @media(max-width:899px){.bspec .tower{border-right:none;border-top:1px solid #232429;order:3;}}
-  .bspec-main{display:flex;flex-direction:column;min-width:0;}
+  @media(max-width:899px){.bspec .tower{border-right:none;border-top:1px solid #232429;}}
   .bspec .map-box{background:#0d1410;border:none;border-bottom:1px solid #232429;}
   .bspec .map-box .trackpath{stroke:#565b63;}
   .bspec .map-box .casing{stroke:rgba(255,255,255,.14);}
-  .bspec-deck{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid #232429;}
-  @media(min-width:900px){.bspec-deck{grid-template-columns:1fr 1.15fr;}}
   .bspec .player-panel{background:#101114;border:none;border-top:3px solid var(--red);margin-top:0;color:#e8e9ec;}
-  @media(min-width:900px){.bspec .player-panel{border-right:1px solid #232429;}}
+  @media(min-width:900px){
+    .bspec .ctrl{border-left:1px solid #232429;}
+    .bspec .player-panel{border-left:1px solid #232429;}
+  }
   .bspec .ctrl{background:#101114;border:none;margin-top:0;color:#e8e9ec;}
   .bspec .pace-btn{background:#1a1b1f;border-color:#33363e;color:#eee;}
   .bspec .pace-btn .w{color:#9a9da6;}
@@ -282,7 +307,11 @@
   <section id="view-setup">
     <div class="driver-card">
       <div>
-        <div class="driver-name">AIドライバー「レン」</div>
+        <div class="driver-name">AIドライバー「<span id="driver-name-disp">REN</span>」</div>
+        <label class="name-edit">DRIVER NAME（ローマ字で自由に変更可）
+          <input id="inp-name" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="REN" aria-label="ドライバーの名前（ローマ字）">
+        </label>
+        <div class="driver-meta">名前はこのブラウザに保存され、タイミングタワー・シルエット表示・実況にも反映される。</div>
         <div class="driver-meta" id="driver-meta">出走 0回 ／ 優勝 0回 ／ 表彰台 0回</div>
         <div class="driver-meta">レースを走るたびに経験値が入り、能力が少しずつ伸びる。</div>
         <div class="driver-meta" id="field-info">出走台数：6台（A〜F）</div>
@@ -313,7 +342,7 @@
     <div class="foot">
       遊び方：あなたは運転しない「監督」。レース中はペース指示（1〜5）、追い越し指示、ピット指示だけを出す。タイヤと燃料は周回ごとに減り、ピットの判断が勝敗を分ける。早送り ×1／×2／×3 対応。<br>
       レース画面の「🎙 実況」をONにすると、ブラウザの音声合成が実況と解説の2役でレースを喋る（スタート、順位変動、ピット、ファイナルラップ、チェッカーなど）。環境によっては音声が出ない場合がある。<br>
-      ※ 本作は非公式のファンメイド作品です。コースは実在サーキットと名作レースゲームの名コースをオマージュして再現したもので、各公式とは関係ありません。車名はオリジナル名称を使用しています。
+      ※ 本作は非公式のファンメイド作品です。コースは実在サーキットと名作レースゲームの名コースをオマージュして再現したもので、各公式とは関係ありません。車名はオリジナル名称を使用しています。ライバルドライバー名は実在のレーシングドライバーへのオマージュとして、イニシャル＋姓の表記にしています。
     </div>
   </section>
 
@@ -334,7 +363,7 @@
         </div>
       </div>
 
-      <div class="race-grid">
+      <div class="race-layout">
         <div class="tower">
           <h3><span>LIVE TIMING</span><span class="mono" id="tower-lap">LAP 1</span></h3>
           <table>
@@ -343,8 +372,7 @@
           </table>
         </div>
 
-        <div class="bspec-main">
-          <div class="map-box">
+        <div class="map-box">
             <svg id="map-svg" viewBox="0 0 400 260" role="img" aria-label="コースマップ">
               <path class="casing" id="map-casing" d=""/>
               <path class="trackpath" id="map-track" d=""/>
@@ -374,10 +402,6 @@
               <span class="sg">自車の周回位置 <b class="mono" id="sil-my-pos">—</b></span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="bspec-deck">
         <div class="player-panel">
           <div class="pp-head">
             <div class="pp-pos"><span id="pp-pos">6</span><small> / <span id="pp-total">6</span>台中</small></div>
@@ -586,12 +610,14 @@ function silSVG(carId, color){
   }
   return '<svg viewBox="0 0 120 40" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>';
 }
+/* Rivals are real-world racing drivers, initial + surname (fan homage):
+   T. Sato = Takuma Sato, K. Kobayashi = Kamui Kobayashi, etc. */
 var RIVALS = [
-  { name:"K. Sato", color:"#3d9bff" }, { name:"M. Weber", color:"#9b59d0" },
-  { name:"J. Costa", color:"#2fbf71" }, { name:"T. Novak", color:"#ff9f1a" },
-  { name:"R. Finn", color:"#e8e8e8" }, { name:"A. Diallo", color:"#ffd23e" },
-  { name:"S. Berg", color:"#4dd0e1" }, { name:"H. Park", color:"#ff6b9d" },
-  { name:"L. Moreau", color:"#a3e635" }
+  { name:"T. Sato", color:"#3d9bff" }, { name:"K. Kobayashi", color:"#9b59d0" },
+  { name:"Y. Tsunoda", color:"#2fbf71" }, { name:"K. Nakajima", color:"#ff9f1a" },
+  { name:"N. Yamamoto", color:"#e8e8e8" }, { name:"M. Verstappen", color:"#ffd23e" },
+  { name:"L. Hamilton", color:"#4dd0e1" }, { name:"F. Alonso", color:"#ff6b9d" },
+  { name:"C. Leclerc", color:"#a3e635" }
 ];
 var PTS_TABLE = [10,8,6,5,4,3,2,1,0,0];
 /* Field size grows with driver level, like the real B-Spec grid opening up:
@@ -606,12 +632,13 @@ function fieldSizeForLevel(level){
 var SAVE_KEY = "bspecDirectorSaveV1";
 var save = null;
 function defaultSave(){
-  return { money:20000, owned:["kei"], driver:{ pace:42, battle:38, mental:40, exp:0, level:1, races:0, wins:0, podiums:0 } };
+  return { money:20000, owned:["kei"], playerName:"REN", driver:{ pace:42, battle:38, mental:40, exp:0, level:1, races:0, wins:0, podiums:0 } };
 }
 function loadSave(){
   try{ var s = localStorage.getItem(SAVE_KEY); save = s ? JSON.parse(s) : defaultSave(); }
   catch(e){ save = defaultSave(); }
   if(!save.driver) save = defaultSave();
+  if(!save.playerName) save.playerName = "REN";
 }
 function storeSave(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(save)); }catch(e){} }
 loadSave();
@@ -626,6 +653,7 @@ var simSpeed = 1, paused = false, timer = null, lastTs = 0;
 function $(id){ return document.getElementById(id); }
 function fmt(n){ return Math.round(n).toLocaleString("ja-JP"); }
 function carById(id){ for(var i=0;i<CARS.length;i++) if(CARS[i].id===id) return CARS[i]; return CARS[0]; }
+function pName(){ return (save && save.playerName) ? save.playerName : "REN"; }
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function fmtTime(s){ if(!isFinite(s)) return "--:--.---"; var m=Math.floor(s/60), ss=s-m*60; return m+":"+(ss<10?"0":"")+ss.toFixed(3); }
 function fmtClock(s){ var m=Math.floor(s/60), ss=Math.floor(s-m*60); return m+":"+(ss<10?"0":"")+ss; }
@@ -659,6 +687,9 @@ function ttsProcess(){
     if(item.pri < 3 && performance.now() - item.born > 8000) continue;
     var text = item.fn ? item.fn() : item.text;
     if(!text) continue;
+    /* The commentary scripts are written with the placeholder name レン;
+       speak them with the player's chosen driver name instead. */
+    text = text.replace(/レン/g, pName());
     var st = ttsStyle(item.role);
     var u = new SpeechSynthesisUtterance(text);
     u.lang = "ja-JP";
@@ -813,6 +844,9 @@ $("ticker").textContent = ("TRIAL MOUNTAIN ◆ DEEP FOREST ◆ GRAND VALLEY ◆ 
 
 function renderDriver(){
   var d = save.driver;
+  $("driver-name-disp").textContent = pName();
+  var nameInp = $("inp-name");
+  if(nameInp && document.activeElement !== nameInp) nameInp.value = pName();
   $("ui-money").textContent = fmt(save.money);
   $("ui-lv").textContent = d.level;
   $("driver-meta").textContent = "出走 "+d.races+"回 ／ 優勝 "+d.wins+"回 ／ 表彰台 "+d.podiums+"回 ／ EXP "+fmt(d.exp);
@@ -869,6 +903,12 @@ function renderCars(){
 }
 $("mode-single").addEventListener("click", function(){ mode="single"; this.classList.add("on"); $("mode-champ").classList.remove("on"); });
 $("mode-champ").addEventListener("click", function(){ mode="champ"; this.classList.add("on"); $("mode-single").classList.remove("on"); });
+$("inp-name").addEventListener("change", function(){
+  var v = this.value.replace(/[^A-Za-z0-9 .'\-]/g, "").replace(/\s+/g, " ").trim().slice(0, 12);
+  if(!v) v = "REN";
+  save.playerName = v; storeSave();
+  this.value = v; renderDriver();
+});
 $("btn-reset").addEventListener("click", function(){
   save = defaultSave(); storeSave(); selCar="kei"; selCourse=0; renderDriver(); renderCourses(); renderCars();
 });
@@ -876,6 +916,7 @@ function show(view){
   $("view-setup").classList.toggle("hidden", view!=="setup");
   $("view-race").classList.toggle("hidden", view!=="race");
   $("view-result").classList.toggle("hidden", view!=="result");
+  document.body.classList.toggle("racing", view==="race");
   window.scrollTo(0,0);
 }
 
@@ -895,7 +936,7 @@ function buildGrid(course, playerCar){
   var pSkill = (drv.pace*0.5 + drv.battle*0.25 + drv.mental*0.25) / 100;
   var fieldSize = fieldSizeForLevel(drv.level);
   entries.push({
-    name:"REN（あなた）", car:playerCar, me:true, color:"#e10600",
+    name:pName() + "（あなた）", car:playerCar, me:true, color:"#e10600",
     baseLap: baseLapTime(playerCar, pSkill), skill:pSkill,
     dist:0, lap:1, lapStart:0, lastLap:null, bestLap:null,
     tire:100, fuel:100, pace:3, overtake:false, pitQueued:false, inPit:0, pitCount:0,
@@ -1022,7 +1063,7 @@ function startRace(courseIdx){
   race.entries.forEach(function(e){
     var d = document.createElement("div");
     d.className = "sil-car" + (e.me ? " me" : "");
-    var short = (e.letter ? e.letter + " · " : "") + (e.me ? "REN" : e.name.split(" ").pop().toUpperCase());
+    var short = (e.letter ? e.letter + " · " : "") + (e.me ? pName().toUpperCase() : e.name.split(" ").pop().toUpperCase());
     e._silLabel = short;
     d.innerHTML = '<span class="lb">' + short + '</span>' + silSVG(e.car.id, e.color);
     silBox.appendChild(d); e.silEl = d;
