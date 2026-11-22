@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>GT1 Complete Car List（収録車種リスト完全版）</title>
+    <style>
+      :root{
+        --bg:#f4f4f6; --panel:#ffffff; --ink:#17171c; --ink2:#55565e;
+        --line:#d9d9e0; --red:#d8000f; --red-ink:#b0000c;
+        --head-bg:#17171c; --head-ink:#f5f5f7;
+        --maker-bg:#2a0d10; --maker-ink:#ffd9dc;
+        --row-alt:#fafafa; --owned-bg:#fdeef0;
+        --chip:#ececf1;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#101014; --panel:#17171d; --ink:#ececf1; --ink2:#a7a8b3;
+          --line:#2c2c36; --red:#ff2a38; --red-ink:#ff5b66;
+          --head-bg:#000000; --head-ink:#f5f5f7;
+          --maker-bg:#3d0a10; --maker-ink:#ffc9cd;
+          --row-alt:#1b1b22; --owned-bg:#2b1216;
+          --chip:#23232c;
+        }
+      }
+      *{ box-sizing:border-box; }
+      html{ scroll-behavior:smooth; }
+      body{
+        margin:0; background:var(--bg); color:var(--ink);
+        font-family:"Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+        -webkit-text-size-adjust:100%;
+      }
+      .wrap{ max-width:1060px; margin:0 auto; padding:20px 14px 56px; }
+
+      header.top{ border-top:6px solid var(--red); padding-top:14px; }
+      h1{
+        margin:0; font-size:clamp(22px,4.6vw,34px); line-height:1.2; font-weight:800; letter-spacing:.01em;
+      }
+      h1 .jp{ display:block; font-size:.52em; font-weight:700; color:var(--ink2); margin-top:4px; }
+      .meta{
+        margin:10px 0 0; color:var(--ink2); font-size:13px; line-height:1.7;
+      }
+      .meta b{ color:var(--ink); }
+      .stats{
+        display:flex; flex-wrap:wrap; gap:8px; margin:14px 0 4px;
+      }
+      .stat{
+        background:var(--panel); border:1px solid var(--line); padding:8px 12px;
+        font-size:13px; border-radius:6px;
+      }
+      .stat b{ font-size:16px; color:var(--red-ink); }
+      .bar{
+        height:8px; background:var(--chip); border-radius:99px; overflow:hidden; margin:10px 0 2px;
+      }
+      .bar > div{ height:100%; width:0%; background:var(--red); transition:width .25s ease; }
+      @media (prefers-reduced-motion: reduce){ .bar > div{ transition:none; } html{ scroll-behavior:auto; } }
+
+      nav.makers{
+        display:flex; flex-wrap:wrap; gap:6px; margin:16px 0 6px;
+      }
+      nav.makers a{
+        display:inline-flex; align-items:center; min-height:36px; padding:6px 12px;
+        background:var(--panel); border:1px solid var(--line); border-radius:99px;
+        color:var(--ink); text-decoration:none; font-size:13px; font-weight:600;
+      }
+      nav.makers a span{ color:var(--ink2); font-weight:400; margin-left:5px; }
+      nav.makers a:active{ border-color:var(--red); }
+
+      .hint{ font-size:12px; color:var(--ink2); margin:8px 0 12px; line-height:1.7; }
+
+      table{
+        width:100%; border-collapse:collapse; background:var(--panel);
+        border:1px solid var(--line); font-size:13.5px;
+      }
+      thead th{
+        background:var(--head-bg); color:var(--head-ink); text-align:left;
+        padding:9px 8px; font-size:12px; letter-spacing:.04em; white-space:nowrap;
+        position:sticky; top:0; z-index:2;
+      }
+      tbody td{ padding:7px 8px; border-top:1px solid var(--line); vertical-align:top; }
+      tbody tr:nth-child(even) td{ background:var(--row-alt); }
+      tr.maker td{
+        background:var(--maker-bg); color:var(--maker-ink);
+        font-weight:800; font-size:14.5px; padding:10px 8px; letter-spacing:.02em;
+      }
+      tr.maker td .cnt{ font-weight:600; font-size:12px; opacity:.85; margin-left:8px; }
+      tr.maker td .mnote{ display:block; font-weight:400; font-size:11.5px; opacity:.85; margin-top:2px; }
+      td.no{ color:var(--ink2); text-align:right; white-space:nowrap; width:34px; }
+      td.car{ font-weight:600; }
+      td.car .note{ display:block; font-weight:400; font-size:11.5px; color:var(--ink2); margin-top:2px; line-height:1.5; }
+      td.year, td.drive, td.rm{ white-space:nowrap; color:var(--ink2); }
+      td.rm{ text-align:center; }
+      td.own{ text-align:center; width:40px; }
+      tr.owned td{ background:var(--owned-bg) !important; }
+      label.ownbox{
+        display:inline-flex; align-items:center; justify-content:center;
+        width:36px; height:36px; margin:-8px 0; cursor:pointer;
+      }
+      label.ownbox input{ width:19px; height:19px; accent-color:var(--red); cursor:pointer; }
+
+      footer{
+        margin-top:22px; font-size:12px; color:var(--ink2); line-height:1.8;
+      }
+      footer a{ color:var(--red-ink); }
+      .clearbtn{
+        min-height:36px; padding:6px 14px; margin-top:10px;
+        background:var(--panel); color:var(--ink); border:1px solid var(--line);
+        border-radius:6px; font-size:13px; cursor:pointer;
+      }
+      @media (max-width:560px){
+        table{ font-size:12.5px; }
+        thead th, tbody td{ padding:6px 5px; }
+        td.no{ width:26px; }
+        .wrap{ padding:14px 8px 48px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <h1>Gran Turismo 1 — Complete Car List
+          <span class="jp">GT1 収録車種リスト完全版（初代グランツーリスモ）</span>
+        </h1>
+        <p class="meta">
+          <b>Gran Turismo</b> (PlayStation, 1997 / ポリフォニー・デジタル) — every car in the game, in one long table.
+          Car names follow the <b>NTSC-J (Japanese) version</b>; region-only cars are marked in the notes.
+          Tick <b>Owned（所持）</b> for the cars you have — checks are saved in this browser (localStorage).
+        </p>
+        <div class="stats">
+          <div class="stat">Total（総収録数） <b id="statTotal">–</b></div>
+          <div class="stat">Makers（メーカー） <b id="statMakers">–</b></div>
+          <div class="stat">Owned（所持） <b id="statOwned">0</b></div>
+        </div>
+        <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+        <nav class="makers" id="makerNav" aria-label="Makers"></nav>
+        <p class="hint">
+          Columns: Car（車名） / Year（年式） / Drive（駆動方式） / RM = Racing Modification available（レーシングモディファイ可否）.<br />
+          Just scroll — no filters, no pages.（絞り込みなし、1枚の長い表をスクロールして見るだけのシンプル版です）
+        </p>
+      </header>
+
+      <table id="carTable">
+        <thead>
+          <tr>
+            <th scope="col">Own<br />（所持）</th>
+            <th scope="col">No.</th>
+            <th scope="col">Car（車名）</th>
+            <th scope="col">Year<br />（年式）</th>
+            <th scope="col">Drive<br />（駆動）</th>
+            <th scope="col">RM</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+
+      <footer>
+        <p>
+          Source（出典）: <a href="https://gran-turismo.fandom.com/wiki/Gran_Turismo_(PlayStation)/Car_List" target="_blank" rel="noopener">Gran Turismo Wiki — Gran Turismo (PlayStation) / Car List</a>.
+          Names are based on the NTSC-J version; Acura-badged cars and a few others appear only in overseas versions and are marked as such.
+          （車名は日本版基準。Acura 名義など海外版のみの車両は注記付きで併記しています。）
+        </p>
+        <p>Unofficial fan-made list. Not affiliated with Sony Interactive Entertainment or Polyphony Digital.（非公式ファンリストです）</p>
+        <button type="button" class="clearbtn" id="clearBtn">Clear saved checks（保存したチェックを消去）</button>
+      </footer>
+    </div>
+
+    <script>
+      // [maker, makerJP, car, year, drive, rm(1=yes), note, makerNote]
+      var CARS = [
+        // Acura — NTSC-U only
+        ["Acura","アキュラ","INTEGRA GS-R",1997,"FF",1,"NTSC-U only（北米版のみ）","NTSC-U (North America) only — sold as Honda in Japan（北米版のみ。日本版では Honda 名義）"],
+        ["Acura","アキュラ","INTEGRA Type-R",1997,"FF",1,"NTSC-U only（北米版のみ）",""],
+        ["Acura","アキュラ","NSX",1997,"MR",1,"NTSC-U only（北米版のみ）",""],
+        ["Acura","アキュラ","NSX '91",1991,"MR",1,"NTSC-U only（北米版のみ）",""],
+        ["Acura","アキュラ","NSX '93",1993,"MR",1,"NTSC-U only（北米版のみ）",""],
+        ["Acura","アキュラ","NSX Type S",1997,"MR",1,"NTSC-U only（北米版のみ）",""],
+        ["Acura","アキュラ","NSX Type S Zero",1997,"MR",1,"NTSC-U only（北米版のみ）",""],
+        ["Acura","アキュラ","NSX-R LM GT2",1995,"MR",0,"Race car / NTSC-U only（レースカー・北米版のみ）",""],
+        // Aston Martin
+        ["Aston Martin","アストンマーティン","DB7 Coupe",null,"FR",1,"",""],
+        ["Aston Martin","アストンマーティン","DB7 Volante",null,"FR",1,"Open top（オープン）",""],
+        // Chevrolet
+        ["Chevrolet","シボレー","Camaro Z28",1997,"FR",1,"",""],
+        ["Chevrolet","シボレー","Camaro Z28 30th Anniversary",1997,"FR",1,"",""],
+        ["Chevrolet","シボレー","Corvette '67 427 Coupe",1967,"FR",0,"Arcade Mode only — not in NTSC-J（アーケード専用・日本版なし）",""],
+        ["Chevrolet","シボレー","Corvette Coupe '96",1996,"FR",1,"Listed as '96 Corvette COUPE in-game（ゲーム内表記）",""],
+        ["Chevrolet","シボレー","Corvette Grand Sport '96",1996,"FR",1,"Listed as '96 Corvette GRAND SPORT in-game（ゲーム内表記）",""],
+        // Dodge
+        ["Dodge","ダッジ","Concept Car",null,"FR",0,"Dodge Copperhead concept（コンセプトカー）","Badged as Chrysler in NTSC-J / PAL versions（日本版・欧州版では Chrysler 名義）"],
+        ["Dodge","ダッジ","Concept Car LM Edition",null,"FR",0,"Race car（レースカー）",""],
+        ["Dodge","ダッジ","Viper RT/10",null,"FR",1,"",""],
+        ["Dodge","ダッジ","Viper GTS '96",1996,"FR",1,"",""],
+        ["Dodge","ダッジ","Viper GTS-R '96",1996,"FR",0,"Race car（レースカー）",""],
+        // Honda
+        ["Honda","ホンダ","Accord SiR '96",1996,"FF",1,"",""],
+        ["Honda","ホンダ","Accord Wagon SiR '96",1996,"FF",1,"",""],
+        ["Honda","ホンダ","Civic SiR-II (EG) '93",1993,"FF",1,"",""],
+        ["Honda","ホンダ","Civic SiR-II (EK) '95",1995,"FF",1,"",""],
+        ["Honda","ホンダ","Civic Type R (EK) '97",1997,"FF",1,"",""],
+        ["Honda","ホンダ","Civic Ferio SiR (EG) '93",1993,"FF",1,"Sedan（セダン）",""],
+        ["Honda","ホンダ","Civic Ferio Si-II (EK) '96",1996,"FF",1,"Sedan（セダン）",""],
+        ["Honda","ホンダ","CR-X SiR (EF8) '90",1990,"FF",1,"",""],
+        ["Honda","ホンダ","CR-X del Sol SiR '92",1992,"FF",1,"",""],
+        ["Honda","ホンダ","CR-X del Sol VXi '92",1992,"FF",1,"",""],
+        ["Honda","ホンダ","CR-X del Sol SiR '95",1995,"FF",1,"NTSC-J only（日本版のみ）",""],
+        ["Honda","ホンダ","CR-X del Sol VGi '95",1995,"FF",1,"NTSC-J only（日本版のみ）",""],
+        ["Honda","ホンダ","CR-X del Sol LM Edition",null,"FF",0,"Race car（レースカー）",""],
+        ["Honda","ホンダ","Integra SiR-G (DC2) '95",1995,"FF",1,"Acura badge in NTSC-U（北米版は Acura 名義）",""],
+        ["Honda","ホンダ","Integra Type R (DC2) '95",1995,"FF",1,"Acura badge in NTSC-U（北米版は Acura 名義）",""],
+        ["Honda","ホンダ","NSX '90",1990,"MR",1,"Acura badge in NTSC-U（北米版は Acura 名義）",""],
+        ["Honda","ホンダ","NSX Type R '92",1992,"MR",1,"Acura badge in NTSC-U（北米版は Acura 名義）",""],
+        ["Honda","ホンダ","NSX '97",1997,"MR",1,"Acura badge in NTSC-U（北米版は Acura 名義）",""],
+        ["Honda","ホンダ","NSX Type S '97",1997,"MR",1,"Acura badge in NTSC-U（北米版は Acura 名義）",""],
+        ["Honda","ホンダ","NSX Type S Zero '97",1997,"MR",1,"Acura badge in NTSC-U（北米版は Acura 名義）",""],
+        ["Honda","ホンダ","NSX-R GT1 Turbo '95",1995,"MR",0,"Race car / NTSC-J only（レースカー・日本版のみ）",""],
+        ["Honda","ホンダ","NSX-R LM GT2 '95",1995,"MR",0,"Race car / PAL version (Acura in NTSC-U)（レースカー・欧州版）",""],
+        ["Honda","ホンダ","Prelude Si '91",1991,"FF",1,"",""],
+        ["Honda","ホンダ","Prelude Si VTEC '91",1991,"FF",1,"",""],
+        ["Honda","ホンダ","Prelude SiR '96",1996,"FF",1,"",""],
+        ["Honda","ホンダ","Prelude Type S '96",1996,"FF",1,"",""],
+        // Mazda
+        ["Mazda","マツダ","Demio A-Spec '97",1997,"FF",1,"",""],
+        ["Mazda","マツダ","Demio GL '97",1997,"FF",1,"",""],
+        ["Mazda","マツダ","Demio GL-X '97",1997,"FF",1,"",""],
+        ["Mazda","マツダ","Demio LX G Package '97",1997,"FF",1,"",""],
+        ["Mazda","マツダ","Eunos Cosmo 13B Type S",1994,"FR",1,"Listed as Eunos Cosmo 13B Type S CCS in-game（ゲーム内表記）",""],
+        ["Mazda","マツダ","Eunos Cosmo 20B Type E",1994,"FR",1,"Listed as Eunos Cosmo 20B Type E CCS in-game（ゲーム内表記）",""],
+        ["Mazda","マツダ","Lantis Coupe 2000 Type R '93",1993,"FF",1,"",""],
+        ["Mazda","マツダ","Eunos Roadster '89",1989,"FR",1,"MX-5 Miata (overseas name)（海外名 MX-5）",""],
+        ["Mazda","マツダ","Eunos Roadster V-Special '90",1990,"FR",1,"",""],
+        ["Mazda","マツダ","Eunos Roadster S-Special '92",1992,"FR",1,"",""],
+        ["Mazda","マツダ","Eunos Roadster '93",1993,"FR",1,"",""],
+        ["Mazda","マツダ","Eunos Roadster S-Special '93",1993,"FR",1,"",""],
+        ["Mazda","マツダ","Eunos Roadster V-Special '93",1993,"FR",1,"",""],
+        ["Mazda","マツダ","Roadster RS '98",1998,"FR",0,"Arcade Mode only — not in NTSC-J（アーケード専用・日本版なし）",""],
+        ["Mazda","マツダ","Savanna RX-7 GT-X (FC) '90",1990,"FR",1,"",""],
+        ["Mazda","マツダ","Savanna RX-7 Infini III (FC) '90",1990,"FR",1,"",""],
+        ["Mazda","マツダ","Efini RX-7 Type R (FD) '91",1991,"FR",1,"",""],
+        ["Mazda","マツダ","Efini RX-7 A-Spec (FD)",1996,"FR",1,"",""],
+        ["Mazda","マツダ","Efini RX-7 Type RB (FD)",1996,"FR",1,"",""],
+        ["Mazda","マツダ","Efini RX-7 Type RZ (FD)",1996,"FR",1,"",""],
+        ["Mazda","マツダ","Efini RX-7 Touring X (FD)",1996,"FR",1,"",""],
+        ["Mazda","マツダ","RX-7 LM Edition",null,"FR",0,"Race car（レースカー）",""],
+        ["Mazda","マツダ","RX-7 A-Spec LM Edition",null,"FR",0,"Race car（レースカー）",""],
+        // Mitsubishi
+        ["Mitsubishi","三菱","Eclipse GT '95",1995,"FF",1,"",""],
+        ["Mitsubishi","三菱","FTO GPX '94",1994,"FF",1,"",""],
+        ["Mitsubishi","三菱","FTO GR '94",1994,"FF",1,"",""],
+        ["Mitsubishi","三菱","FTO GP Version R '97",1997,"FF",1,"",""],
+        ["Mitsubishi","三菱","FTO GR '97",1997,"FF",1,"",""],
+        ["Mitsubishi","三菱","FTO GPX '97",1997,"FF",1,"",""],
+        ["Mitsubishi","三菱","FTO LM Edition",null,"FF",0,"Race car（レースカー）",""],
+        ["Mitsubishi","三菱","Galant VR-4 '96",1996,"4WD",1,"",""],
+        ["Mitsubishi","三菱","Galant VR-G Touring '96",1996,"FF",1,"",""],
+        ["Mitsubishi","三菱","GTO '92",1992,"4WD",1,"3000GT (overseas name)（海外名 3000GT）",""],
+        ["Mitsubishi","三菱","GTO Twin Turbo '92",1992,"4WD",1,"",""],
+        ["Mitsubishi","三菱","GTO MR '95",1995,"4WD",1,"",""],
+        ["Mitsubishi","三菱","GTO SR '95",1995,"4WD",1,"",""],
+        ["Mitsubishi","三菱","GTO Twin Turbo '95",1995,"4WD",1,"",""],
+        ["Mitsubishi","三菱","GTO SR '96",1996,"4WD",1,"",""],
+        ["Mitsubishi","三菱","GTO Twin Turbo '96",1996,"4WD",1,"",""],
+        ["Mitsubishi","三菱","GTO LM Edition",null,"4WD",0,"Race car（レースカー）",""],
+        ["Mitsubishi","三菱","Lancer Evolution III GSR",1995,"4WD",1,"",""],
+        ["Mitsubishi","三菱","Lancer Evolution IV GSR",1996,"4WD",1,"",""],
+        ["Mitsubishi","三菱","Mirage Cyborg R '92",1992,"FF",1,"",""],
+        ["Mitsubishi","三菱","Mirage Asti RX",1996,"FF",1,"",""],
+        // Nismo
+        ["Nismo","ニスモ","400R",1996,"4WD",1,"Based on Skyline GT-R (R33)（R33 GT-R ベース）","Listed under Nissan in-game（ゲーム内では Nissan 扱い）"],
+        ["Nismo","ニスモ","GT-R LM Road Going Version",1995,"FR",1,"Road version of the LM race car（LM のロードバージョン）",""],
+        ["Nismo","ニスモ","GT-R LM",1995,"FR",0,"Race car（レースカー）",""],
+        // Nissan
+        ["Nissan","日産","Primera 2.0Te '90",1990,"FF",1,"",""],
+        ["Nissan","日産","Primera 2.0Te '95",1995,"FF",1,"",""],
+        ["Nissan","日産","Pulsar GTi-R '91",1991,"4WD",1,"",""],
+        ["Nissan","日産","Silvia Q's (S13) '88",1988,"FR",1,"1800cc（1.8L）",""],
+        ["Nissan","日産","Silvia K's (S13) '88",1988,"FR",1,"1800cc（1.8L）",""],
+        ["Nissan","日産","Silvia Q's (S13) '91",1991,"FR",1,"2000cc（2.0L）",""],
+        ["Nissan","日産","Silvia K's (S13) '91",1991,"FR",1,"2000cc（2.0L）",""],
+        ["Nissan","日産","180SX Type X '94",1994,"FR",1,"",""],
+        ["Nissan","日産","Sileighty",null,"FR",1,"Silvia front + 180SX body（シルビア顔の180SX）",""],
+        ["Nissan","日産","180SX Type S",1996,"FR",1,"",""],
+        ["Nissan","日産","180SX Type X",1996,"FR",1,"",""],
+        ["Nissan","日産","Silvia Q's (S14) '95",1995,"FR",1,"",""],
+        ["Nissan","日産","Silvia K's (S14) '95",1995,"FR",1,"",""],
+        ["Nissan","日産","Silvia Q's Aero (S14)",1996,"FR",1,"",""],
+        ["Nissan","日産","Silvia K's Aero (S14)",1996,"FR",1,"",""],
+        ["Nissan","日産","Silvia LM Edition (S14)",null,"FR",0,"Race car（レースカー）",""],
+        ["Nissan","日産","Skyline GT-R (R32) '89",1989,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GT-R Nismo (R32)",1990,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GTS25 Type S (R32)",1991,"FR",1,"",""],
+        ["Nissan","日産","Skyline GTS-4 (R32)",1991,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GTS-t Type M (R32)",1991,"FR",1,"",""],
+        ["Nissan","日産","Skyline GT-R (R32) '91",1991,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GT-R V-Spec (R32)",1993,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GT-R V-Spec II (R32)",1994,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GTS25t Type M (R33)",1996,"FR",1,"",""],
+        ["Nissan","日産","Skyline GT-R (R33) '95",1995,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GT-R V-Spec (R33) '95",1995,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GT-R (R33) '97",1997,"4WD",1,"",""],
+        ["Nissan","日産","Skyline GT-R V-Spec (R33) '97",1997,"4WD",1,"",""],
+        ["Nissan","日産","Fairlady Z Twin Turbo 2seater (Z32)",1994,"FR",1,"300ZX (overseas name)（海外名 300ZX）",""],
+        ["Nissan","日産","Fairlady Z Twin Turbo 2by2 (Z32)",1994,"FR",1,"",""],
+        ["Nissan","日産","Fairlady Z Version S 2seater (Z32)",1994,"FR",1,"",""],
+        ["Nissan","日産","Fairlady Z Version S 2by2 (Z32)",1994,"FR",1,"",""],
+        // Subaru
+        ["Subaru","スバル","Alcyone SVX S4",null,"4WD",1,"",""],
+        ["Subaru","スバル","Alcyone SVX Version L",null,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Sedan WRX '94",1994,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Sport Wagon WRX '94",1994,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Sedan WRX STi Ver.II '95",1995,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Wagon WRX STi Ver.II '96",1996,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Sedan WRX '96",1996,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Sedan WRX STi Ver.III '96",1996,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Sport Wagon WRX '96",1996,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza Wagon WRX STi Ver.III '96",1996,"4WD",1,"",""],
+        ["Subaru","スバル","Impreza WRX STi Type R",1996,"4WD",1,"Coupe（クーペ）",""],
+        ["Subaru","スバル","Impreza Rally Edition",null,"4WD",0,"Race car（レースカー）",""],
+        ["Subaru","スバル","Legacy Touring Sport RS '93",1993,"4WD",1,"Sedan（セダン）",""],
+        ["Subaru","スバル","Legacy Touring Wagon GT '93",1993,"4WD",1,"",""],
+        ["Subaru","スバル","Legacy Touring Sedan RS",1996,"4WD",1,"",""],
+        ["Subaru","スバル","Legacy Touring Wagon GT-B",1996,"4WD",1,"",""],
+        // Toyota
+        ["Toyota","トヨタ","Celica GT-FOUR (ST205)",1995,"4WD",1,"",""],
+        ["Toyota","トヨタ","Celica SS-II (ST202)",1995,"FF",1,"",""],
+        ["Toyota","トヨタ","Chaser Tourer S",1996,"FR",1,"",""],
+        ["Toyota","トヨタ","Chaser Tourer V",1996,"FR",1,"",""],
+        ["Toyota","トヨタ","Chaser LM Edition",null,"FR",0,"Race car（レースカー）",""],
+        ["Toyota","トヨタ","Corolla Levin GT-APEX (AE86)",1985,"FR",1,"",""],
+        ["Toyota","トヨタ","Corolla Levin BZ-G",1996,"FF",1,"",""],
+        ["Toyota","トヨタ","Corona EXiV 200GT",1996,"FF",1,"",""],
+        ["Toyota","トヨタ","Mark II Tourer S '92",1992,"FR",1,"",""],
+        ["Toyota","トヨタ","Mark II Tourer V '92",1992,"FR",1,"",""],
+        ["Toyota","トヨタ","MR2 G-Limited",1996,"MR",1,"",""],
+        ["Toyota","トヨタ","MR2 GT-S",1996,"MR",1,"",""],
+        ["Toyota","トヨタ","Soarer 2.5GT-T '95",1995,"FR",1,"",""],
+        ["Toyota","トヨタ","Soarer 2.5GT-T VVT-i",1996,"FR",1,"",""],
+        ["Toyota","トヨタ","Sprinter Trueno GT-APEX (AE86)",1985,"FR",1,"",""],
+        ["Toyota","トヨタ","Sprinter Trueno BZ-G",1996,"FF",1,"",""],
+        ["Toyota","トヨタ","Starlet Glanza V",1996,"FF",1,"",""],
+        ["Toyota","トヨタ","Supra GT Turbo Limited (MA70)",null,"FR",1,"",""],
+        ["Toyota","トヨタ","Supra Twin Turbo R (JZA70)",1990,"FR",1,"",""],
+        ["Toyota","トヨタ","Supra SZ-R '95",1995,"FR",1,"",""],
+        ["Toyota","トヨタ","Supra RZ '95",1995,"FR",1,"",""],
+        ["Toyota","トヨタ","Supra SZ-R",1996,"FR",1,"",""],
+        ["Toyota","トヨタ","Supra RZ",1996,"FR",1,"",""],
+        ["Toyota","トヨタ","Castrol Tom's Supra GT",1996,"FR",0,"Race car — JGTC（レースカー・全日本GT選手権）",""],
+        ["Toyota","トヨタ","TRD 3000GT",null,"FR",1,"TRD-tuned Supra — listed under Toyota in-game（TRD チューンのスープラ。ゲーム内では Toyota 扱い）",""],
+        // TVR
+        ["TVR","TVR","Cerbera 4.2",null,"FR",1,"",""],
+        ["TVR","TVR","Cerbera LM Edition",null,"FR",0,"Race car（レースカー）",""],
+        ["TVR","TVR","Griffith 500 '94",1994,"FR",1,"",""],
+        ["TVR","TVR","Griffith Blackpool B340",null,"FR",1,"Known as Griffith 4.0 in NTSC-U / PAL（海外版では Griffith 4.0）",""]
+      ];
+
+      var LS_KEY = "gt1CarListOwnedV1";
+      var owned = {};
+      try {
+        var raw = localStorage.getItem(LS_KEY);
+        if (raw) owned = JSON.parse(raw) || {};
+      } catch (e) { owned = {}; }
+
+      function carId(i) { return "c" + i; }
+      function save() {
+        try { localStorage.setItem(LS_KEY, JSON.stringify(owned)); } catch (e) {}
+      }
+
+      var tbody = document.getElementById("tbody");
+      var nav = document.getElementById("makerNav");
+      var makers = [];
+      var counts = {};
+      CARS.forEach(function (c) {
+        if (!counts[c[0]]) { counts[c[0]] = 0; makers.push(c); }
+        counts[c[0]]++;
+      });
+
+      makers.forEach(function (m) {
+        var a = document.createElement("a");
+        a.href = "#maker-" + m[0].replace(/\s+/g, "-");
+        a.textContent = m[0];
+        var s = document.createElement("span");
+        s.textContent = "(" + m[1] + " · " + counts[m[0]] + ")";
+        a.appendChild(s);
+        nav.appendChild(a);
+      });
+      document.getElementById("statTotal").textContent = CARS.length;
+      document.getElementById("statMakers").textContent = makers.length;
+
+      var frag = document.createDocumentFragment();
+      var lastMaker = null;
+      CARS.forEach(function (c, i) {
+        if (c[0] !== lastMaker) {
+          lastMaker = c[0];
+          var mtr = document.createElement("tr");
+          mtr.className = "maker";
+          mtr.id = "maker-" + c[0].replace(/\s+/g, "-");
+          var mtd = document.createElement("td");
+          mtd.colSpan = 6;
+          mtd.textContent = c[0] + " (" + c[1] + ")";
+          var cnt = document.createElement("span");
+          cnt.className = "cnt";
+          cnt.textContent = counts[c[0]] + " cars";
+          mtd.appendChild(cnt);
+          if (c[7]) {
+            var mn = document.createElement("span");
+            mn.className = "mnote";
+            mn.textContent = c[7];
+            mtd.appendChild(mn);
+          }
+          mtr.appendChild(mtd);
+          frag.appendChild(mtr);
+        }
+        var tr = document.createElement("tr");
+        if (owned[carId(i)]) tr.className = "owned";
+
+        var tdOwn = document.createElement("td");
+        tdOwn.className = "own";
+        var label = document.createElement("label");
+        label.className = "ownbox";
+        var cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = !!owned[carId(i)];
+        cb.setAttribute("aria-label", "Owned: " + c[0] + " " + c[2]);
+        cb.addEventListener("change", function () {
+          if (cb.checked) { owned[carId(i)] = 1; tr.className = "owned"; }
+          else { delete owned[carId(i)]; tr.className = ""; }
+          save(); updateStats();
+        });
+        label.appendChild(cb);
+        tdOwn.appendChild(label);
+        tr.appendChild(tdOwn);
+
+        var tdNo = document.createElement("td");
+        tdNo.className = "no";
+        tdNo.textContent = i + 1;
+        tr.appendChild(tdNo);
+
+        var tdCar = document.createElement("td");
+        tdCar.className = "car";
+        tdCar.textContent = c[2];
+        if (c[6]) {
+          var note = document.createElement("span");
+          note.className = "note";
+          note.textContent = c[6];
+          tdCar.appendChild(note);
+        }
+        tr.appendChild(tdCar);
+
+        var tdYear = document.createElement("td");
+        tdYear.className = "year";
+        tdYear.textContent = c[3] ? "'" + String(c[3]).slice(2) : "—";
+        tr.appendChild(tdYear);
+
+        var tdDrive = document.createElement("td");
+        tdDrive.className = "drive";
+        tdDrive.textContent = c[4];
+        tr.appendChild(tdDrive);
+
+        var tdRm = document.createElement("td");
+        tdRm.className = "rm";
+        tdRm.textContent = c[5] ? "Yes" : "—";
+        tr.appendChild(tdRm);
+
+        frag.appendChild(tr);
+      });
+      tbody.appendChild(frag);
+
+      function updateStats() {
+        var n = Object.keys(owned).length;
+        document.getElementById("statOwned").textContent = n;
+        document.getElementById("barFill").style.width =
+          (CARS.length ? (n / CARS.length) * 100 : 0) + "%";
+      }
+      updateStats();
+
+      document.getElementById("clearBtn").addEventListener("click", function () {
+        owned = {};
+        save();
+        var boxes = tbody.querySelectorAll("input[type=checkbox]");
+        boxes.forEach(function (b) { b.checked = false; });
+        var rows = tbody.querySelectorAll("tr.owned");
+        rows.forEach(function (r) { r.className = ""; });
+        updateStats();
+      });
+    </script>
+  </body>
+</html>
