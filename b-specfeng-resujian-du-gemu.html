@@ -118,8 +118,63 @@
   .speed-row{display:flex;gap:6px;}
   .speed-btn{background:var(--panel);border:1px solid var(--line);color:var(--text);font-weight:900;padding:8px 14px;min-width:52px;}
   .speed-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
-  .race-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:10px;}
-  @media(min-width:900px){.race-grid{grid-template-columns:1.25fr 1fr;}}
+  .race-grid{display:grid;grid-template-columns:1fr;gap:0;margin-top:0;}
+  @media(min-width:900px){.race-grid{grid-template-columns:330px 1fr;}}
+
+  /* ===== GT4 B-Spec race monitor ===== */
+  .bspec{background:#07080a;color:#e8e9ec;border:1px solid #2a2c31;margin-top:12px;}
+  .bspec-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:#101114;border-bottom:3px solid var(--red);padding:9px 12px;}
+  .bspec-top .bt-l{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0;}
+  .bspec-badge{background:var(--red);color:#fff;font-size:10px;font-weight:900;letter-spacing:.18em;padding:4px 8px;white-space:nowrap;}
+  .bspec .race-title{color:#fff;}
+  .bspec .race-title small{color:#9a9da6;}
+  .bspec .speed-btn{background:#17181c;border-color:#33363e;color:#eee;}
+  .bspec .speed-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
+  .bspec .tower{border:none;border-right:1px solid #232429;background:#0a0b0d;}
+  @media(max-width:899px){.bspec .tower{border-right:none;border-top:1px solid #232429;order:3;}}
+  .bspec-main{display:flex;flex-direction:column;min-width:0;}
+  .bspec .map-box{background:#0d1410;border:none;border-bottom:1px solid #232429;}
+  .bspec .map-box .trackpath{stroke:#565b63;}
+  .bspec .map-box .casing{stroke:rgba(255,255,255,.14);}
+  .bspec-deck{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid #232429;}
+  @media(min-width:900px){.bspec-deck{grid-template-columns:1fr 1.15fr;}}
+  .bspec .player-panel{background:#101114;border:none;border-top:3px solid var(--red);margin-top:0;color:#e8e9ec;}
+  @media(min-width:900px){.bspec .player-panel{border-right:1px solid #232429;}}
+  .bspec .ctrl{background:#101114;border:none;margin-top:0;color:#e8e9ec;}
+  .bspec .pace-btn{background:#1a1b1f;border-color:#33363e;color:#eee;}
+  .bspec .pace-btn .w{color:#9a9da6;}
+  .bspec .pace-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
+  .bspec .pace-btn.on .w{color:#ffd9d6;}
+  .bspec .cmd-btn{background:#1a1b1f;border-color:#33363e;color:#eee;}
+  .bspec .cmd-btn small{color:#9a9da6;}
+  .bspec .log{border:none;border-top:1px solid #232429;margin-top:0;}
+  .bspec .bar{background:#26282e;border-color:#3a3d45;}
+  /* tire diagram (GT4 style 4-wheel wear) */
+  .status-flex{display:flex;gap:16px;align-items:flex-start;margin-top:10px;}
+  .tire-diagram{display:grid;grid-template-columns:26px 26px;gap:8px 14px;padding:10px;background:#0a0b0d;border:1px solid #2c2e34;flex:none;}
+  .twheel{width:26px;height:34px;border:2px solid #45484f;background:var(--green);}
+  .twheel.warn{background:var(--amber);} .twheel.crit{background:var(--red);}
+  .tire-cap{grid-column:1/-1;font-size:9px;letter-spacing:.14em;color:#9a9da6;text-align:center;font-weight:800;}
+  .status-flex .gauges{flex:1;margin-top:0;grid-template-columns:1fr;}
+  /* ===== Side silhouette view ===== */
+  .sil-box{background:#0a0b0d;border-bottom:1px solid #232429;padding:10px 12px 8px;}
+  .sil-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:10px;font-weight:900;letter-spacing:.16em;color:#c9ccd4;}
+  .sil-head .mono{color:var(--gold);letter-spacing:.02em;}
+  .sil-stage{position:relative;height:96px;margin-top:6px;background:linear-gradient(#101623 0 58%,#191a1e 58% 100%);border:1px solid #232429;overflow:hidden;}
+  .sil-road{position:absolute;left:0;right:0;bottom:20px;height:5px;background:#3c3f46;}
+  .sil-road::after{content:"";position:absolute;left:0;right:0;top:2px;border-top:2px dashed #8f939c;opacity:.55;}
+  .sil-car{position:absolute;bottom:24px;width:76px;transform:translateX(-50%);text-align:center;z-index:2;}
+  .sil-car svg{width:76px;height:23px;display:block;margin:0 auto;}
+  .sil-car .lb{font-size:8.5px;font-weight:900;letter-spacing:.03em;color:#fff;background:rgba(0,0,0,.65);padding:1px 4px;white-space:nowrap;display:inline-block;max-width:76px;overflow:hidden;}
+  .sil-car.me{z-index:4;}
+  .sil-car.me .lb{background:var(--red);}
+  .sil-ruler{position:absolute;left:0;right:0;bottom:4px;height:12px;font-size:8.5px;color:#7d8089;}
+  .sil-ruler span{position:absolute;transform:translateX(-50%);white-space:nowrap;}
+  .sil-ruler i{position:absolute;top:-4px;width:1px;height:5px;background:#55585f;display:block;}
+  .sil-gaps{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:11.5px;color:#c9ccd4;}
+  .sil-gaps .sg{background:#141519;border:1px solid #2c2e34;padding:5px 9px;}
+  .sil-gaps .sg b{color:#fff;}
+  .sil-gaps .sg .mono{color:var(--gold);}
   .map-box{background:var(--grass);border:1px solid var(--line);position:relative;}
   .map-box svg{width:100%;height:auto;display:block;}
   .map-box .trackpath{fill:none;stroke:var(--track);stroke-width:11;stroke-linejoin:round;stroke-linecap:round;}
@@ -249,36 +304,72 @@
 
   <!-- ============ RACE ============ -->
   <section id="view-race" class="hidden">
-    <div class="race-head">
-      <div class="race-title" id="race-title">—</div>
-      <div class="speed-row" role="group" aria-label="早送り">
-        <button class="speed-btn on" data-speed="1" type="button">×1</button>
-        <button class="speed-btn" data-speed="2" type="button">×2</button>
-        <button class="speed-btn" data-speed="4" type="button">×4</button>
-        <button class="speed-btn" id="btn-pause" type="button">II</button>
+    <div class="bspec">
+      <div class="bspec-top">
+        <div class="bt-l">
+          <span class="bspec-badge">B-SPEC&nbsp;MONITOR</span>
+          <div class="race-title" id="race-title">—</div>
+        </div>
+        <div class="speed-row" role="group" aria-label="早送り">
+          <button class="speed-btn on" data-speed="1" type="button">×1</button>
+          <button class="speed-btn" data-speed="2" type="button">×2</button>
+          <button class="speed-btn" data-speed="4" type="button">×4</button>
+          <button class="speed-btn" id="btn-pause" type="button">II</button>
+        </div>
       </div>
-    </div>
 
-    <div class="race-grid">
-      <div>
-        <div class="map-box">
-          <svg id="map-svg" viewBox="0 0 400 260" role="img" aria-label="コースマップ">
-            <path class="casing" id="map-casing" d=""/>
-            <path class="trackpath" id="map-track" d=""/>
-            <line class="startline" id="map-start" x1="0" y1="0" x2="0" y2="0"/>
-            <g id="map-dots"></g>
-          </svg>
-          <div class="map-tag">LAP <span class="lap mono" id="map-lap">1/1</span>　<span class="mono" id="map-clock">0:00</span></div>
+      <div class="race-grid">
+        <div class="tower">
+          <h3><span>LIVE TIMING</span><span class="mono" id="tower-lap">LAP 1</span></h3>
+          <table>
+            <thead><tr><th>POS</th><th>DRIVER / CAR</th><th class="gap">GAP</th><th class="lt">LAST LAP</th></tr></thead>
+            <tbody id="tower-body"></tbody>
+          </table>
         </div>
 
+        <div class="bspec-main">
+          <div class="map-box">
+            <svg id="map-svg" viewBox="0 0 400 260" role="img" aria-label="コースマップ">
+              <path class="casing" id="map-casing" d=""/>
+              <path class="trackpath" id="map-track" d=""/>
+              <line class="startline" id="map-start" x1="0" y1="0" x2="0" y2="0"/>
+              <g id="map-dots"></g>
+            </svg>
+            <div class="map-tag">LAP <span class="lap mono" id="map-lap">1/1</span>　<span class="mono" id="map-clock">0:00</span></div>
+          </div>
+
+          <div class="sil-box">
+            <div class="sil-head"><span>SIDE VIEW（真横シルエット表示）</span><span>1 LAP = <span class="mono" id="sil-lap-dist">—</span></span></div>
+            <div class="sil-stage" id="sil-stage" role="img" aria-label="真横から見た車の位置と車間距離">
+              <div class="sil-road"></div>
+              <div id="sil-cars"></div>
+              <div class="sil-ruler" id="sil-ruler"></div>
+            </div>
+            <div class="sil-gaps">
+              <span class="sg">前車まで <b class="mono" id="sil-gap-ahead">—</b></span>
+              <span class="sg">後車まで <b class="mono" id="sil-gap-behind">—</b></span>
+              <span class="sg">自車の周回位置 <b class="mono" id="sil-my-pos">—</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bspec-deck">
         <div class="player-panel">
           <div class="pp-head">
             <div class="pp-pos"><span id="pp-pos">8</span><small> / 8台中</small></div>
-            <div class="mono" style="font-size:13px;color:var(--muted);">GAP 前車 <b id="pp-gap-up" style="color:var(--text)">—</b> ／ 後車 <b id="pp-gap-dn" style="color:var(--text)">—</b></div>
+            <div class="mono" style="font-size:13px;color:var(--muted);">GAP 前車 <b id="pp-gap-up" style="color:#fff">—</b> ／ 後車 <b id="pp-gap-dn" style="color:#fff">—</b></div>
           </div>
-          <div class="gauges">
-            <div class="gauge" id="g-tire"><div class="gl"><span>TIRE（タイヤ）</span><span class="mono" id="v-tire">100%</span></div><div class="bar"><i id="b-tire" style="width:100%"></i></div></div>
-            <div class="gauge fuel" id="g-fuel"><div class="gl"><span>FUEL（燃料）</span><span class="mono" id="v-fuel">100%</span></div><div class="bar"><i id="b-fuel" style="width:100%"></i></div></div>
+          <div class="status-flex">
+            <div class="tire-diagram" aria-label="タイヤ摩耗（4輪）">
+              <div class="twheel" id="tw-fl"></div><div class="twheel" id="tw-fr"></div>
+              <div class="twheel" id="tw-rl"></div><div class="twheel" id="tw-rr"></div>
+              <div class="tire-cap">TIRE</div>
+            </div>
+            <div class="gauges">
+              <div class="gauge" id="g-tire"><div class="gl"><span>TIRE（タイヤ）</span><span class="mono" id="v-tire">100%</span></div><div class="bar"><i id="b-tire" style="width:100%"></i></div></div>
+              <div class="gauge fuel" id="g-fuel"><div class="gl"><span>FUEL（燃料）</span><span class="mono" id="v-fuel">100%</span></div><div class="bar"><i id="b-fuel" style="width:100%"></i></div></div>
+            </div>
           </div>
         </div>
 
@@ -296,17 +387,9 @@
             <button class="cmd-btn pit" id="btn-pit" type="button">ピットイン指示<small>次の周回終わりでピットへ（タイヤ交換＋給油）</small></button>
           </div>
         </div>
-
-        <div class="log mono" id="race-log" aria-live="polite"></div>
       </div>
 
-      <div class="tower">
-        <h3><span>LIVE TIMING</span><span class="mono" id="tower-lap">LAP 1</span></h3>
-        <table>
-          <thead><tr><th>POS</th><th>DRIVER / CAR</th><th class="gap">GAP</th><th class="lt">LAST LAP</th></tr></thead>
-          <tbody id="tower-body"></tbody>
-        </table>
-      </div>
+      <div class="log mono" id="race-log" aria-live="polite"></div>
     </div>
   </section>
 
@@ -555,6 +638,25 @@ function startRace(courseIdx){
     c.setAttribute("class", "dot"+(e.me?" player":""));
     dots.appendChild(c); e.dot = c;
   });
+  /* side silhouette cars */
+  $("sil-lap-dist").textContent = course.km.toFixed(1) + " km";
+  var ruler = $("sil-ruler"); ruler.innerHTML = "";
+  var tickEvery = course.km >= 3.5 ? 1000 : 500;
+  for(var tm = 0; tm <= course.km*1000; tm += tickEvery){
+    var pct = tm/(course.km*1000)*100;
+    var sp = document.createElement("span"); sp.style.left = pct + "%";
+    sp.innerHTML = "<i></i>" + (tm === 0 ? "0" : (tm/1000) + "km");
+    ruler.appendChild(sp);
+  }
+  var silBox = $("sil-cars"); silBox.innerHTML = "";
+  race.entries.forEach(function(e){
+    var d = document.createElement("div");
+    d.className = "sil-car" + (e.me ? " me" : "");
+    var short = e.me ? "REN" : e.name.split(" ").pop().toUpperCase();
+    d.innerHTML = '<span class="lb">' + short + '</span>'
+      + '<svg viewBox="0 0 100 28" aria-hidden="true"><path d="M3 21 L7 14 L20 12 L33 4 L57 4 L69 10 L86 12 L94 16 L97 20 L97 23 L90 23 A6 6 0 0 0 78 23 L34 23 A6 6 0 0 0 22 23 L3 23 Z" fill="' + e.color + '" stroke="' + (e.me ? "#ffffff" : "rgba(0,0,0,.55)") + '" stroke-width="' + (e.me ? 1.6 : 0.8) + '"/><circle cx="28" cy="23" r="4.6" fill="#0b0b0c" stroke="#9a9da6" stroke-width="1.2"/><circle cx="84" cy="23" r="4.6" fill="#0b0b0c" stroke="#9a9da6" stroke-width="1.2"/></svg>';
+    silBox.appendChild(d); e.silEl = d;
+  });
   var roundTxt = (mode==="champ" && champ) ? "ROUND "+(champ.round+1)+" / 5　" : "";
   $("race-title").innerHTML = roundTxt + course.name + '<small>（'+course.jp+'） '+course.laps+' LAPS</small>';
   $("race-log").innerHTML = "";
@@ -712,6 +814,28 @@ function render(){
     if(e.inPit > 0) prog = 0.995;
     var pt = path.getPointAtLength(prog * L);
     e.dot.setAttribute("cx", pt.x); e.dot.setAttribute("cy", pt.y);
+    if(e.silEl){
+      e.silEl.style.left = (4 + prog * 92) + "%";
+      e.silEl.style.opacity = e.inPit > 0 ? "0.45" : "1";
+    }
+  });
+  /* silhouette gap readouts (real metres between cars) */
+  var srt = sortedEntries();
+  var mi = srt.indexOf(me);
+  var aCar = srt[mi-1], bCar = srt[mi+1];
+  var refS = Math.max(8, race.lapDist / srt[0].baseLap);
+  $("sil-gap-ahead").textContent = aCar ? Math.round(aCar.dist - me.dist) + " m（" + ((aCar.dist - me.dist)/refS).toFixed(1) + "秒）" : "—（トップ）";
+  $("sil-gap-behind").textContent = bCar ? Math.round(me.dist - bCar.dist) + " m（" + ((me.dist - bCar.dist)/refS).toFixed(1) + "秒）" : "—（最下位）";
+  var myProg = ((me.dist % race.lapDist) + race.lapDist) % race.lapDist;
+  $("sil-my-pos").textContent = (myProg/1000).toFixed(2) + " km / " + course.km.toFixed(1) + " km";
+  /* 4-wheel tire diagram */
+  [["tw-fl", me.tire - 3], ["tw-fr", me.tire - 3], ["tw-rl", me.tire + 2], ["tw-rr", me.tire + 2]].forEach(function(pair){
+    var el = $(pair[0]); if(!el) return;
+    var v = clamp(pair[1], 0, 100);
+    el.classList.toggle("warn", v <= 35 && v > 15);
+    el.classList.toggle("crit", v <= 15);
+    if(v > 35){ el.style.background = "var(--green)"; }
+    else { el.style.background = ""; }
   });
   var myLap = clamp(me.lap, 1, course.laps);
   $("map-lap").textContent = myLap + "/" + course.laps;
