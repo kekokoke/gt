@@ -36,6 +36,8 @@
   button{cursor:pointer;}
   .mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums;}
   .wrap{max-width:1080px;margin:0 auto;padding:0 14px 48px;}
+  /* while racing the page widens so the course map + silhouette strip dominate */
+  body.racing .wrap{max-width:1440px;padding:0 10px 32px;}
 
   /* ticker */
   .ticker{background:#0a0a0b;color:#fff;overflow:hidden;white-space:nowrap;border-bottom:3px solid var(--red);}
@@ -126,14 +128,19 @@
   /* race layout: course-first grid. Mobile stacks map -> side view -> controls ->
      status -> tower so the race fits a phone screen; desktop puts the controls
      in a column right beside the course (tower | course | controls). */
-  .race-layout{display:grid;grid-template-columns:1fr;gap:0;grid-template-areas:"map" "side" "ctrl" "status" "tower";}
+  /* Mobile stacks map -> silhouette -> driver/gap -> controls -> tyre/fuel -> tower.
+     Desktop: tower | course+silhouette (the main event, widest) | a slim right-hand
+     column stacked vertically: driver/gap on top, pace commands under it, tyre/fuel last. */
+  .race-layout{display:grid;grid-template-columns:1fr;gap:0;grid-template-areas:"map" "side" "ctrl" "status" "tire" "tower";}
   .race-layout .tower{grid-area:tower;}
   .race-layout .map-box{grid-area:map;}
   .race-layout .sil-box{grid-area:side;}
   .race-layout .player-panel{grid-area:status;}
   .race-layout .ctrl{grid-area:ctrl;}
+  .race-layout .tire-panel{grid-area:tire;}
+  .panel-label{font-size:9.5px;font-weight:800;letter-spacing:.14em;color:var(--muted);margin-bottom:3px;}
   @media(min-width:900px){
-    .race-layout{grid-template-columns:318px minmax(0,1fr) 300px;grid-template-areas:"tower map ctrl" "tower side ctrl" "tower side status";align-items:start;}
+    .race-layout{grid-template-columns:184px minmax(0,1fr) 196px;grid-template-areas:"tower map status" "tower side ctrl" "tower side tire";align-items:start;}
   }
   /* compact page chrome while racing so the monitor fits the phone screen */
   body.racing .ticker{display:none;}
@@ -141,17 +148,18 @@
   body.racing .brand h1{font-size:16px;}
   body.racing .brand .sub{display:none;}
   @media(max-width:560px){
-    .sil-stage{height:98px;}
-    .sil-car{width:80px;} .sil-car svg{width:80px;height:27px;} .sil-car .lb{max-width:80px;}
-    .bspec .tower td{padding:4px 6px;} .bspec .tower table{font-size:12px;}
-    .bspec .log{height:76px;}
-    .bspec .player-panel{padding:9px 12px;}
-    .bspec .ctrl{padding:9px 12px;}
+    .sil-stage{height:148px;}
+    .sil-car{width:102px;} .sil-car svg{width:102px;height:34px;} .sil-car .lb{max-width:102px;}
+    .bspec .tower td{padding:3px 5px;} .bspec .tower table{font-size:11.5px;}
+    .bspec .log{height:64px;}
+    .bspec .player-panel{padding:6px 9px;}
+    .bspec .ctrl{padding:6px 9px;}
+    .bspec .tire-panel{padding:6px 9px;}
   }
 
   /* ===== GT4 B-Spec race monitor ===== */
   .bspec{background:#07080a;color:#e8e9ec;border:1px solid #2a2c31;margin-top:12px;font-family:"DotGothic16","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;}
-  .bspec-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:#101114;border-bottom:3px solid var(--red);padding:9px 12px;}
+  .bspec-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:space-between;background:#101114;border-bottom:3px solid var(--red);padding:5px 10px;}
   .bspec-top .bt-l{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;min-width:0;}
   .bspec-badge{background:var(--red);color:#fff;font-size:10px;font-weight:900;letter-spacing:.18em;padding:4px 8px;white-space:nowrap;}
   .bspec .race-title{color:#fff;}
@@ -164,9 +172,11 @@
   .bspec .map-box .trackpath{stroke:#565b63;}
   .bspec .map-box .casing{stroke:rgba(255,255,255,.14);}
   .bspec .player-panel{background:#101114;border:none;border-top:3px solid var(--red);margin-top:0;color:#e8e9ec;}
+  .bspec .tire-panel{background:#101114;border:none;border-top:1px solid #232429;margin-top:0;color:#e8e9ec;padding:5px 8px;}
   @media(min-width:900px){
-    .bspec .ctrl{border-left:1px solid #232429;}
+    .bspec .ctrl{border-left:1px solid #232429;border-top:1px solid #232429;}
     .bspec .player-panel{border-left:1px solid #232429;}
+    .bspec .tire-panel{border-left:1px solid #232429;}
   }
   .bspec .ctrl{background:#101114;border:none;margin-top:0;color:#e8e9ec;}
   .bspec .pace-btn{background:#1a1b1f;border-color:#33363e;color:#eee;}
@@ -177,26 +187,30 @@
   .bspec .cmd-btn small{color:#9a9da6;}
   .bspec .log{border:none;border-top:1px solid #232429;margin-top:0;}
   .bspec .bar{background:#26282e;border-color:#3a3d45;}
-  /* tire diagram (GT4 style 4-wheel wear) */
-  .status-flex{display:flex;gap:16px;align-items:flex-start;margin-top:10px;}
-  .tire-diagram{display:grid;grid-template-columns:26px 26px;gap:8px 14px;padding:10px;background:#0a0b0d;border:1px solid #2c2e34;flex:none;}
-  .twheel{width:26px;height:34px;border:2px solid #45484f;background:var(--green);}
+  /* tire diagram (GT4 style 4-wheel wear) — kept deliberately small so the
+     course and silhouette stay the main event */
+  .status-flex{display:flex;gap:10px;align-items:center;margin-top:5px;}
+  .tire-diagram{display:grid;grid-template-columns:17px 17px;gap:4px 8px;padding:5px 6px;background:#0a0b0d;border:1px solid #2c2e34;flex:none;}
+  .twheel{width:17px;height:23px;border:1.5px solid #45484f;background:var(--green);}
   .twheel.warn{background:var(--amber);} .twheel.crit{background:var(--red);}
-  .tire-cap{grid-column:1/-1;font-size:9px;letter-spacing:.14em;color:#9a9da6;text-align:center;font-weight:800;}
-  .status-flex .gauges{flex:1;margin-top:0;grid-template-columns:1fr;}
+  .tire-cap{grid-column:1/-1;font-size:8px;letter-spacing:.14em;color:#9a9da6;text-align:center;font-weight:800;}
+  .status-flex .gauges{flex:1;margin-top:0;grid-template-columns:1fr;gap:5px;}
   /* ===== Side silhouette view ===== */
-  .sil-box{background:#0a0b0d;border-bottom:1px solid #232429;padding:10px 12px 8px;}
+  .sil-box{background:#0a0b0d;border-bottom:1px solid #232429;padding:8px 10px 7px;}
   .sil-head{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:10px;font-weight:900;letter-spacing:.16em;color:#c9ccd4;}
   .sil-head .mono{color:var(--gold);letter-spacing:.02em;}
-  .sil-stage{position:relative;height:124px;margin-top:6px;background:linear-gradient(#101623 0 62%,#191a1e 62% 100%);border:1px solid #232429;overflow:hidden;}
-  .sil-road{position:absolute;left:0;right:0;bottom:20px;height:5px;background:#3c3f46;}
-  .sil-road::after{content:"";position:absolute;left:0;right:0;top:2px;border-top:2px dashed #8f939c;opacity:.55;}
-  .sil-finish{position:absolute;right:4.4%;bottom:22px;width:8px;height:52px;background:repeating-conic-gradient(#e8e9ec 0 25%,#101114 0 50%);background-size:8px 8px;opacity:.85;z-index:1;}
-  .sil-dir{position:absolute;left:8px;top:4px;font-size:10px;font-weight:900;letter-spacing:.14em;color:#8f939c;z-index:1;}
-  .sil-car{position:absolute;bottom:24px;width:96px;transform:translateX(-50%);text-align:center;z-index:2;}
-  .sil-car svg{width:96px;height:32px;display:block;margin:0 auto;}
-  .sil-car .lb{font-size:8.5px;font-weight:900;letter-spacing:.03em;color:#fff;background:rgba(0,0,0,.65);padding:1px 4px;white-space:nowrap;display:inline-block;max-width:96px;overflow:hidden;}
-  .sil-gaplab{position:absolute;top:22px;transform:translateX(-50%);z-index:3;background:rgba(0,0,0,.78);border:1px solid #3a3d45;color:var(--gold);font-size:9px;font-weight:700;padding:1px 4px;white-space:nowrap;text-align:center;line-height:1.25;pointer-events:none;}
+  .sil-stage{position:relative;height:196px;margin-top:5px;background:linear-gradient(#101623 0 62%,#191a1e 62% 100%);border:1px solid #232429;overflow:hidden;}
+  .sil-road{position:absolute;left:0;right:0;bottom:24px;height:6px;background:#3c3f46;}
+  .sil-dash{position:absolute;left:0;right:0;bottom:24px;height:6px;background-image:repeating-linear-gradient(90deg,rgba(210,213,220,.55) 0 26px,transparent 26px 52px);pointer-events:none;}
+  .sil-posts{position:absolute;left:0;right:0;bottom:30px;height:70px;background-image:repeating-linear-gradient(90deg,rgba(150,155,165,.22) 0 3px,transparent 3px 156px);pointer-events:none;}
+  .sil-finish{position:absolute;right:4.4%;bottom:26px;width:10px;height:88px;background:repeating-conic-gradient(#e8e9ec 0 25%,#101114 0 50%);background-size:10px 10px;opacity:.85;z-index:1;transform:translateX(-50%);}
+  .sil-edge{position:absolute;top:30px;z-index:3;background:rgba(0,0,0,.78);border:1px solid #3a3d45;color:var(--gold);font-size:10px;font-weight:700;padding:1px 5px;white-space:nowrap;display:none;pointer-events:none;}
+  .sil-edge.ahead{left:6px;} .sil-edge.behind{right:6px;}
+  .sil-dir{position:absolute;left:8px;top:5px;font-size:11px;font-weight:900;letter-spacing:.14em;color:#8f939c;z-index:1;}
+  .sil-car{position:absolute;bottom:29px;width:138px;transform:translateX(-50%);text-align:center;z-index:2;}
+  .sil-car svg{width:138px;height:46px;display:block;margin:0 auto;}
+  .sil-car .lb{font-size:9.5px;font-weight:900;letter-spacing:.03em;color:#fff;background:rgba(0,0,0,.65);padding:1px 5px;white-space:nowrap;display:inline-block;max-width:138px;overflow:hidden;}
+  .sil-gaplab{position:absolute;top:30px;transform:translateX(-50%);z-index:3;background:rgba(0,0,0,.78);border:1px solid #3a3d45;color:var(--gold);font-size:10px;font-weight:700;padding:1px 5px;white-space:nowrap;text-align:center;line-height:1.25;pointer-events:none;}
   .sil-gaplab span{display:block;color:#9a9da6;font-size:8px;}
   .car-sil{display:inline-block;vertical-align:middle;margin-right:8px;}
   .car-sil svg{width:72px;height:24px;display:block;}
@@ -205,8 +219,8 @@
   .sil-ruler{position:absolute;left:0;right:0;bottom:4px;height:12px;font-size:8.5px;color:#7d8089;}
   .sil-ruler span{position:absolute;transform:translateX(-50%);white-space:nowrap;}
   .sil-ruler i{position:absolute;top:-4px;width:1px;height:5px;background:#55585f;display:block;}
-  .sil-gaps{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:11.5px;color:#c9ccd4;}
-  .sil-gaps .sg{background:#141519;border:1px solid #2c2e34;padding:5px 9px;}
+  .sil-gaps{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;font-size:10.5px;color:#c9ccd4;}
+  .sil-gaps .sg{background:#141519;border:1px solid #2c2e34;padding:3px 7px;}
   .sil-gaps .sg b{color:#fff;}
   .sil-gaps .sg .mono{color:var(--gold);}
   .map-box{background:var(--grass);border:1px solid var(--line);position:relative;}
@@ -224,10 +238,11 @@
   .map-tag .lap{color:var(--gold);}
 
   .tower{background:#0c0d0f;color:#eee;border:1px solid var(--line);}
-  .tower h3{margin:0;padding:9px 12px;font-size:11px;letter-spacing:.2em;background:var(--red);color:#fff;display:flex;justify-content:space-between;}
-  .tower table{width:100%;border-collapse:collapse;font-size:13px;}
-  .tower th{font-size:10px;letter-spacing:.12em;color:#9a9da6;text-align:left;padding:6px 8px 4px;font-weight:700;}
-  .tower td{padding:6px 8px;border-top:1px solid #232429;white-space:nowrap;}
+  .tower h3{margin:0;padding:6px 8px;font-size:10px;letter-spacing:.14em;background:var(--red);color:#fff;display:flex;justify-content:space-between;}
+  .tower table{width:100%;border-collapse:collapse;font-size:11px;}
+  .tower th{font-size:9px;letter-spacing:.08em;color:#9a9da6;text-align:left;padding:4px 4px 2px;font-weight:700;}
+  .tower td{padding:3px 4px;border-top:1px solid #232429;white-space:nowrap;}
+  .tower td:nth-child(2){white-space:normal;line-height:1.3;}
   .tower tr.me td{background:rgba(225,6,0,.18);font-weight:800;}
   .tower tr.me td.pos{color:#ff5a52;}
   .tower td.pos{font-weight:900;width:30px;}
@@ -236,36 +251,37 @@
   .pit-tag{font-size:9px;font-weight:900;background:var(--amber);color:#231500;padding:1px 5px;margin-left:5px;letter-spacing:.06em;}
   .out-tag{font-size:9px;font-weight:900;background:#444;color:#ccc;padding:1px 5px;margin-left:5px;}
 
-  .player-panel{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--red);padding:12px 14px;margin-top:12px;}
-  .pp-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:baseline;}
-  .pp-pos{font-size:26px;font-weight:900;}
-  .pp-pos small{font-size:13px;color:var(--muted);font-weight:700;}
+  .player-panel{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--red);padding:5px 8px;margin-top:12px;}
+  .tire-panel{background:var(--panel);border:1px solid var(--line);padding:5px 8px;margin-top:12px;}
+  .pp-head{display:flex;flex-direction:column;gap:0;align-items:flex-start;}
+  .pp-pos{font-size:17px;font-weight:900;line-height:1.05;}
+  .pp-pos small{font-size:12px;color:var(--muted);font-weight:700;}
   .gauges{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-top:10px;}
-  .gauge .gl{display:flex;justify-content:space-between;font-size:11px;font-weight:800;letter-spacing:.08em;}
+  .gauge .gl{display:flex;justify-content:space-between;font-size:10.5px;font-weight:800;letter-spacing:.06em;}
   .gauge .gl span:last-child{color:var(--muted);}
-  .gauge .bar{height:12px;margin-top:4px;}
+  .gauge .bar{height:9px;margin-top:3px;}
   .gauge .bar i{background:var(--green);}
   .gauge.warn .bar i{background:var(--amber);} .gauge.crit .bar i{background:var(--red);}
   .gauge.fuel .bar i{background:var(--blue);}
 
-  .ctrl{margin-top:12px;background:var(--panel);border:1px solid var(--line);padding:12px 14px;}
-  .ctrl .cl{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--muted);margin-bottom:8px;}
-  .pace-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-  .pace-btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 2px;text-align:center;}
-  .pace-btn .n{font-size:19px;font-weight:900;display:block;line-height:1;}
-  .pace-btn .w{font-size:9px;color:var(--muted);display:block;margin-top:3px;letter-spacing:.04em;}
+  .ctrl{margin-top:12px;background:var(--panel);border:1px solid var(--line);padding:5px 8px;}
+  .ctrl .cl{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--muted);margin-bottom:3px;}
+  .pace-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;}
+  .pace-btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:3px 1px;text-align:center;min-height:34px;}
+  .pace-btn .n{font-size:14px;font-weight:900;display:block;line-height:1;}
+  .pace-btn .w{font-size:9px;color:var(--muted);display:block;margin-top:1px;letter-spacing:.02em;}
   .pace-btn.on{background:var(--red);border-color:var(--red);color:#fff;}
   .pace-btn.on .w{color:#ffd9d6;}
-  .cmd-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
-  .cmd-btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:900;font-size:15px;padding:12px;}
-  .cmd-btn small{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:2px;}
+  .cmd-row{display:grid;grid-template-columns:1fr;gap:4px;margin-top:4px;}
+  .cmd-btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:900;font-size:12.5px;padding:5px 6px;min-height:34px;}
+  .cmd-btn small{display:block;font-size:9px;color:var(--muted);font-weight:600;margin-top:0;}
   .cmd-btn.on{background:var(--amber);border-color:var(--amber);color:#231500;}
   .cmd-btn.on small{color:#5c3d00;}
   .cmd-btn.pit.on{background:var(--blue);border-color:var(--blue);color:#fff;}
   .cmd-btn.pit.on small{color:#d6e9ff;}
   .cmd-btn:disabled{opacity:.45;cursor:not-allowed;}
 
-  .log{background:#0c0d0f;color:#d7d9de;border:1px solid var(--line);margin-top:12px;padding:10px 12px;height:118px;overflow-y:auto;font-size:12px;line-height:1.65;}
+  .log{background:#0c0d0f;color:#d7d9de;border:1px solid var(--line);margin-top:12px;padding:8px 12px;height:84px;overflow-y:auto;font-size:12px;line-height:1.6;}
   .log .t{color:#7d8089;margin-right:6px;}
   .log .hot{color:#ffb3ae;} .log .good{color:#8fe6b8;}
 
@@ -286,6 +302,15 @@
   .growth{background:var(--panel2);border:1px solid var(--line);padding:10px 14px;font-size:13px;margin-top:12px;line-height:1.8;}
   .growth b{color:var(--red);}
   .hidden{display:none !important;}
+
+  /* Best Motoring Tsukuba reproduction panel */
+  .bm-panel{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--gold);padding:12px 14px;margin-top:12px;}
+  .bm-panel .bm-title{font-weight:900;font-size:15px;}
+  .bm-panel .bm-title .en{color:var(--gold);letter-spacing:.06em;}
+  .bm-panel p{font-size:12px;color:var(--muted);line-height:1.7;margin:6px 0;}
+  .bm-panel table{margin-top:8px;}
+  .bm-panel .src{font-size:11px;color:var(--faint);margin-top:8px;line-height:1.7;}
+  .bm-panel .src a{color:var(--blue);}
 </style>
 </head>
 <body>
@@ -307,9 +332,9 @@
   <section id="view-setup">
     <div class="driver-card">
       <div>
-        <div class="driver-name">AIドライバー「<span id="driver-name-disp">REN</span>」</div>
+        <div class="driver-name">AIドライバー「<span id="driver-name-disp">KEKO</span>」</div>
         <label class="name-edit">DRIVER NAME（ローマ字で自由に変更可）
-          <input id="inp-name" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="REN" aria-label="ドライバーの名前（ローマ字）">
+          <input id="inp-name" type="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="KEKO" aria-label="ドライバーの名前（ローマ字）">
         </label>
         <div class="driver-meta">名前はこのブラウザに保存され、タイミングタワー・シルエット表示・実況にも反映される。</div>
         <div class="driver-meta" id="driver-meta">出走 0回 ／ 優勝 0回 ／ 表彰台 0回</div>
@@ -324,6 +349,17 @@
     <div class="mode-row">
       <button class="mode-btn on" id="mode-single" type="button"><span class="t">SINGLE RACE（単発）</span><span class="d">1レースだけ走って賞金を稼ぐ</span></button>
       <button class="mode-btn" id="mode-champ" type="button"><span class="t">CHAMPIONSHIP（全5戦）</span><span class="d">ポイント合計で年間王者を決める</span></button>
+      <button class="mode-btn" id="mode-bm" type="button"><span class="t">BEST MOTORING 再現（筑波）</span><span class="d">実在ドライバー＆実車で90年代スーパーバトルを再現</span></button>
+    </div>
+
+    <div class="bm-panel hidden" id="bm-panel">
+      <div class="bm-title"><span class="en">BEST MOTORING</span> 筑波スーパーバトル再現</div>
+      <p>90年代初頭のベストモータリング名物「筑波スーパーバトル」を再現する特別モード。グリッドはベストラップの遅い順（実戦同様、速い車ほど後方）で、<b>各車のペースは映像に表示された実測ベストラップそのもの</b>に設定してある。ドライバーは当時のBMキャスター陣。あなたは最後尾グリッドの <b>Ferrari F40</b>（本来のドライバーは黒沢元治）を監督し、5周で全車を抜いて実戦どおりの優勝を再現できるか挑む。ピットなし・タイヤ燃料の心配なしの純粋なバトル。</p>
+      <table class="plain">
+        <thead><tr><th>GRID</th><th>DRIVER</th><th>CAR</th><th>BEST LAP（実測）</th></tr></thead>
+        <tbody id="bm-body"></tbody>
+      </table>
+      <div class="src">ベストラップ出典：ベストモータリング筑波スーパーバトルの映像内表示タイムを記録した記事（<a href="https://minkara.carview.co.jp/userid/327116/blog/29048102/" target="_blank" rel="noopener">みんカラ「筑波サーキット、20年一昔」</a>）、グリッド構成の参考（<a href="https://rennlist.com/forums/996-turbo-forum/338016-ot-ruf-yellowbird-in-best-motoring-race.html" target="_blank" rel="noopener">Rennlist の視聴者レポート</a>）。ドライバーと車の組み合わせは当時のBMキャスター陣を基にした再構成で、映像そのもののコピーではありません。</div>
     </div>
 
     <h2 class="sec">コース選択</h2>
@@ -367,7 +403,7 @@
         <div class="tower">
           <h3><span>LIVE TIMING</span><span class="mono" id="tower-lap">LAP 1</span></h3>
           <table>
-            <thead><tr><th>POS</th><th>DRIVER / CAR</th><th class="gap">GAP</th><th class="lt">LAST LAP</th></tr></thead>
+            <thead><tr><th>POS</th><th>DRIVER / CAR</th><th class="gap">GAP</th><th class="lt">LAP</th></tr></thead>
             <tbody id="tower-body"></tbody>
           </table>
         </div>
@@ -387,11 +423,15 @@
           </div>
 
           <div class="sil-box">
-            <div class="sil-head"><span>SIDE VIEW（真横シルエット表示）</span><span>◀ 進行方向（右→左）／ リーダー基準の相対距離 ・ 1周 = <span class="mono" id="sil-lap-dist">—</span> でループ</span></div>
-            <div class="sil-stage" id="sil-stage" role="img" aria-label="真横から見た各車の相対距離表示（リーダーを基準に1周分でループ表示、右から左へ進行）">
+            <div class="sil-head"><span>SIDE VIEW（真横シルエット表示）</span><span>◀ 進行方向（右→左）／ GT4 B-Spec風：カメラは自車に固定、前後の車は相対速度で行き交う ・ 表示幅 <span class="mono" id="sil-lap-dist">—</span></span></div>
+            <div class="sil-stage" id="sil-stage" role="img" aria-label="真横から見た相対位置表示（GT4 B-Spec風：自車を画面に固定し、前後の車が実際の相対速度で近づき、追い越し、離れていく。右から左へ進行）">
               <div class="sil-dir">◀◀ RACE</div>
-              <div class="sil-finish" aria-hidden="true"></div>
+              <div class="sil-posts" id="sil-posts" aria-hidden="true"></div>
+              <div class="sil-finish" id="sil-finish" aria-hidden="true"></div>
               <div class="sil-road"></div>
+              <div class="sil-dash" id="sil-dash" aria-hidden="true"></div>
+              <div class="sil-edge ahead" id="sil-edge-ahead"></div>
+              <div class="sil-edge behind" id="sil-edge-behind"></div>
               <div id="sil-gaplabs"></div>
               <div id="sil-cars"></div>
               <div class="sil-ruler" id="sil-ruler"></div>
@@ -403,25 +443,15 @@
             </div>
           </div>
         <div class="player-panel">
+          <div class="panel-label">DRIVER / GAP（自車）</div>
           <div class="pp-head">
             <div class="pp-pos"><span id="pp-pos">6</span><small> / <span id="pp-total">6</span>台中</small></div>
-            <div class="mono" style="font-size:13px;color:var(--muted);">GAP 前車 <b id="pp-gap-up" style="color:#fff">—</b> ／ 後車 <b id="pp-gap-dn" style="color:#fff">—</b></div>
-          </div>
-          <div class="status-flex">
-            <div class="tire-diagram" aria-label="タイヤ摩耗（4輪）">
-              <div class="twheel" id="tw-fl"></div><div class="twheel" id="tw-fr"></div>
-              <div class="twheel" id="tw-rl"></div><div class="twheel" id="tw-rr"></div>
-              <div class="tire-cap">TIRE</div>
-            </div>
-            <div class="gauges">
-              <div class="gauge" id="g-tire"><div class="gl"><span>TIRE（タイヤ）</span><span class="mono" id="v-tire">100%</span></div><div class="bar"><i id="b-tire" style="width:100%"></i></div></div>
-              <div class="gauge fuel" id="g-fuel"><div class="gl"><span>FUEL（燃料）</span><span class="mono" id="v-fuel">100%</span></div><div class="bar"><i id="b-fuel" style="width:100%"></i></div></div>
-            </div>
+            <div class="mono" style="font-size:12px;color:var(--muted);">GAP 前車 <b id="pp-gap-up" style="color:#fff">—</b><br>GAP 後車 <b id="pp-gap-dn" style="color:#fff">—</b></div>
           </div>
         </div>
 
         <div class="ctrl">
-          <div class="cl">PACE（ペース指示）— 上げるほど速いがタイヤ・燃料を食い、ミスも増える</div>
+          <div class="cl">PACE（ペース指示）</div>
           <div class="pace-row" id="pace-row">
             <button class="pace-btn" data-pace="1" type="button"><span class="n">1</span><span class="w">温存</span></button>
             <button class="pace-btn" data-pace="2" type="button"><span class="n">2</span><span class="w">巡航</span></button>
@@ -432,6 +462,21 @@
           <div class="cmd-row">
             <button class="cmd-btn" id="btn-overtake" type="button">追い越し指示<small>前車に近いとき攻撃的に抜く（タイヤ消耗増）</small></button>
             <button class="cmd-btn pit" id="btn-pit" type="button">ピットイン指示<small>次の周回終わりでピットへ（タイヤ交換＋給油）</small></button>
+          </div>
+        </div>
+
+        <div class="tire-panel">
+          <div class="panel-label">TIRE / FUEL（タイヤ・燃料）</div>
+          <div class="status-flex">
+            <div class="tire-diagram" aria-label="タイヤ摩耗（4輪）">
+              <div class="twheel" id="tw-fl"></div><div class="twheel" id="tw-fr"></div>
+              <div class="twheel" id="tw-rl"></div><div class="twheel" id="tw-rr"></div>
+              <div class="tire-cap">TIRE</div>
+            </div>
+            <div class="gauges">
+              <div class="gauge" id="g-tire"><div class="gl"><span>TIRE（タイヤ）</span><span class="mono" id="v-tire">100%</span></div><div class="bar"><i id="b-tire" style="width:100%"></i></div></div>
+              <div class="gauge fuel" id="g-fuel"><div class="gl"><span>FUEL（燃料）</span><span class="mono" id="v-fuel">100%</span></div><div class="bar"><i id="b-fuel" style="width:100%"></i></div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -474,6 +519,9 @@
 "use strict";
 /* ================= DATA ================= */
 var COURSES = [
+  { id:"tsukuba", name:"Tsukuba Circuit", jp:"筑波サーキット", laps:13, km:2.05, wP:0.35, wH:0.65,
+    desc:"実在サーキット再現（コース2000の形状を再現）。第1コーナー→S字→名物ダンロップコーナーのタイトなヘアピン→第2ヘアピン→高速の最終コーナーからストレートへ。1周2.045kmのショートコースで接近戦が続く。",
+    d:"M112,197 L246,200 C290,202 314,185 316,154 C318,137 309,124 293,118 C278,112 275,99 285,89 C293,83 301,80 310,78 C316,66 317,53 308,46 C301,40 292,42 289,50 C285,59 285,68 288,76 C278,84 262,87 244,87 C210,89 168,86 138,90 C118,92 98,104 93,126 C89,142 98,152 94,164 C90,177 74,182 63,173 C50,163 40,176 47,188 C53,199 78,204 112,197 Z" },
   { id:"trial", name:"Trial Mountain", jp:"トライアルマウンテン", laps:7, km:3.98, wP:0.5, wH:0.5,
     desc:"GTの顔ともいえる山岳コースを再現。トンネル明けのヘアピンと高速S字が続く、バランス型のテクニカルコース。",
     d:"M58,202 L248,206 C298,207 330,192 333,162 C336,136 316,121 294,118 L284,86 C298,60 274,40 240,44 C206,48 196,68 176,78 C142,58 96,72 92,104 C89,128 108,140 104,160 C99,184 78,192 58,202 Z" },
@@ -500,10 +548,7 @@ var COURSES = [
     d:"M148,216 C106,211 76,184 84,148 L94,118 C68,102 58,72 84,52 C105,36 141,44 151,64 L176,58 C202,32 262,28 307,54 C352,80 362,131 341,171 C320,209 258,223 204,219 Z" },
   { id:"spa", name:"Spa-Francorchamps", jp:"スパ・フランコルシャン", laps:4, km:7.0, wP:0.6, wH:0.4,
     desc:"実在サーキット再現。オールージュからケメルストレートへ駆け上がる、1周7kmの高速ロングコース。タイヤのマネジメントが試される。",
-    d:"M68,216 L118,118 C128,93 160,79 202,77 L300,59 C341,54 362,80 351,111 L331,169 C347,195 320,219 284,216 L238,213 C244,200 228,192 208,201 L108,219 C84,221 62,221 68,216 Z" },
-  { id:"tsukuba", name:"Tsukuba Circuit", jp:"筑波サーキット", laps:13, km:2.05, wP:0.35, wH:0.65,
-    desc:"実在サーキット再現。1周2kmのショートコース。最終コーナーの立ち上がりとヘアピン勝負で、接近戦が続く。",
-    d:"M68,150 C63,99 99,64 156,59 L264,57 C316,57 342,79 339,107 C357,117 354,149 333,156 C340,186 300,206 249,203 L128,206 C93,206 71,185 68,150 Z" }
+    d:"M68,216 L118,118 C128,93 160,79 202,77 L300,59 C341,54 362,80 351,111 L331,169 C347,195 320,219 284,216 L238,213 C244,200 228,192 208,201 L108,219 C84,221 62,221 68,216 Z" }
 ];
 var CARS = [
   { id:"kei",   name:"Hatch K-Sport",  jp:"軽ハッチ",     cls:"K",  power:38, handling:55, price:0,     top:165, color:"#ffd23e" },
@@ -619,6 +664,25 @@ var RIVALS = [
   { name:"L. Hamilton", color:"#4dd0e1" }, { name:"F. Alonso", color:"#ff6b9d" },
   { name:"C. Leclerc", color:"#a3e635" }
 ];
+/* ===== Best Motoring Tsukuba Super Battle reproduction =====
+   Early-90s BM "Tsukuba Super Battle": 7 real cars, drivers from the period's
+   BM caster line-up, and each car's pace set to the ACTUAL best lap shown
+   on screen in the video (F40 1'05"73 / RUF CTR 1'08"35 / 512TR 1'09"26 /
+   GT-R R32 1'09"59 / MR2 1'10"01 / RX-7 1'10"27 / NSX 1'10"40).
+   Grid is reverse best-lap order (slowest on pole), like the real battles:
+   the F40 starts last and has to carve through the field in 5 laps. */
+var BM_TSUKUBA = {
+  laps: 5,
+  entries: [ /* grid order, pole first */
+    { driver:"K. Tsuchiya", jp:"土屋圭市", carName:"Honda NSX",                 best:70.40, color:"#e8e8e8", sil:"supra"  },
+    { driver:"K. Shimizu",  jp:"清水和夫", carName:"Mazda RX-7 (FD3S)",         best:70.27, color:"#2fbf71", sil:"coupe"  },
+    { driver:"S. Katsura",  jp:"桂 伸一",  carName:"Toyota MR2 GT-S",           best:70.01, color:"#9b59d0", sil:"road"   },
+    { driver:"N. Hattori",  jp:"服部尚貴", carName:"Nissan Skyline GT-R (R32)", best:69.59, color:"#3d9bff", sil:"rally"  },
+    { driver:"A. Nakaya",   jp:"中谷明彦", carName:"Ferrari 512TR",             best:69.26, color:"#ff7b00", sil:"muscle" },
+    { driver:"T. Ohi",      jp:"大井貴之", carName:"RUF CTR",                   best:68.35, color:"#ffd23e", sil:"coupe"  },
+    { driver:"M. Kurosawa", jp:"黒沢元治", carName:"Ferrari F40",               best:65.73, color:"#e10600", sil:"gt500"  }
+  ]
+};
 var PTS_TABLE = [10,8,6,5,4,3,2,1,0,0];
 /* Field size grows with driver level, like the real B-Spec grid opening up:
    Lv.1-2 = 6 cars (A-F), Lv.3-4 = 8 cars (A-H), Lv.5+ = 10 cars (A-J). */
@@ -632,13 +696,13 @@ function fieldSizeForLevel(level){
 var SAVE_KEY = "bspecDirectorSaveV1";
 var save = null;
 function defaultSave(){
-  return { money:20000, owned:["kei"], playerName:"REN", driver:{ pace:42, battle:38, mental:40, exp:0, level:1, races:0, wins:0, podiums:0 } };
+  return { money:20000, owned:["kei"], playerName:"KEKO", driver:{ pace:42, battle:38, mental:40, exp:0, level:1, races:0, wins:0, podiums:0 } };
 }
 function loadSave(){
   try{ var s = localStorage.getItem(SAVE_KEY); save = s ? JSON.parse(s) : defaultSave(); }
   catch(e){ save = defaultSave(); }
   if(!save.driver) save = defaultSave();
-  if(!save.playerName) save.playerName = "REN";
+  if(!save.playerName || save.playerName === "REN") save.playerName = "KEKO"; /* REN was the old default */
 }
 function storeSave(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(save)); }catch(e){} }
 loadSave();
@@ -653,9 +717,10 @@ var simSpeed = 1, paused = false, timer = null, lastTs = 0;
 function $(id){ return document.getElementById(id); }
 function fmt(n){ return Math.round(n).toLocaleString("ja-JP"); }
 function carById(id){ for(var i=0;i<CARS.length;i++) if(CARS[i].id===id) return CARS[i]; return CARS[0]; }
-function pName(){ return (save && save.playerName) ? save.playerName : "REN"; }
+function pName(){ return (save && save.playerName) ? save.playerName : "KEKO"; }
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function fmtTime(s){ if(!isFinite(s)) return "--:--.---"; var m=Math.floor(s/60), ss=s-m*60; return m+":"+(ss<10?"0":"")+ss.toFixed(3); }
+function fmtLapShort(s){ if(!isFinite(s) || s == null) return "—"; var m=Math.floor(s/60), ss=s-m*60; return m+":"+(ss<10?"0":"")+ss.toFixed(1); }
 function fmtClock(s){ var m=Math.floor(s/60), ss=Math.floor(s-m*60); return m+":"+(ss<10?"0":"")+ss; }
 
 /* ================= TTS COMMENTARY（実況＋解説） =================
@@ -901,11 +966,24 @@ function renderCars(){
   });
   void pc;
 }
-$("mode-single").addEventListener("click", function(){ mode="single"; this.classList.add("on"); $("mode-champ").classList.remove("on"); });
-$("mode-champ").addEventListener("click", function(){ mode="champ"; this.classList.add("on"); $("mode-single").classList.remove("on"); });
+function setMode(m){
+  mode = m;
+  $("mode-single").classList.toggle("on", m==="single");
+  $("mode-champ").classList.toggle("on", m==="champ");
+  $("mode-bm").classList.toggle("on", m==="bm");
+  $("bm-panel").classList.toggle("hidden", m!=="bm");
+  $("btn-start").textContent = m==="bm" ? "▶ 筑波スーパーバトル開始（F40を監督）" : "▶ レース開始（グリッドへ）";
+}
+$("mode-single").addEventListener("click", function(){ setMode("single"); });
+$("mode-champ").addEventListener("click", function(){ setMode("champ"); });
+$("mode-bm").addEventListener("click", function(){ setMode("bm"); });
+$("bm-body").innerHTML = BM_TSUKUBA.entries.map(function(b, i){
+  var you = i === BM_TSUKUBA.entries.length - 1;
+  return '<tr'+(you?' class="me"':'')+'><td class="mono"><b>'+String.fromCharCode(65+i)+'</b></td><td>'+b.driver+'（'+b.jp+'）'+(you?' ← あなたが監督':'')+'</td><td>'+b.carName+'</td><td class="mono">'+fmtTime(b.best)+'</td></tr>';
+}).join("");
 $("inp-name").addEventListener("change", function(){
   var v = this.value.replace(/[^A-Za-z0-9 .'\-]/g, "").replace(/\s+/g, " ").trim().slice(0, 12);
-  if(!v) v = "REN";
+  if(!v) v = "KEKO";
   save.playerName = v; storeSave();
   this.value = v; renderDriver();
 });
@@ -967,6 +1045,27 @@ function buildGrid(course, playerCar){
   return entries;
 }
 
+/* BM reproduction grid: real drivers/cars, base pace = the real best laps.
+   The player directs the last-grid F40 (originally M. Kurosawa's car).
+   The engine expects the player at entries[0], so the F40 is moved there
+   while keeping its slot-G letter and last-place start distance. */
+function buildGridBM(){
+  var all = BM_TSUKUBA.entries.map(function(b, i){
+    var isPlayer = i === BM_TSUKUBA.entries.length - 1;
+    return {
+      name: isPlayer ? pName() + "（あなた）" : b.driver,
+      car: { id: b.sil, name: b.carName }, me: isPlayer, color: b.color,
+      baseLap: b.best, skill: 0.85,
+      dist: -i * 32, lap: 1, lapStart: 0, lastLap: null, bestLap: null,
+      tire: 100, fuel: 100, pace: 3, overtake: false, pitQueued: false, inPit: 0, pitCount: 0,
+      finished: false, finishTime: null, mistakeCd: 0, seed: Math.random() * 10,
+      letter: String.fromCharCode(65 + i), bmBest: b.best, bmDriver: b.driver, bmJp: b.jp
+    };
+  });
+  var player = all[all.length - 1];
+  return [player].concat(all.slice(0, all.length - 1));
+}
+
 function logMsg(html, cls){
   var el = $("race-log");
   var line = document.createElement("div");
@@ -993,12 +1092,33 @@ function buildPitLaneD(path, L){
   return "M" + pts.join(" L");
 }
 
-function startRace(courseIdx){
+/* Side-view ruler for the player-centred GT4-style camera: fixed 560 m
+   window, your car anchored at 58% — marks are metres ahead (+) / behind (-). */
+var SIL_WINDOW = 560, SIL_ANCHOR = 58;
+function buildSilRuler(){
+  var ruler = $("sil-ruler"); ruler.innerHTML = "";
+  $("sil-lap-dist").textContent = SIL_WINDOW + " m（自車中心）";
+  [[200, "+200m 前方"], [100, "+100m"], [0, "YOU（自車）"], [-100, "-100m"], [-200, "-200m 後方"]].forEach(function(mk){
+    var sp = document.createElement("span");
+    sp.style.left = (SIL_ANCHOR - mk[0] / SIL_WINDOW * 100) + "%";
+    sp.innerHTML = "<i></i>" + mk[1];
+    ruler.appendChild(sp);
+  });
+}
+
+function startRace(courseIdx, bm){
   var course = COURSES[courseIdx];
   var playerCar = carById(selCar);
-  var gridEntries = buildGrid(course, playerCar);
+  var gridEntries;
+  if(bm){
+    /* Tsukuba with the real battle's lap count; pace comes from BM_TSUKUBA */
+    course = { id:course.id, name:course.name, jp:course.jp, laps:BM_TSUKUBA.laps, km:course.km, wP:course.wP, wH:course.wH, d:course.d };
+    gridEntries = buildGridBM();
+  } else {
+    gridEntries = buildGrid(course, playerCar);
+  }
   race = {
-    course: course, courseIdx: courseIdx, time:0,
+    course: course, courseIdx: courseIdx, time:0, bm: !!bm,
     totalDist: course.km*1000*course.laps, lapDist: course.km*1000,
     entries: gridEntries, over:false, playerPos: gridEntries.length,
     prevPos: 0, flags: {}, cPos: 0, cLeader: null, lastPosAt: 0, lastColorAt: 0, nextColorIn: 15000,
@@ -1049,16 +1169,9 @@ function startRace(courseIdx){
     g.appendChild(c); g.appendChild(t);
     dots.appendChild(g); e.dot = g;
   });
-  /* side silhouette cars — travel RIGHT -> LEFT like the real B-Spec monitor */
-  $("sil-lap-dist").textContent = course.km.toFixed(1) + " km";
-  var ruler = $("sil-ruler"); ruler.innerHTML = "";
-  var tickEvery = course.km >= 3.5 ? 1000 : 500;
-  for(var tm = 0; tm <= course.km*1000; tm += tickEvery){
-    var frac = tm/(course.km*1000);
-    var sp = document.createElement("span"); sp.style.left = (95 - frac*90) + "%";
-    sp.innerHTML = "<i></i>" + (tm === 0 ? "LEADER" : "+" + (tm/1000) + "km");
-    ruler.appendChild(sp);
-  }
+  /* side silhouette cars — GT4 B-Spec monitor style: the camera follows
+     YOUR car (anchored at 58%), rivals stream past by relative speed. */
+  buildSilRuler();
   var silBox = $("sil-cars"); silBox.innerHTML = "";
   race.entries.forEach(function(e){
     var d = document.createElement("div");
@@ -1076,11 +1189,19 @@ function startRace(courseIdx){
     glBox.appendChild(gd); race.gapLabels.push(gd);
   }
   var roundTxt = (mode==="champ" && champ) ? "ROUND "+(champ.round+1)+" / 5　" : "";
-  $("race-title").innerHTML = roundTxt + course.name + '<small>（'+course.jp+'） '+course.laps+' LAPS</small>';
+  $("race-title").innerHTML = bm
+    ? 'BEST MOTORING 筑波スーパーバトル再現<small>（'+course.jp+'） '+course.laps+' LAPS</small>'
+    : roundTxt + course.name + '<small>（'+course.jp+'） '+course.laps+' LAPS</small>';
   $("race-log").innerHTML = "";
-  logMsg("グリッド整列完了。出走 "+gridEntries.length+"台（A〜"+String.fromCharCode(64+gridEntries.length)+"、あなたは "+race.entries[0].letter+"）。"+course.name+"、"+course.laps+"周のレース。監督の指示で勝負が決まる。", "hot");
-  logMsg("タイヤと燃料の残量に注意。ピットは「次の周回終わり」に入る。");
-  logMsg("ピットレーンはコースマップ内側の専用レーン（PIT LANE表記）。ピット中はマップ上の車がそちらを走って止まる。");
+  if(bm){
+    logMsg("【BEST MOTORING再現】90年代筑波スーパーバトル。出走7台、全車のペースは映像に表示された実測ベストラップで再現。", "hot");
+    logMsg("グリッド： A NSX（土屋圭市 1'10\"40）／ B RX-7（清水和夫 1'10\"27）／ C MR2（桂伸一 1'10\"01）／ D GT-R R32（服部尚貴 1'09\"59）／ E 512TR（中谷明彦 1'09\"26）／ F RUF CTR（大井貴之 1'08\"35）／ G F40（本来は黒沢元治 1'05\"73）＝ あなた。", "");
+    logMsg("実戦では最後尾スタートのF40が優勝。5周・ピットなしの短期決戦、ペース指示と追い越し指示だけで再現を目指せ。", "good");
+  } else {
+    logMsg("グリッド整列完了。出走 "+gridEntries.length+"台（A〜"+String.fromCharCode(64+gridEntries.length)+"、あなたは "+race.entries[0].letter+"）。"+course.name+"、"+course.laps+"周のレース。監督の指示で勝負が決まる。", "hot");
+    logMsg("タイヤと燃料の残量に注意。ピットは「次の周回終わり」に入る。");
+    logMsg("ピットレーンはコースマップ内側の専用レーン（PIT LANE表記）。ピット中はマップ上の車がそちらを走って止まる。");
+  }
   ttsStop();
   say("スタート！ " + course.name + "、" + course.laps + "周のレースが始まりました！ レンは" + race.prevPos + "番手から追い上げます！", "jikkyou", 3);
   say("解説です。カギはタイヤと燃料のマネジメント。ピットのタイミングが勝敗を分けます。", "kaisetsu", 1);
@@ -1149,7 +1270,13 @@ function step(dt){
       return;
     }
     /* AI brain */
-    if(!e.me){
+    if(!e.me && race.bm){
+      /* BM reproduction: everyone runs at their real best-lap pace (pace 3 =
+         x1.00) for the whole 5 laps, no pit stops, just the battle. */
+      e.pace = 3;
+      var aheadBM = sorted[sorted.indexOf(e)-1];
+      e.overtake = !!(aheadBM && (aheadBM.dist - e.dist) < 60);
+    } else if(!e.me){
       if(e.lap < course.laps && ((e.tire < 24 && !e.pitQueued) || (e.fuel < 16 && !e.pitQueued))) e.pitQueued = true;
       var posAI = sorted.indexOf(e);
       if(e.tire > 55 && e.fuel > 30) e.pace = (posAI >= 3 && Math.random() < 0.004) ? 4 : 3;
@@ -1182,7 +1309,7 @@ function step(dt){
     e.mistakeCd -= dt;
     var mistakeF = 1;
     if(e.mistakeCd <= 0){
-      var risk = (e.pace >= 5 ? 0.0035 : e.pace === 4 ? 0.0016 : 0.0005) * (e.me ? (1.25 - save.driver.mental/100*0.55) : 1);
+      var risk = (e.pace >= 5 ? 0.0035 : e.pace === 4 ? 0.0016 : 0.0005) * (e.me ? (1.25 - save.driver.mental/100*0.55) : 1) * (race.bm ? 0.3 : 1);
       if(Math.random() < risk * dt * 10){
         mistakeF = 0.55; e.mistakeCd = 2.2;
         if(e.me){ logMsg("ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot"); race.flags.mistake = true; }
@@ -1193,9 +1320,9 @@ function step(dt){
     var speed = (race.lapDist / e.baseLap) * paceF * tireF * fuelF * battleF * mistakeF * wobble; /* m/s */
     e.dist += speed * dt;
     /* wear: pace3 ≈ 18pts/lap, pace5 ≈ 34pts/lap on a ~160s lap; fuel ≈ 9pts/lap */
-    var wearBase = [0, 0.55, 0.8, 1.05, 1.45, 1.95][e.pace] * (e.overtake ? 1.3 : 1);
+    var wearBase = [0, 0.55, 0.8, 1.05, 1.45, 1.95][e.pace] * (e.overtake ? 1.3 : 1) * (race.bm ? 0.12 : 1);
     e.tire = clamp(e.tire - wearBase * dt * 0.11, 0, 100);
-    e.fuel = clamp(e.fuel - [0,0.7,0.9,1.05,1.25,1.5][e.pace] * dt * 0.055 * (3.4/course.km), 0, 100);
+    e.fuel = clamp(e.fuel - [0,0.7,0.9,1.05,1.25,1.5][e.pace] * dt * 0.055 * (3.4/course.km) * (race.bm ? 0.3 : 1), 0, 100);
     /* lap crossing */
     var lapProgress = e.dist - (e.lap-1)*race.lapDist;
     if(lapProgress >= race.lapDist){
@@ -1230,6 +1357,7 @@ function step(dt){
 function frame(ts){
   if(!race || race.over) return;
   var real = Math.min(0.05, (ts - lastTs)/1000); lastTs = ts;
+  race._frameReal = real;
   if(!paused){
     var simDt = real * 10 * simSpeed; /* base rate ×10, fast-forward multiplies further */
     var steps = Math.max(1, Math.round(simDt / 0.1));
@@ -1244,6 +1372,19 @@ function render(){
   var course = race.course, me = race.entries[0];
   var path = $("map-track"), L = path.getTotalLength();
   var leadE = sortedEntries()[0];
+  /* Side view — GT4 B-Spec monitor style. The previous version pinned the
+     LEADER to the right edge and auto-rescaled the window to the field's
+     spread, so every car drifted and bunched whenever the spread changed,
+     even when the real gaps never moved — that is not how GT4 moves.
+     GT4's monitor follows YOUR car: you stay anchored, the road streams
+     past underneath, and rivals move only by their RELATIVE speed —
+     creeping up on you, drawing alongside, passing, or pulling away.
+     Fixed 560 m window (no rescaling ever), positions smoothed per frame. */
+  var refSv = Math.max(8, race.lapDist / leadE.baseLap);
+  var pxPerM = ($("sil-stage").clientWidth || 800) / SIL_WINDOW;
+  var dashEl = $("sil-dash"); if(dashEl) dashEl.style.backgroundPositionX = (-(me.dist * pxPerM) % 52).toFixed(1) + "px";
+  var postEl = $("sil-posts"); if(postEl) postEl.style.backgroundPositionX = (-(me.dist * pxPerM) % 156).toFixed(1) + "px";
+  var nearAhead = null, nearBehind = null;
   race.entries.forEach(function(e){
     var pt;
     if(e.inPit > 0 && race.pitPath){
@@ -1259,18 +1400,40 @@ function render(){
     }
     e.dot.setAttribute("transform", "translate(" + pt.x + "," + pt.y + ")");
     if(e.silEl){
-      /* GT4 B-Spec style: the strip shows each car's distance RELATIVE to the leader,
-         wrapped over exactly one lap, so the field loops around the strip every lap.
-         Leader is pinned at the right edge; everyone else trails to the left by their
-         real gap. A car in the pits stands still, so it visibly slides backwards. */
-      var rel = (((leadE.dist - e.dist) % race.lapDist) + race.lapDist) % race.lapDist;
-      e._sx = 95 - (rel / race.lapDist) * 90; /* right -> left */
+      /* + = ahead of you, shown to the LEFT (travel is right -> left).
+         Your own target never moves: the camera is locked to your car,
+         and a car in the pits stands still while the field streams past. */
+      var relAhead = e.dist - me.dist;
+      var target = SIL_ANCHOR - (relAhead / SIL_WINDOW) * 100;
+      if(e._sxSmooth == null) e._sxSmooth = target;
+      var kk = clamp((race._frameReal || 0.016) * 7, 0, 1);
+      e._sxSmooth += (target - e._sxSmooth) * kk;
+      e._sx = e._sxSmooth;
+      var vis = e._sx > -11 && e._sx < 111;
+      e.silEl.style.display = vis ? "" : "none";
       e.silEl.style.left = e._sx + "%";
       e.silEl.style.opacity = e.inPit > 0 ? "0.45" : "1";
+      if(!vis && !e.me){
+        if(relAhead > 0 && (!nearAhead || relAhead < nearAhead.rel)) nearAhead = { e: e, rel: relAhead };
+        if(relAhead < 0 && (!nearBehind || relAhead > nearBehind.rel)) nearBehind = { e: e, rel: relAhead };
+      }
       var inPitNow = e.inPit > 0;
       if(!!e._pitTag !== inPitNow){ e._pitTag = inPitNow; e.silEl.firstChild.textContent = (e._silLabel || "") + (inPitNow ? " [PIT]" : ""); }
     }
   });
+  /* edge tags for the nearest car outside the camera window, each side */
+  var eaEl = $("sil-edge-ahead"), ebEl = $("sil-edge-behind");
+  if(eaEl){ if(nearAhead){ eaEl.style.display = "block"; eaEl.textContent = "◀ " + (nearAhead.e._silLabel || nearAhead.e.name) + " +" + (nearAhead.rel / refSv).toFixed(1) + "s"; } else eaEl.style.display = "none"; }
+  if(ebEl){ if(nearBehind){ ebEl.style.display = "block"; ebEl.textContent = (nearBehind.e._silLabel || nearBehind.e.name) + " " + (nearBehind.rel / refSv).toFixed(1) + "s ▶"; } else ebEl.style.display = "none"; }
+  /* the start/finish gantry streams past your car as you cross the line */
+  var finEl = $("sil-finish");
+  if(finEl){
+    var myProgF = ((me.dist % race.lapDist) + race.lapDist) % race.lapDist;
+    var toLine = race.lapDist - myProgF;
+    var fx = SIL_ANCHOR - (toLine / SIL_WINDOW) * 100;
+    if(toLine > 3 && fx > -6){ finEl.style.display = ""; finEl.style.left = fx + "%"; finEl.style.right = "auto"; }
+    else finEl.style.display = "none";
+  }
   /* silhouette gap readouts (real metres between cars) */
   var srt = sortedEntries();
   var mi = srt.indexOf(me);
@@ -1284,7 +1447,7 @@ function render(){
   if(race.gapLabels){
     for(var gi = 0; gi < race.gapLabels.length; gi++){
       var lab = race.gapLabels[gi], ea = srt[gi], eb = srt[gi+1];
-      if(!ea || !eb || ea._sx == null || eb._sx == null || ea.inPit > 0 || eb.inPit > 0 || Math.abs(ea._sx - eb._sx) < 10){
+      if(!ea || !eb || ea._sx == null || eb._sx == null || ea.inPit > 0 || eb.inPit > 0 || ea._sx < -11 || ea._sx > 111 || eb._sx < -11 || eb._sx > 111 || Math.abs(ea._sx - eb._sx) < 10){
         lab.style.display = "none"; continue;
       }
       var gSec = (ea.dist - eb.dist) / refS, gM = Math.round(ea.dist - eb.dist);
@@ -1315,7 +1478,7 @@ function render(){
     var tag = e.inPit > 0 ? '<span class="pit-tag">PIT</span>' : (e.pitQueued ? '<span class="pit-tag">IN</span>' : "");
     return '<tr class="'+(e.me?"me":"")+'"><td class="pos mono">'+(i+1)+'</td>'
       + '<td><span style="color:'+e.color+'">●</span> <b class="mono" style="color:#f5c518">['+(e.letter||"")+']</b> '+e.name+tag+'<br><span style="font-size:10px;color:#9a9da6">'+e.car.name+'</span></td>'
-      + '<td class="gap mono">'+gap+'</td><td class="lt mono">'+(e.lastLap?fmtTime(e.lastLap):"—")+'</td></tr>';
+      + '<td class="gap mono">'+gap+'</td><td class="lt mono">'+(e.lastLap?fmtLapShort(e.lastLap):"—")+'</td></tr>';
   }).join("");
   /* player panel */
   $("pp-pos").textContent = race.playerPos;
@@ -1348,7 +1511,7 @@ function finishRace(){
       pos <= 3 ? "解説です。表彰台獲得。ピット戦略が実を結びました。" :
       "解説です。あと一歩でした。タイヤと燃料の使い方に、次への課題が残りました。", "kaisetsu", 3);
   /* prize by class value of player car + position */
-  var base = 4000 + (carById(selCar).price * 0.06);
+  var base = race.bm ? 30000 : 4000 + (carById(selCar).price * 0.06);
   var posMul = [1, 1.6, 1.3, 1.1, 0.9, 0.75, 0.6, 0.5, 0.4, 0.35, 0.3][pos] || 0.3;
   var prize = Math.round(base * posMul / 100) * 100;
   var exp = Math.round(30 + (sorted.length-pos)*8 + sorted.filter(function(e){return e!==me;}).length*1 + (pos===1?25:pos<=3?12:0));
@@ -1414,8 +1577,11 @@ function finishRace(){
   show("result");
 }
 
+function tsukubaIdx(){ for(var i=0;i<COURSES.length;i++) if(COURSES[i].id==="tsukuba") return i; return 0; }
 $("btn-start").addEventListener("click", function(){
-  if(mode === "champ"){
+  if(mode === "bm"){
+    champ = null; startRace(tsukubaIdx(), true);
+  } else if(mode === "champ"){
     champ = { round:0, points:{} };
     startRace(0);
   } else {
@@ -1428,7 +1594,8 @@ $("btn-next-round").addEventListener("click", function(){
   startRace(champ.round % COURSES.length);
 });
 $("btn-again").addEventListener("click", function(){
-  if(mode === "champ"){ champ = { round:0, points:{} }; startRace(0); }
+  if(race && race.bm){ startRace(tsukubaIdx(), true); }
+  else if(mode === "champ"){ champ = { round:0, points:{} }; startRace(0); }
   else startRace(race ? race.courseIdx : selCourse);
 });
 $("btn-garage").addEventListener("click", function(){ ttsStop(); champ = null; renderDriver(); renderCars(); show("setup"); });
