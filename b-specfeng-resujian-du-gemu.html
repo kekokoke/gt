@@ -203,9 +203,7 @@
   .sil-road{position:absolute;left:0;right:0;bottom:24px;height:6px;background:#3c3f46;}
   .sil-dash{position:absolute;left:0;right:0;bottom:24px;height:6px;background-image:repeating-linear-gradient(90deg,rgba(210,213,220,.55) 0 26px,transparent 26px 52px);pointer-events:none;}
   .sil-posts{position:absolute;left:0;right:0;bottom:30px;height:70px;background-image:repeating-linear-gradient(90deg,rgba(150,155,165,.22) 0 3px,transparent 3px 156px);pointer-events:none;}
-  .sil-finish{position:absolute;right:4.4%;bottom:26px;width:10px;height:88px;background:repeating-conic-gradient(#e8e9ec 0 25%,#101114 0 50%);background-size:10px 10px;opacity:.85;z-index:1;transform:translateX(-50%);}
-  .sil-edge{position:absolute;top:30px;z-index:3;background:rgba(0,0,0,.78);border:1px solid #3a3d45;color:var(--gold);font-size:10px;font-weight:700;padding:1px 5px;white-space:nowrap;display:none;pointer-events:none;}
-  .sil-edge.ahead{left:6px;} .sil-edge.behind{right:6px;}
+  .sil-finish{position:absolute;bottom:26px;width:10px;height:88px;background:repeating-conic-gradient(#e8e9ec 0 25%,#101114 0 50%);background-size:10px 10px;opacity:.85;z-index:1;transform:translateX(-50%);}
   .sil-dir{position:absolute;left:8px;top:5px;font-size:11px;font-weight:900;letter-spacing:.14em;color:#8f939c;z-index:1;}
   .sil-car{position:absolute;bottom:29px;width:138px;transform:translateX(-50%);text-align:center;z-index:2;}
   .sil-car svg{width:138px;height:46px;display:block;margin:0 auto;}
@@ -423,15 +421,13 @@
           </div>
 
           <div class="sil-box">
-            <div class="sil-head"><span>SIDE VIEW（真横シルエット表示）</span><span>◀ 進行方向（右→左）／ GT4 B-Spec風：カメラは自車に固定、前後の車は相対速度で行き交う ・ 表示幅 <span class="mono" id="sil-lap-dist">—</span></span></div>
-            <div class="sil-stage" id="sil-stage" role="img" aria-label="真横から見た相対位置表示（GT4 B-Spec風：自車を画面に固定し、前後の車が実際の相対速度で近づき、追い越し、離れていく。右から左へ進行）">
+            <div class="sil-head"><span>SIDE VIEW（真横シルエット表示）</span><span>◀ 進行方向（右→左）／ 全車常時表示：先頭〜最後尾の広がりを帯幅いっぱいに合わせる相対表示 ・ フィールド全長 <span class="mono" id="sil-lap-dist">—</span></span></div>
+            <div class="sil-stage" id="sil-stage" role="img" aria-label="真横から見た相対位置表示（全車常時表示：タイム差がどれだけ開いても、先頭から最後尾までの全車が常に帯の中に収まる。右から左へ進行）">
               <div class="sil-dir">◀◀ RACE</div>
               <div class="sil-posts" id="sil-posts" aria-hidden="true"></div>
               <div class="sil-finish" id="sil-finish" aria-hidden="true"></div>
               <div class="sil-road"></div>
               <div class="sil-dash" id="sil-dash" aria-hidden="true"></div>
-              <div class="sil-edge ahead" id="sil-edge-ahead"></div>
-              <div class="sil-edge behind" id="sil-edge-behind"></div>
               <div id="sil-gaplabs"></div>
               <div id="sil-cars"></div>
               <div class="sil-ruler" id="sil-ruler"></div>
@@ -519,8 +515,8 @@
 "use strict";
 /* ================= DATA ================= */
 var COURSES = [
-  { id:"tsukuba", name:"Tsukuba Circuit", jp:"筑波サーキット", laps:13, km:2.045, wP:0.35, wH:0.65, sf:0.03, pit:[0.827, 0.08, 14],
-    desc:"実在サーキット完全再現（コース2000、全長2.045km・時計回り）。輪郭は実在のコース図をトレースして再現。第1コーナー→シケイン→第1ヘアピン→名物アーチのダンロップコーナー→80R→第2ヘアピン→バックストレート（437m）→高速の最終コーナー。ピット入口は最終コーナー入り口の右側、ピット出口は第1コーナー直前、スタートラインはホームストレート（282m）のピット前という実物の配置も再現。",
+  { id:"tsukuba", name:"Tsukuba Circuit", jp:"筑波サーキット", laps:13, km:2.045, wP:0.35, wH:0.65, sf:0.285, pit:[0.095, 0.272, 14],
+    desc:"実在サーキット完全再現（コース2000、全長2.045km・時計回り）。輪郭は実在のコース図をトレースして再現。第1コーナー→シケイン→第1ヘアピン→名物アーチのダンロップコーナー→80R→第2ヘアピン→バックストレート（437m）→高速の最終コーナー。このマップではホームストレートが左側の立ち上がり区間にあたり、スタートラインはその終端（左上）。ピットレーンはホームストレート内側で、入口は左下（最終コーナー出口）、出口は左上の第1コーナー手前という配置。",
     d:"M206.4,225.6 C203.2,225.5 200.0,225.5 196.8,225.5 C193.6,225.5 190.4,225.4 187.2,225.4 C184.0,225.4 180.8,225.4 177.6,225.3 C174.4,225.3 171.2,225.3 168.0,225.2 C164.8,225.2 161.7,225.2 158.5,225.2 C155.3,225.1 152.1,225.1 148.9,225.1 C145.7,225.1 142.5,225.0 139.3,225.0 C136.1,225.0 132.9,224.9 129.7,224.9 C126.5,224.9 123.3,224.9 120.1,224.8 C116.9,224.8 113.7,224.8 110.5,224.8 C107.3,224.7 104.1,224.7 100.9,224.7 C97.7,224.6 94.5,224.6 91.3,224.6 C88.1,224.6 84.9,224.5 81.7,224.5 C78.5,224.5 75.3,224.6 72.2,224.4 C69.0,224.2 65.7,224.1 62.6,223.4 C59.6,222.6 56.6,221.4 53.7,220.1 C50.7,218.8 47.8,217.4 45.1,215.7 C42.4,214.1 39.8,212.2 37.4,210.1 C35.0,208.0 32.8,205.7 30.7,203.2 C28.6,200.8 26.6,198.3 24.9,195.6 C23.2,192.9 21.6,190.1 20.2,187.2 C18.9,184.4 17.7,181.4 16.7,178.3 C15.7,175.3 14.9,172.2 14.5,169.0 C14.1,165.9 14.0,162.6 14.1,159.5 C14.2,156.3 14.6,153.1 15.2,149.9 C15.9,146.8 16.7,143.7 17.9,140.7 C19.1,137.8 20.6,134.9 22.3,132.2 C24.0,129.5 25.9,126.9 27.9,124.5 C30.0,122.1 32.3,119.8 34.7,117.8 C37.2,115.7 39.7,113.7 42.5,112.1 C45.2,110.5 48.2,109.3 51.1,107.9 C54.0,106.6 56.9,105.2 59.8,103.9 C62.7,102.6 65.7,101.4 68.6,100.1 C71.5,98.8 74.4,97.5 77.4,96.2 C80.3,94.9 83.2,93.6 86.1,92.4 C89.1,91.1 92.0,89.8 94.9,88.5 C97.8,87.2 100.8,85.9 103.7,84.6 C106.6,83.3 109.6,82.1 112.5,80.8 C115.4,79.5 118.3,78.2 121.3,76.9 C124.2,75.6 127.1,74.3 130.0,73.1 C133.0,71.8 135.9,70.5 138.8,69.2 C141.7,67.9 144.7,66.6 147.6,65.3 C150.5,64.0 153.4,62.8 156.4,61.5 C159.3,60.2 162.2,58.9 165.1,57.6 C168.1,56.3 171.0,55.0 173.9,53.8 C176.9,52.5 179.8,51.2 182.7,49.9 C185.6,48.6 188.6,47.3 191.5,46.0 C194.4,44.7 197.3,43.5 200.3,42.2 C203.2,40.9 206.1,39.6 209.0,38.3 C212.0,37.0 214.8,35.3 217.8,34.5 C220.9,33.7 224.1,33.3 227.2,33.6 C230.3,34.0 233.6,35.2 236.2,36.8 C238.8,38.5 241.1,41.0 242.9,43.5 C244.8,46.1 246.4,49.0 247.3,52.0 C248.1,55.0 248.5,58.4 248.1,61.5 C247.8,64.6 246.8,67.9 245.2,70.5 C243.6,73.2 241.0,75.5 238.4,77.3 C235.9,79.1 232.8,80.2 229.8,81.3 C226.9,82.5 223.7,83.2 220.6,84.1 C217.6,85.0 214.5,85.9 211.5,86.9 C208.4,87.8 205.3,88.7 202.3,89.6 C199.2,90.6 196.2,91.5 193.1,92.4 C190.0,93.3 187.0,94.2 183.9,95.2 C180.9,96.1 177.8,97.0 174.7,97.9 C171.7,98.9 168.6,99.9 165.6,100.9 C162.6,102.0 159.6,103.0 156.7,104.3 C153.8,105.7 150.9,107.1 148.2,108.9 C145.6,110.6 143.1,112.7 140.6,114.7 C138.2,116.7 135.9,118.9 133.5,121.1 C131.1,123.2 128.7,125.3 126.3,127.4 C123.9,129.6 121.6,131.8 119.2,133.8 C116.7,135.9 114.3,138.1 111.6,139.7 C108.9,141.3 105.8,142.5 102.8,143.4 C99.8,144.4 96.5,144.6 93.4,145.2 C90.2,145.8 87.1,146.5 84.0,147.1 C80.8,147.7 77.7,148.3 74.6,148.9 C71.4,149.6 68.1,149.8 65.3,151.1 C62.4,152.4 59.5,154.4 57.7,156.8 C55.9,159.2 54.8,162.6 54.5,165.6 C54.3,168.7 55.0,172.2 56.2,175.0 C57.5,177.8 59.5,180.9 62.0,182.5 C64.5,184.1 68.2,185.0 71.2,184.7 C74.2,184.4 77.1,182.3 80.0,181.0 C82.9,179.6 85.7,178.1 88.5,176.6 C91.4,175.2 94.2,173.7 97.1,172.3 C99.9,170.8 102.8,169.4 105.6,167.9 C108.5,166.5 111.3,165.0 114.2,163.6 C117.0,162.1 119.9,160.7 122.7,159.2 C125.6,157.8 128.4,156.3 131.3,154.9 C134.1,153.4 136.9,152.0 139.8,150.5 C142.7,149.1 145.5,147.6 148.4,146.4 C151.3,145.1 154.3,143.6 157.4,142.9 C160.4,142.2 163.9,141.6 166.7,142.4 C169.6,143.2 172.1,145.8 174.6,147.8 C177.0,149.8 179.3,152.0 181.5,154.4 C183.7,156.7 185.7,159.2 187.6,161.7 C189.6,164.2 191.4,166.9 193.4,169.4 C195.3,172.0 197.3,174.4 199.3,176.9 C201.3,179.4 203.3,181.9 205.3,184.4 C207.3,186.9 209.2,189.5 211.4,191.9 C213.5,194.2 215.7,196.6 218.2,198.6 C220.6,200.6 223.3,202.5 226.1,203.9 C229.0,205.3 232.1,206.3 235.1,207.1 C238.2,208.0 241.4,208.7 244.5,209.3 C247.6,209.8 250.8,210.2 254.0,210.6 C257.2,210.9 260.4,211.1 263.6,211.3 C266.7,211.6 269.9,211.9 273.1,212.0 C276.3,212.2 279.5,212.0 282.7,212.0 C285.9,212.1 289.1,212.3 292.3,212.3 C295.5,212.2 298.7,212.1 301.9,212.0 C305.1,211.8 308.3,211.8 311.4,211.3 C314.6,210.8 317.7,209.9 320.7,209.0 C323.8,208.1 326.8,206.9 329.8,205.9 C332.8,204.8 335.8,203.7 338.8,202.6 C341.8,201.6 344.9,200.5 347.9,199.4 C350.9,198.3 353.9,197.2 356.9,196.2 C359.9,195.1 362.8,193.7 365.9,192.9 C369.0,192.1 372.4,190.8 375.3,191.3 C378.2,191.7 381.6,193.6 383.3,195.8 C385.1,198.1 385.7,201.7 385.9,204.7 C386.1,207.8 385.6,211.3 384.3,214.1 C383.0,216.8 380.4,219.3 377.9,221.1 C375.4,223.0 372.3,224.2 369.3,225.1 C366.3,226.0 363.0,226.2 359.8,226.5 C356.6,226.8 353.4,226.8 350.2,226.8 C347.0,226.9 343.8,226.8 340.6,226.7 C337.5,226.7 334.3,226.7 331.1,226.7 C327.9,226.6 324.7,226.6 321.5,226.6 C318.3,226.5 315.1,226.5 311.9,226.5 C308.7,226.5 305.5,226.4 302.3,226.4 C299.1,226.4 295.9,226.3 292.7,226.3 C289.5,226.3 286.3,226.3 283.1,226.2 C279.9,226.2 276.7,226.2 273.5,226.2 C270.3,226.1 267.1,226.1 263.9,226.1 C260.7,226.0 257.5,226.0 254.3,226.0 C251.1,226.0 248.0,225.9 244.8,225.9 C241.6,225.9 238.4,225.9 235.2,225.8 C232.0,225.8 228.8,225.8 225.6,225.7 C222.4,225.7 219.2,225.7 216.0,225.7 C212.8,225.6 209.6,225.6 206.4,225.6 Z" },
   { id:"trial", name:"Trial Mountain", jp:"トライアルマウンテン", laps:7, km:3.98, wP:0.5, wH:0.5, sf:0.09, pit:[0.965, 0.235, 14],
     desc:"GTの顔ともいえる山岳コースを、原作のコース図をトレースして再現。南のホームストレートから登り、トンネル明けの東ヘアピン、北側のうねるS字へ。ピットレーンはホームストレート内側の実配置。",
@@ -656,11 +652,14 @@ function silSVG(carId, color){
   return '<svg viewBox="0 0 120 40" shape-rendering="crispEdges" aria-hidden="true">' + rects + '</svg>';
 }
 /* Rivals are real-world racing drivers, initial + surname (fan homage):
-   T. Sato = Takuma Sato, K. Kobayashi = Kamui Kobayashi, etc. */
+   T. Sato = Takuma Sato, K. Kobayashi = Kamui Kobayashi,
+   S. Nakajima = Satoru Nakajima, A. Suzuki = Aguri Suzuki,
+   U. Katayama = Ukyo Katayama, K. Nakajima = Kazuki Nakajima, etc. */
 var RIVALS = [
   { name:"T. Sato", color:"#3d9bff" }, { name:"K. Kobayashi", color:"#9b59d0" },
-  { name:"Y. Tsunoda", color:"#2fbf71" }, { name:"K. Nakajima", color:"#ff9f1a" },
-  { name:"N. Yamamoto", color:"#e8e8e8" }, { name:"M. Verstappen", color:"#ffd23e" },
+  { name:"S. Nakajima", color:"#e8e8e8" }, { name:"A. Suzuki", color:"#ff7b00" },
+  { name:"U. Katayama", color:"#a78bfa" }, { name:"Y. Tsunoda", color:"#2fbf71" },
+  { name:"K. Nakajima", color:"#ff9f1a" }, { name:"M. Verstappen", color:"#ffd23e" },
   { name:"L. Hamilton", color:"#4dd0e1" }, { name:"F. Alonso", color:"#ff6b9d" },
   { name:"C. Leclerc", color:"#a3e635" }
 ];
@@ -1153,9 +1152,11 @@ function logMsg(html, cls){
 
 /* Pit lane: a real second road on the map, generated per course from the
    course's own pit spec — pit:[entryFrac, exitFrac, offsetPx] in PATH
-   fractions, measured on the real layout (e.g. Tsukuba: entry at the
-   final-corner entrance 0.827, exit just before Turn 1 0.08; Suzuka:
-   entry inside the final corner, exit just before Turn 1). The segment is
+   fractions, measured on the real layout (e.g. Tsukuba: the home straight
+   is the left-hand climb of the traced map — entry at the bottom-left
+   final-corner exit 0.095, exit at the top-left just before Turn 1 0.272,
+   start line at the top-left 0.285; Suzuka: entry inside the final
+   corner, exit just before Turn 1). The segment is
    offset toward the infield. Cars visibly drive it: entry -> box -> exit. */
 function buildPitLaneD(path, L, course){
   var spec = course.pit || [0.93, 0.06, 14];
@@ -1174,18 +1175,42 @@ function buildPitLaneD(path, L, course){
   return "M" + pts.join(" L");
 }
 
-/* Side-view ruler for the player-centred GT4-style camera: fixed 560 m
-   window, your car anchored at 58% — marks are metres ahead (+) / behind (-). */
-var SIL_WINDOW = 560, SIL_ANCHOR = 58;
+/* Side-view ruler for the full-field relative view: the strip ALWAYS shows
+   the whole field — the leader sits at the left edge of the band and the
+   last car at the right edge, however large the real time gap grows. The
+   scale therefore stretches/shrinks with the field's spread (never a fixed
+   metre window, never a camera that crops cars out). The ruler ticks are
+   re-labelled every frame with the actual metres behind the leader, and a
+   YOU marker tracks your car's slot inside the field. */
+var SIL_MIN_SPAN = 160; /* metres: floor so a bunched start grid still reads */
+var silRulerTicks = [], silRulerYou = null;
 function buildSilRuler(){
-  var ruler = $("sil-ruler"); ruler.innerHTML = "";
-  $("sil-lap-dist").textContent = SIL_WINDOW + " m（自車中心）";
-  [[200, "+200m 前方"], [100, "+100m"], [0, "YOU（自車）"], [-100, "-100m"], [-200, "-200m 後方"]].forEach(function(mk){
+  var ruler = $("sil-ruler"); ruler.innerHTML = ""; silRulerTicks = [];
+  for(var i = 0; i <= 4; i++){
     var sp = document.createElement("span");
-    sp.style.left = (SIL_ANCHOR - mk[0] / SIL_WINDOW * 100) + "%";
-    sp.innerHTML = "<i></i>" + mk[1];
-    ruler.appendChild(sp);
-  });
+    sp.innerHTML = "<i></i>";
+    ruler.appendChild(sp); silRulerTicks.push(sp);
+  }
+  silRulerYou = document.createElement("span");
+  silRulerYou.style.color = "#ff8a84"; silRulerYou.style.fontWeight = "900";
+  ruler.appendChild(silRulerYou);
+  $("sil-lap-dist").textContent = "—";
+}
+/* frac: 0 = leader (left edge of the band), 1 = last car (right edge).
+   The band keeps a small margin each side so the end cars' silhouettes and
+   name labels are never clipped by the stage edge. */
+function silFracToPct(frac){ return 7 + frac * 86; }
+function updateSilRuler(leadDist, spanM, myFrac){
+  for(var i = 0; i < silRulerTicks.length; i++){
+    var f = i / 4, sp = silRulerTicks[i];
+    sp.style.left = silFracToPct(f) + "%";
+    sp.style.transform = i === 0 ? "translateX(-6%)" : (i === 4 ? "translateX(-94%)" : "translateX(-50%)");
+    sp.innerHTML = "<i></i>" + (i === 0 ? "LEADER 0m" : "-" + Math.round(spanM * f) + "m");
+  }
+  if(silRulerYou){
+    silRulerYou.style.left = silFracToPct(myFrac) + "%";
+    silRulerYou.innerHTML = "<i></i>YOU";
+  }
 }
 
 function startRace(courseIdx, bm){
@@ -1258,8 +1283,8 @@ function startRace(courseIdx, bm){
     g.appendChild(c); g.appendChild(t);
     dots.appendChild(g); e.dot = g;
   });
-  /* side silhouette cars — GT4 B-Spec monitor style: the camera follows
-     YOUR car (anchored at 58%), rivals stream past by relative speed. */
+  /* side silhouette cars — full-field relative view: every car is always
+     on the strip, leader at the left edge, last car at the right edge. */
   buildSilRuler();
   var silBox = $("sil-cars"); silBox.innerHTML = "";
   race.entries.forEach(function(e){
@@ -1481,19 +1506,29 @@ function render(){
   var course = race.course, me = race.entries[0];
   var path = $("map-track"), L = path.getTotalLength();
   var leadE = sortedEntries()[0];
-  /* Side view — GT4 B-Spec monitor style. The previous version pinned the
-     LEADER to the right edge and auto-rescaled the window to the field's
-     spread, so every car drifted and bunched whenever the spread changed,
-     even when the real gaps never moved — that is not how GT4 moves.
-     GT4's monitor follows YOUR car: you stay anchored, the road streams
-     past underneath, and rivals move only by their RELATIVE speed —
-     creeping up on you, drawing alongside, passing, or pulling away.
-     Fixed 560 m window (no rescaling ever), positions smoothed per frame. */
+  /* Side view — full-field relative view. EVERY car is always on the strip,
+     however large the real time gaps grow: the leader anchors the left edge
+     of the band and the last car the right edge, and the scale stretches or
+     shrinks to fit the field's actual spread (floored at SIL_MIN_SPAN so a
+     bunched start grid still reads). Positions are true relative distances
+     — a car halfway back in metres sits halfway across the band — smoothed
+     per frame so the rescaling glides instead of jumping. The road markings
+     stream at YOUR car's speed so the sense of motion stays. */
   var refSv = Math.max(8, race.lapDist / leadE.baseLap);
-  var pxPerM = ($("sil-stage").clientWidth || 800) / SIL_WINDOW;
+  var fieldLead = -Infinity, fieldTail = Infinity;
+  race.entries.forEach(function(e){
+    if(e.dist > fieldLead) fieldLead = e.dist;
+    if(e.dist < fieldTail) fieldTail = e.dist;
+  });
+  var fieldSpan = Math.max(fieldLead - fieldTail, SIL_MIN_SPAN);
+  if(race._silSpanSm == null) race._silSpanSm = fieldSpan;
+  race._silSpanSm += (fieldSpan - race._silSpanSm) * clamp((race._frameReal || 0.016) * 3, 0, 1);
+  var spanSm = race._silSpanSm;
+  var pxPerM = ($("sil-stage").clientWidth || 800) / 280;
   var dashEl = $("sil-dash"); if(dashEl) dashEl.style.backgroundPositionX = (-(me.dist * pxPerM) % 52).toFixed(1) + "px";
   var postEl = $("sil-posts"); if(postEl) postEl.style.backgroundPositionX = (-(me.dist * pxPerM) % 156).toFixed(1) + "px";
-  var nearAhead = null, nearBehind = null;
+  $("sil-lap-dist").textContent = Math.round(fieldSpan) + " m（約" + (fieldSpan / refSv).toFixed(1) + "秒差）";
+  updateSilRuler(fieldLead, fieldSpan, clamp((fieldLead - me.dist) / fieldSpan, 0, 1));
   race.entries.forEach(function(e){
     var pt;
     if(e.inPit > 0 && race.pitPath){
@@ -1510,38 +1545,29 @@ function render(){
     }
     e.dot.setAttribute("transform", "translate(" + pt.x + "," + pt.y + ")");
     if(e.silEl){
-      /* + = ahead of you, shown to the LEFT (travel is right -> left).
-         Your own target never moves: the camera is locked to your car,
-         and a car in the pits stands still while the field streams past. */
-      var relAhead = e.dist - me.dist;
-      var target = SIL_ANCHOR - (relAhead / SIL_WINDOW) * 100;
+      /* relative position inside the whole field: leader = left edge of the
+         band, last car = right edge (travel is right -> left, so ahead is
+         LEFT). Every car is always visible — nothing is ever cropped out,
+         however big the gap to the leader becomes. */
+      var target = silFracToPct(clamp((fieldLead - e.dist) / spanSm, 0, 1));
       if(e._sxSmooth == null) e._sxSmooth = target;
       var kk = clamp((race._frameReal || 0.016) * 7, 0, 1);
       e._sxSmooth += (target - e._sxSmooth) * kk;
       e._sx = e._sxSmooth;
-      var vis = e._sx > -11 && e._sx < 111;
-      e.silEl.style.display = vis ? "" : "none";
+      e.silEl.style.display = "";
       e.silEl.style.left = e._sx + "%";
       e.silEl.style.opacity = e.inPit > 0 ? "0.45" : "1";
-      if(!vis && !e.me){
-        if(relAhead > 0 && (!nearAhead || relAhead < nearAhead.rel)) nearAhead = { e: e, rel: relAhead };
-        if(relAhead < 0 && (!nearBehind || relAhead > nearBehind.rel)) nearBehind = { e: e, rel: relAhead };
-      }
       var inPitNow = e.inPit > 0;
       if(!!e._pitTag !== inPitNow){ e._pitTag = inPitNow; e.silEl.firstChild.textContent = (e._silLabel || "") + (inPitNow ? " [PIT]" : ""); }
     }
   });
-  /* edge tags for the nearest car outside the camera window, each side */
-  var eaEl = $("sil-edge-ahead"), ebEl = $("sil-edge-behind");
-  if(eaEl){ if(nearAhead){ eaEl.style.display = "block"; eaEl.textContent = "◀ " + (nearAhead.e._silLabel || nearAhead.e.name) + " +" + (nearAhead.rel / refSv).toFixed(1) + "s"; } else eaEl.style.display = "none"; }
-  if(ebEl){ if(nearBehind){ ebEl.style.display = "block"; ebEl.textContent = (nearBehind.e._silLabel || nearBehind.e.name) + " " + (nearBehind.rel / refSv).toFixed(1) + "s ▶"; } else ebEl.style.display = "none"; }
-  /* the start/finish gantry streams past your car as you cross the line */
+  /* the start/finish gantry sits at the leader's slot whenever the leader
+     is on the start/finish straight section of the lap */
   var finEl = $("sil-finish");
   if(finEl){
-    var myProgF = ((me.dist % race.lapDist) + race.lapDist) % race.lapDist;
-    var toLine = race.lapDist - myProgF;
-    var fx = SIL_ANCHOR - (toLine / SIL_WINDOW) * 100;
-    if(toLine > 3 && fx > -6){ finEl.style.display = ""; finEl.style.left = fx + "%"; finEl.style.right = "auto"; }
+    var leadProgF = ((fieldLead % race.lapDist) + race.lapDist) % race.lapDist;
+    var toLineL = race.lapDist - leadProgF;
+    if(toLineL < 90 && leadE._sx != null){ finEl.style.display = ""; finEl.style.left = leadE._sx + "%"; }
     else finEl.style.display = "none";
   }
   /* silhouette gap readouts (real metres between cars) */
