@@ -377,7 +377,7 @@
 
     <div class="foot">
       遊び方：あなたは運転しない「監督」。レース中はペース指示（1〜5）、追い越し指示、ピット指示だけを出す。タイヤと燃料は周回ごとに減り、ピットの判断が勝敗を分ける。早送り ×1／×2／×3 対応。<br>
-      レース画面の「🎙 実況」をONにすると、ブラウザの音声合成が実況と解説の2役でレースを喋る（スタート、順位変動、ピット、ファイナルラップ、チェッカーなど）。環境によっては音声が出ない場合がある。<br>
+      レース画面の「🎙 実況」をONにすると、ブラウザの音声合成が実況と解説の2役でレースを喋る（スタート、自車とライバル全員の順位変動・追い越し・ミス・ピット・ファステストラップ、ファイナルラップ、チェッカーなど）。同じセリフは続けて読み上げないよう制御している。環境によっては音声が出ない場合がある。<br>
       ※ 本作は非公式のファンメイド作品です。コースは実在サーキットと名作レースゲームの名コースをオマージュして再現したもので、各公式とは関係ありません。車名はオリジナル名称を使用しています。ライバルドライバー名は実在のレーシングドライバーへのオマージュとして、イニシャル＋姓の表記にしています。
     </div>
   </section>
@@ -519,9 +519,9 @@
 "use strict";
 /* ================= DATA ================= */
 var COURSES = [
-  { id:"tsukuba", name:"Tsukuba Circuit", jp:"筑波サーキット", laps:13, km:2.05, wP:0.35, wH:0.65,
-    desc:"実在サーキット再現（コース2000の形状を再現）。第1コーナー→S字→名物ダンロップコーナーのタイトなヘアピン→第2ヘアピン→高速の最終コーナーからストレートへ。1周2.045kmのショートコースで接近戦が続く。",
-    d:"M112,197 L246,200 C290,202 314,185 316,154 C318,137 309,124 293,118 C278,112 275,99 285,89 C293,83 301,80 310,78 C316,66 317,53 308,46 C301,40 292,42 289,50 C285,59 285,68 288,76 C278,84 262,87 244,87 C210,89 168,86 138,90 C118,92 98,104 93,126 C89,142 98,152 94,164 C90,177 74,182 63,173 C50,163 40,176 47,188 C53,199 78,204 112,197 Z" },
+  { id:"tsukuba", name:"Tsukuba Circuit", jp:"筑波サーキット", laps:13, km:2.045, wP:0.35, wH:0.65,
+    desc:"実在サーキット完全再現（コース2000、全長2.045km・時計回り）。輪郭は実在のコース図をトレースして再現。第1コーナー→シケイン→第1ヘアピン→名物アーチのダンロップコーナー→80R→第2ヘアピン→バックストレート（437m）→高速の最終コーナー。短いがコーナーが連続するテクニカルコース。",
+    d:"M206.4,225.6 C203.2,225.5 200.0,225.5 196.8,225.5 C193.6,225.5 190.4,225.4 187.2,225.4 C184.0,225.4 180.8,225.4 177.6,225.3 C174.4,225.3 171.2,225.3 168.0,225.2 C164.8,225.2 161.7,225.2 158.5,225.2 C155.3,225.1 152.1,225.1 148.9,225.1 C145.7,225.1 142.5,225.0 139.3,225.0 C136.1,225.0 132.9,224.9 129.7,224.9 C126.5,224.9 123.3,224.9 120.1,224.8 C116.9,224.8 113.7,224.8 110.5,224.8 C107.3,224.7 104.1,224.7 100.9,224.7 C97.7,224.6 94.5,224.6 91.3,224.6 C88.1,224.6 84.9,224.5 81.7,224.5 C78.5,224.5 75.3,224.6 72.2,224.4 C69.0,224.2 65.7,224.1 62.6,223.4 C59.6,222.6 56.6,221.4 53.7,220.1 C50.7,218.8 47.8,217.4 45.1,215.7 C42.4,214.1 39.8,212.2 37.4,210.1 C35.0,208.0 32.8,205.7 30.7,203.2 C28.6,200.8 26.6,198.3 24.9,195.6 C23.2,192.9 21.6,190.1 20.2,187.2 C18.9,184.4 17.7,181.4 16.7,178.3 C15.7,175.3 14.9,172.2 14.5,169.0 C14.1,165.9 14.0,162.6 14.1,159.5 C14.2,156.3 14.6,153.1 15.2,149.9 C15.9,146.8 16.7,143.7 17.9,140.7 C19.1,137.8 20.6,134.9 22.3,132.2 C24.0,129.5 25.9,126.9 27.9,124.5 C30.0,122.1 32.3,119.8 34.7,117.8 C37.2,115.7 39.7,113.7 42.5,112.1 C45.2,110.5 48.2,109.3 51.1,107.9 C54.0,106.6 56.9,105.2 59.8,103.9 C62.7,102.6 65.7,101.4 68.6,100.1 C71.5,98.8 74.4,97.5 77.4,96.2 C80.3,94.9 83.2,93.6 86.1,92.4 C89.1,91.1 92.0,89.8 94.9,88.5 C97.8,87.2 100.8,85.9 103.7,84.6 C106.6,83.3 109.6,82.1 112.5,80.8 C115.4,79.5 118.3,78.2 121.3,76.9 C124.2,75.6 127.1,74.3 130.0,73.1 C133.0,71.8 135.9,70.5 138.8,69.2 C141.7,67.9 144.7,66.6 147.6,65.3 C150.5,64.0 153.4,62.8 156.4,61.5 C159.3,60.2 162.2,58.9 165.1,57.6 C168.1,56.3 171.0,55.0 173.9,53.8 C176.9,52.5 179.8,51.2 182.7,49.9 C185.6,48.6 188.6,47.3 191.5,46.0 C194.4,44.7 197.3,43.5 200.3,42.2 C203.2,40.9 206.1,39.6 209.0,38.3 C212.0,37.0 214.8,35.3 217.8,34.5 C220.9,33.7 224.1,33.3 227.2,33.6 C230.3,34.0 233.6,35.2 236.2,36.8 C238.8,38.5 241.1,41.0 242.9,43.5 C244.8,46.1 246.4,49.0 247.3,52.0 C248.1,55.0 248.5,58.4 248.1,61.5 C247.8,64.6 246.8,67.9 245.2,70.5 C243.6,73.2 241.0,75.5 238.4,77.3 C235.9,79.1 232.8,80.2 229.8,81.3 C226.9,82.5 223.7,83.2 220.6,84.1 C217.6,85.0 214.5,85.9 211.5,86.9 C208.4,87.8 205.3,88.7 202.3,89.6 C199.2,90.6 196.2,91.5 193.1,92.4 C190.0,93.3 187.0,94.2 183.9,95.2 C180.9,96.1 177.8,97.0 174.7,97.9 C171.7,98.9 168.6,99.9 165.6,100.9 C162.6,102.0 159.6,103.0 156.7,104.3 C153.8,105.7 150.9,107.1 148.2,108.9 C145.6,110.6 143.1,112.7 140.6,114.7 C138.2,116.7 135.9,118.9 133.5,121.1 C131.1,123.2 128.7,125.3 126.3,127.4 C123.9,129.6 121.6,131.8 119.2,133.8 C116.7,135.9 114.3,138.1 111.6,139.7 C108.9,141.3 105.8,142.5 102.8,143.4 C99.8,144.4 96.5,144.6 93.4,145.2 C90.2,145.8 87.1,146.5 84.0,147.1 C80.8,147.7 77.7,148.3 74.6,148.9 C71.4,149.6 68.1,149.8 65.3,151.1 C62.4,152.4 59.5,154.4 57.7,156.8 C55.9,159.2 54.8,162.6 54.5,165.6 C54.3,168.7 55.0,172.2 56.2,175.0 C57.5,177.8 59.5,180.9 62.0,182.5 C64.5,184.1 68.2,185.0 71.2,184.7 C74.2,184.4 77.1,182.3 80.0,181.0 C82.9,179.6 85.7,178.1 88.5,176.6 C91.4,175.2 94.2,173.7 97.1,172.3 C99.9,170.8 102.8,169.4 105.6,167.9 C108.5,166.5 111.3,165.0 114.2,163.6 C117.0,162.1 119.9,160.7 122.7,159.2 C125.6,157.8 128.4,156.3 131.3,154.9 C134.1,153.4 136.9,152.0 139.8,150.5 C142.7,149.1 145.5,147.6 148.4,146.4 C151.3,145.1 154.3,143.6 157.4,142.9 C160.4,142.2 163.9,141.6 166.7,142.4 C169.6,143.2 172.1,145.8 174.6,147.8 C177.0,149.8 179.3,152.0 181.5,154.4 C183.7,156.7 185.7,159.2 187.6,161.7 C189.6,164.2 191.4,166.9 193.4,169.4 C195.3,172.0 197.3,174.4 199.3,176.9 C201.3,179.4 203.3,181.9 205.3,184.4 C207.3,186.9 209.2,189.5 211.4,191.9 C213.5,194.2 215.7,196.6 218.2,198.6 C220.6,200.6 223.3,202.5 226.1,203.9 C229.0,205.3 232.1,206.3 235.1,207.1 C238.2,208.0 241.4,208.7 244.5,209.3 C247.6,209.8 250.8,210.2 254.0,210.6 C257.2,210.9 260.4,211.1 263.6,211.3 C266.7,211.6 269.9,211.9 273.1,212.0 C276.3,212.2 279.5,212.0 282.7,212.0 C285.9,212.1 289.1,212.3 292.3,212.3 C295.5,212.2 298.7,212.1 301.9,212.0 C305.1,211.8 308.3,211.8 311.4,211.3 C314.6,210.8 317.7,209.9 320.7,209.0 C323.8,208.1 326.8,206.9 329.8,205.9 C332.8,204.8 335.8,203.7 338.8,202.6 C341.8,201.6 344.9,200.5 347.9,199.4 C350.9,198.3 353.9,197.2 356.9,196.2 C359.9,195.1 362.8,193.7 365.9,192.9 C369.0,192.1 372.4,190.8 375.3,191.3 C378.2,191.7 381.6,193.6 383.3,195.8 C385.1,198.1 385.7,201.7 385.9,204.7 C386.1,207.8 385.6,211.3 384.3,214.1 C383.0,216.8 380.4,219.3 377.9,221.1 C375.4,223.0 372.3,224.2 369.3,225.1 C366.3,226.0 363.0,226.2 359.8,226.5 C356.6,226.8 353.4,226.8 350.2,226.8 C347.0,226.9 343.8,226.8 340.6,226.7 C337.5,226.7 334.3,226.7 331.1,226.7 C327.9,226.6 324.7,226.6 321.5,226.6 C318.3,226.5 315.1,226.5 311.9,226.5 C308.7,226.5 305.5,226.4 302.3,226.4 C299.1,226.4 295.9,226.3 292.7,226.3 C289.5,226.3 286.3,226.3 283.1,226.2 C279.9,226.2 276.7,226.2 273.5,226.2 C270.3,226.1 267.1,226.1 263.9,226.1 C260.7,226.0 257.5,226.0 254.3,226.0 C251.1,226.0 248.0,225.9 244.8,225.9 C241.6,225.9 238.4,225.9 235.2,225.8 C232.0,225.8 228.8,225.8 225.6,225.7 C222.4,225.7 219.2,225.7 216.0,225.7 C212.8,225.6 209.6,225.6 206.4,225.6 Z" },
   { id:"trial", name:"Trial Mountain", jp:"トライアルマウンテン", laps:7, km:3.98, wP:0.5, wH:0.5,
     desc:"GTの顔ともいえる山岳コースを再現。トンネル明けのヘアピンと高速S字が続く、バランス型のテクニカルコース。",
     d:"M58,202 L248,206 C298,207 330,192 333,162 C336,136 316,121 294,118 L284,86 C298,60 274,40 240,44 C206,48 196,68 176,78 C142,58 96,72 92,104 C89,128 108,140 104,160 C99,184 78,192 58,202 Z" },
@@ -729,6 +729,10 @@ function fmtClock(s){ var m=Math.floor(s/60), ss=Math.floor(s-m*60); return m+":
    queue so it never talks over itself; low-priority lines are dropped
    when the queue is busy. Default OFF. */
 var ttsOn = false, ttsQueue = [], ttsSpeaking = false, ttsVoices = [];
+/* Ring of the last lines actually spoken. ttsProcess drops any line whose
+   text is still in this ring, so the same sentence can never come round
+   again a few seconds later — the classic "同じコメントばかり" problem. */
+var spokenRecent = [];
 function ttsLoadVoices(){
   if(!("speechSynthesis" in window)) return;
   var vs = speechSynthesis.getVoices() || [];
@@ -755,6 +759,10 @@ function ttsProcess(){
     /* The commentary scripts are written with the placeholder name レン;
        speak them with the player's chosen driver name instead. */
     text = text.replace(/レン/g, pName());
+    /* Never repeat a recently spoken sentence: drop it and move on. */
+    if(spokenRecent.indexOf(text) >= 0) continue;
+    spokenRecent.push(text);
+    if(spokenRecent.length > 12) spokenRecent.shift();
     var st = ttsStyle(item.role);
     var u = new SpeechSynthesisUtterance(text);
     u.lang = "ja-JP";
@@ -788,13 +796,16 @@ function sayFn(fn, role, pri){
   ttsQueue.push({ fn: fn, role: role || "jikkyou", pri: pri, born: performance.now() });
   ttsProcess();
 }
-/* Varied line pools — never use the same phrasing twice in a row. */
+/* Varied line pools — never use the same phrasing twice in a row, and prefer
+   phrasings that are not still in the recently-spoken ring. */
 var lineLast = {};
 function pickLine(key, arr){
-  var i = Math.floor(Math.random() * arr.length);
-  if(arr.length > 1){ var guard = 0; while(i === lineLast[key] && guard++ < 8) i = Math.floor(Math.random() * arr.length); }
-  lineLast[key] = i;
-  return arr[i];
+  var fresh = arr.filter(function(t){ return spokenRecent.indexOf(t) < 0; });
+  var pool = fresh.length ? fresh : arr;
+  var i = Math.floor(Math.random() * pool.length);
+  if(pool.length > 1){ var guard = 0; while(pool[i] === lineLast[key] && guard++ < 8) i = Math.floor(Math.random() * pool.length); }
+  lineLast[key] = pool[i];
+  return pool[i];
 }
 var POOL = {
   overtake: ["抜いた！ レン、オーバーテイク成功です！", "きました！ レン、前車をかわしてポジションアップ！", "オーバーテイク！ 見事な仕掛けでした！", "抜きました！ レン、一気に前に出ます！"],
@@ -809,10 +820,22 @@ var POOL = {
   tireWarn: ["タイヤがかなり厳しくなってきました。そろそろピットを考えたいところです。", "タイヤの残りが少なくなっています。このままでは終盤が持ちません。", "タイヤが警告域です。ピットウィンドウに入っていますよ。"],
   fuelWarn: ["燃料も残りわずかです。このままだとガス欠の危険があります。", "燃料が厳しいですね。ペースを落とすか、ピットか、判断が必要です。"],
   finLapJ: ["ファイナルラップ！ 残り1周です！", "最終周回に入りました！ あと1周！", "ラストラップです！ 全てが決まります！"],
-  finLapK: ["最後までタイヤが持つかどうか。ピットに入る余裕はもうありません。", "ここからは守るか攻めるか、監督の指示が試されます。", "燃料もタイヤも限界のはず。無事に帰ってきてほしい。"]
+  finLapK: ["最後までタイヤが持つかどうか。ピットに入る余裕はもうありません。", "ここからは守るか攻めるか、監督の指示が試されます。", "燃料もタイヤも限界のはず。無事に帰ってきてほしい。"],
+  /* --- the OTHER drivers: the race is not only about your car --- */
+  rivalPass: ["{n}が{v}をかわした！ 順位が入れ替わります！", "{n}、オーバーテイク！ {v}の前に出ました！", "{v}のインを突いた！ {n}が前に出ます！", "{n}が仕掛けた！ {v}を抜いてポジションアップ！"],
+  rivalPassK: ["{n}のペースが上がっています。この勢いは侮れません。", "{v}はタイヤが厳しいのかもしれません。後半の落ち込みに注意です。", "{n}はいいリズムで走っていますね。"],
+  rivalMistakeJ: ["{n}がミス！ コースをはらんでいます！", "おっと{n}、姿勢を乱した！ 大きくタイムを失います。", "{n}がコースアウト気味だ！ 後続が一気に詰め寄ります！"],
+  rivalMistakeK: ["{n}はタイヤが厳しくなってきたのかもしれません。", "こういうミスが終盤の順位を左右します。", "{n}は少しペースを落として立て直したいところです。"],
+  rivalPitIn: ["{n}、ピットインです！", "{n}がピットレーンに入りました。作戦が動きます。", "ピットストップ、{n}です。順位が動くかもしれません。"],
+  rivalPitInK: ["{n}はタイヤ交換と給油に入りました。アンダーカットが決まるか注目です。", "{n}のピットで、レンとの位置関係が変わる可能性があります。", "ピット作業の速さと、コース復帰の位置が見どころです。"],
+  rivalPitOut: ["{n}、ピットアウト。コースに戻ります。", "{n}がフレッシュタイヤでコース復帰です。"],
+  rivalFL: ["{n}がファステストラップ更新、{t}です。絶好調ですね。", "全体ベストは{n}、{t}。ペースの基準が上がりました。", "{n}が{t}をマーク。今日は速さが際立っています。"],
+  finWinK: ["解説です。見事なレース運びでした。マネジメントが完璧に決まりましたね。", "解説です。ピット戦略とペース配分、すべてが噛み合った勝利でした。", "解説です。危なげない走りで、監督の采配も冴えていました。"],
+  finPodiumK: ["解説です。表彰台獲得。ピット戦略が実を結びました。", "解説です。表彰台です。優勝した{n}には届きませんでしたが、内容のあるレースでした。", "解説です。安定した走りで表彰台を確保。次は頂点が狙えます。"],
+  finOtherK: ["解説です。あと一歩でした。タイヤと燃料の使い方に、次への課題が残りました。", "解説です。優勝は{n}。レンは終盤のペースに課題を残しました。", "解説です。{n}の速さが光ったレースでした。次戦に期待しましょう。"]
 };
 function ttsStop(){
-  ttsQueue = []; ttsSpeaking = false;
+  ttsQueue = []; ttsSpeaking = false; spokenRecent = [];
   if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
 }
 /* Situation colour commentary, built from the LIVE race state at speak time:
@@ -824,8 +847,41 @@ function colorLine(){
   var refV = Math.max(8, race.lapDist / leader.baseLap);
   var cands = [];
   var ahead = sorted[idx-1], behind = sorted[idx+1];
-  if(ahead && me.inPit <= 0) cands.push("前車との差は約" + ((ahead.dist - me.dist)/refV).toFixed(1) + "秒。じわじわと詰め寄っています。");
-  if(behind && me.inPit <= 0) cands.push("後ろの" + behind.name + "が" + ((me.dist - behind.dist)/refV).toFixed(1) + "秒差まで迫っています。油断できません。");
+  if(ahead && me.inPit <= 0){
+    var gA = (ahead.dist - me.dist)/refV;
+    if(gA < 30){ /* beyond that you are being lapped — a "gap" number is meaningless */
+      cands.push("前車" + ahead.name + "との差は約" + gA.toFixed(1) + "秒。じわじわと詰め寄っています。");
+      cands.push("レンの前は" + ahead.name + "、差は" + gA.toFixed(1) + "秒です。射程圏内に入ってきました。");
+    }
+  }
+  if(behind && me.inPit <= 0){
+    var gB = (me.dist - behind.dist)/refV;
+    if(gB < 30){
+      cands.push("後ろの" + behind.name + "が" + gB.toFixed(1) + "秒差まで迫っています。油断できません。");
+      cands.push(behind.name + "が" + gB.toFixed(1) + "秒後ろにいます。ミスは許されません。");
+    }
+  }
+  /* the closest battle anywhere in the field that does NOT involve your car */
+  var bestPair = null;
+  for(var i = 0; i < sorted.length - 1; i++){
+    var ea = sorted[i], eb = sorted[i+1];
+    if(ea.me || eb.me || ea.inPit > 0 || eb.inPit > 0 || ea.finished || eb.finished) continue;
+    var g = (ea.dist - eb.dist) / refV;
+    if(g >= 0 && (!bestPair || g < bestPair.g)) bestPair = { a: ea, b: eb, g: g, pos: i + 1 };
+  }
+  if(bestPair && bestPair.g < 2.2) cands.push(bestPair.pos + "位争いは" + bestPair.a.name + "と" + bestPair.b.name + "、差は僅か" + bestPair.g.toFixed(1) + "秒。激しいバトルになっています。");
+  if(bestPair && bestPair.g < 1.0) cands.push(bestPair.b.name + "が" + bestPair.a.name + "の真後ろにつけています。いつ仕掛けるか、目が離せません。");
+  /* the fight for the lead, when your car is not in it */
+  if(sorted.length > 1 && !leader.me && !sorted[1].me){
+    var gTop = (leader.dist - sorted[1].dist) / refV;
+    if(gTop < 4) cands.push("トップ争いは" + leader.name + "と" + sorted[1].name + "、差は" + gTop.toFixed(1) + "秒です。");
+    else if(gTop > 10) cands.push(leader.name + "が2位以下を" + gTop.toFixed(0) + "秒引き離して独走態勢です。");
+  }
+  if(leader.me && sorted[1]) cands.push("レンがトップを走っています。2位" + sorted[1].name + "との差は" + ((leader.dist - sorted[1].dist)/refV).toFixed(1) + "秒です。");
+  /* who has pitted, who is still to stop — the strategy picture */
+  var pitted = race.entries.filter(function(e){ return !e.me && e.pitCount > 0; });
+  var notPitted = race.entries.filter(function(e){ return !e.me && e.pitCount === 0 && !e.finished; });
+  if(pitted.length && notPitted.length && race.time > 120) cands.push("ピットを終えたのは" + pitted.map(function(e){ return e.name; }).join("、") + "。" + notPitted[0].name + "らはまだピットに入っていません。戦略が分かれています。");
   var lapsLeft = race.course.laps - Math.min(me.lap, race.course.laps);
   if(lapsLeft > 1) cands.push("残り" + lapsLeft + "周です。タイヤの残りは" + Math.round(me.tire) + "パーセント、燃料は" + Math.round(me.fuel) + "パーセント。");
   if(leader && !leader.me && (leader.dist - me.dist)/refV > 12) cands.push("トップの" + leader.name + "は独走態勢。レンは自分のレースに集中したいところです。");
@@ -864,6 +920,26 @@ function commentaryTick(){
     say("トップが入れ替わりました！ 首位は" + (lead.me ? "レン" : lead.name) + "です！", "jikkyou", 1);
   }
   race.cLeader = lead;
+  /* The OTHER drivers: at most one rival story every few seconds, and only
+     while the broadcast is not busy with your own car's action. */
+  if(race.rivalEvents && race.rivalEvents.length && now - race.lastRivalAt > 6500 && ttsQueue.length <= 1){
+    var ev = race.rivalEvents.shift();
+    race.lastRivalAt = now;
+    if(ev.type === "pass"){
+      say(pickLine("rivalpass", POOL.rivalPass).replace("{n}", ev.name).replace("{v}", ev.victim || "前車"), "jikkyou", 2);
+      if(Math.random() < 0.4) say(pickLine("rivalpassk", POOL.rivalPassK).replace("{n}", ev.name).replace("{v}", ev.victim || "前車"), "kaisetsu", 1);
+    } else if(ev.type === "mistake"){
+      say(pickLine("rivalmistakej", POOL.rivalMistakeJ).replace("{n}", ev.name), "jikkyou", 1);
+      if(Math.random() < 0.5) say(pickLine("rivalmistakek", POOL.rivalMistakeK).replace("{n}", ev.name), "kaisetsu", 1);
+    } else if(ev.type === "pitin"){
+      say(pickLine("rivalpitin", POOL.rivalPitIn).replace("{n}", ev.name), "jikkyou", 2);
+      say(pickLine("rivalpitink", POOL.rivalPitInK).replace("{n}", ev.name), "kaisetsu", 1);
+    } else if(ev.type === "pitout"){
+      say(pickLine("rivalpitout", POOL.rivalPitOut).replace("{n}", ev.name), "jikkyou", 1);
+    } else if(ev.type === "fl"){
+      say(pickLine("rivalfl", POOL.rivalFL).replace("{n}", ev.name).replace("{t}", ev.extra || ""), "kaisetsu", 1);
+    }
+  }
   if(race.playerPos !== race.cPos && me.inPit <= 0 && !me.finished && now - race.lastPosAt > 9000){
     race.lastPosAt = now;
     sayFn(function(){
@@ -1122,7 +1198,8 @@ function startRace(courseIdx, bm){
     totalDist: course.km*1000*course.laps, lapDist: course.km*1000,
     entries: gridEntries, over:false, playerPos: gridEntries.length,
     prevPos: 0, flags: {}, cPos: 0, cLeader: null, lastPosAt: 0, lastColorAt: 0, nextColorIn: 15000,
-    tireWarned: false, fuelWarned: false, pitPath: null, pitL: 0
+    tireWarned: false, fuelWarned: false, pitPath: null, pitL: 0,
+    rivalEvents: [], lastRivalAt: 0, overallBest: null
   };
   race.prevPos = sortedEntries().indexOf(gridEntries[0]) + 1;
   race.cPos = race.prevPos;
@@ -1205,6 +1282,9 @@ function startRace(courseIdx, bm){
   ttsStop();
   say("スタート！ " + course.name + "、" + course.laps + "周のレースが始まりました！ レンは" + race.prevPos + "番手から追い上げます！", "jikkyou", 3);
   say("解説です。カギはタイヤと燃料のマネジメント。ピットのタイミングが勝敗を分けます。", "kaisetsu", 1);
+  var poleE = null;
+  gridEntries.forEach(function(e){ if(e.letter === "A") poleE = e; });
+  if(poleE && !poleE.me) say("ポールポジションは" + poleE.name + "、" + poleE.car.name + "です。この1台をどう崩すかが焦点になります。", "kaisetsu", 1);
   show("race");
   lastTs = performance.now();
   if(timer) cancelAnimationFrame(timer);
@@ -1258,6 +1338,15 @@ function sortedEntries(){
   });
 }
 
+/* Rival happenings captured inside step() (overtakes, mistakes, pit stops,
+   fastest laps). commentaryTick() turns them into speech about the OTHER
+   drivers, throttled so they never flood the broadcast. */
+function pushRivalEvent(type, name, victim, extra){
+  if(!race || !race.rivalEvents || race.over) return;
+  if(race.rivalEvents.length >= 3) return;
+  race.rivalEvents.push({ type: type, name: name, victim: victim || null, extra: extra || null });
+}
+
 function step(dt){
   var course = race.course;
   race.time += dt;
@@ -1266,7 +1355,7 @@ function step(dt){
     if(e.finished) return;
     if(e.inPit > 0){
       e.inPit -= dt;
-      if(e.inPit <= 0){ e.tire = 100; e.fuel = 100; if(e.me){ logMsg("ピット完了。タイヤ交換＋給油してコース復帰！", "good"); race.flags.pitOut = true; race.tireWarned = false; race.fuelWarned = false; } }
+      if(e.inPit <= 0){ e.tire = 100; e.fuel = 100; if(e.me){ logMsg("ピット完了。タイヤ交換＋給油してコース復帰！", "good"); race.flags.pitOut = true; race.tireWarned = false; race.fuelWarned = false; } else pushRivalEvent("pitout", e.name); }
       return;
     }
     /* AI brain */
@@ -1299,6 +1388,7 @@ function step(dt){
         if(canPass){
           battleF = 1.10;
           if(e.me){ logMsg("オーバーテイク成功！ 前車を抜いた。", "good"); race.flags.overtake = true; }
+          else if(Math.random() < 0.55) pushRivalEvent("pass", e.name, ahead.me ? pName() : ahead.name);
         } else {
           battleF = 0.965; /* stuck behind */
           if(e.me && e.overtake && Math.random() < 0.006) logMsg("前車に詰まっている…追い越し指示が効いていない。", "hot");
@@ -1313,7 +1403,7 @@ function step(dt){
       if(Math.random() < risk * dt * 10){
         mistakeF = 0.55; e.mistakeCd = 2.2;
         if(e.me){ logMsg("ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot"); race.flags.mistake = true; }
-        else if(Math.random()<0.5) logMsg(e.name+" がミス。順位が入れ替わるかも。", "");
+        else { if(Math.random()<0.5) logMsg(e.name+" がミス。順位が入れ替わるかも。", ""); if(Math.random()<0.6) pushRivalEvent("mistake", e.name); }
       }
     }
     var wobble = 1 + Math.sin(race.time*0.7 + e.seed)*0.006;
@@ -1330,6 +1420,12 @@ function step(dt){
       var wasBest = e.bestLap;
       e.lastLap = lapTime; if(!e.bestLap || lapTime < e.bestLap) e.bestLap = lapTime;
       e.lap++; e.lapStart = race.time;
+      /* overall fastest lap changing hands to a rival is commentary material */
+      if(e.lap >= 3 && (!race.overallBest || lapTime < race.overallBest.time)){
+        var prevBest = race.overallBest;
+        race.overallBest = { time: lapTime, e: e };
+        if(prevBest && prevBest.e !== e && !e.me) pushRivalEvent("fl", e.name, null, fmtTime(lapTime));
+      }
       if(e.me){
         logMsg("LAP "+(e.lap-1)+" 完了： "+fmtTime(lapTime)+"（ベスト "+fmtTime(e.bestLap)+"）");
         if(wasBest && lapTime < wasBest && e.lap >= 3) race.flags.bestLap = true;
@@ -1341,6 +1437,7 @@ function step(dt){
       } else if(e.pitQueued){
         e.pitQueued = false; e.inPit = e.pitTotal = 11 + Math.random()*3; e.pitCount++;
         if(e.me){ setPit(false); logMsg("ピットイン…ピットレーンを走行中。", "good"); race.flags.pitIn = true; }
+        else pushRivalEvent("pitin", e.name);
       }
     }
   });
@@ -1506,10 +1603,10 @@ function finishRace(){
   var me = race.entries[0];
   var pos = sorted.indexOf(me) + 1;
   var course = race.course;
-  say("チェッカー！ レン、" + pos + "位でフィニッシュです！", "jikkyou", 3);
-  say(pos === 1 ? "解説です。見事なレース運びでした。マネジメントが完璧に決まりましたね。" :
-      pos <= 3 ? "解説です。表彰台獲得。ピット戦略が実を結びました。" :
-      "解説です。あと一歩でした。タイヤと燃料の使い方に、次への課題が残りました。", "kaisetsu", 3);
+  var winnerE = sorted[0];
+  if(pos === 1) say(pickLine("finj", ["チェッカー！ レン、優勝です！ 見事な勝利！", "チェッカー！ レンがトップで帰ってきました、優勝です！", "チェッカーフラッグ！ レン、文句なしの優勝です！"]), "jikkyou", 3);
+  else say("チェッカー！ 優勝は" + winnerE.name + "！ レンは" + pos + "位でフィニッシュです！", "jikkyou", 3);
+  say(pickLine("fink", pos === 1 ? POOL.finWinK : (pos <= 3 ? POOL.finPodiumK : POOL.finOtherK)).replace("{n}", winnerE.name), "kaisetsu", 3);
   /* prize by class value of player car + position */
   var base = race.bm ? 30000 : 4000 + (carById(selCar).price * 0.06);
   var posMul = [1, 1.6, 1.3, 1.1, 0.9, 0.75, 0.6, 0.5, 0.4, 0.35, 0.3][pos] || 0.3;
