@@ -189,6 +189,10 @@
   .map-box .trackpath{fill:none;stroke:var(--track);stroke-width:11;stroke-linejoin:round;stroke-linecap:round;}
   .map-box .casing{fill:none;stroke:rgba(127,127,127,.35);stroke-width:16;stroke-linejoin:round;stroke-linecap:round;}
   .map-box .startline{stroke:#fff;stroke-width:3;stroke-dasharray:4 3;}
+  .map-box .pit-casing{fill:none;stroke:rgba(0,0,0,.5);stroke-width:13;stroke-linejoin:round;stroke-linecap:round;}
+  .map-box .pitlane{fill:none;stroke:#43464d;stroke-width:8;stroke-linejoin:round;stroke-linecap:round;}
+  .map-box .pit-dash{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-dasharray:5 4;opacity:.8;}
+  .map-box .pit-label{fill:var(--gold);font-size:10px;font-weight:900;letter-spacing:.18em;stroke:#0a0a0b;stroke-width:2.6;paint-order:stroke;font-family:"DotGothic16",sans-serif;}
   .dot{stroke:#0a0a0b;stroke-width:1.4;}
   .dot.player{stroke:#fff;stroke-width:2.2;}
   .map-tag{position:absolute;left:8px;top:8px;background:rgba(10,10,11,.82);color:#fff;font-size:11px;font-weight:800;letter-spacing:.1em;padding:5px 9px;}
@@ -294,7 +298,7 @@
     </div>
 
     <h2 class="sec">コース選択</h2>
-    <p class="sec-note">コース特性で効く性能が変わる。峠と市街地はハンドリング、高速周回はパワー重視。</p>
+    <p class="sec-note">GT4の名コース風レイアウト6本と、鈴鹿・ラグナセカ・スパ・筑波の実在サーキット再現4本。全コースにピットレーン完備。テクニカルコースはハンドリング、高速コースはパワー重視。</p>
     <div class="grid courses" id="course-grid"></div>
 
     <h2 class="sec">マシン選択 ／ ガレージ</h2>
@@ -309,7 +313,7 @@
     <div class="foot">
       遊び方：あなたは運転しない「監督」。レース中はペース指示（1〜5）、追い越し指示、ピット指示だけを出す。タイヤと燃料は周回ごとに減り、ピットの判断が勝敗を分ける。早送り ×1／×2／×3 対応。<br>
       レース画面の「🎙 実況」をONにすると、ブラウザの音声合成が実況と解説の2役でレースを喋る（スタート、順位変動、ピット、ファイナルラップ、チェッカーなど）。環境によっては音声が出ない場合がある。<br>
-      ※ 本作は非公式のファンメイド作品です。実在のゲーム・車名・コース名とは関係のないオリジナル名称を使用しています。
+      ※ 本作は非公式のファンメイド作品です。コースは実在サーキットと名作レースゲームの名コースをオマージュして再現したもので、各公式とは関係ありません。車名はオリジナル名称を使用しています。
     </div>
   </section>
 
@@ -344,6 +348,10 @@
             <svg id="map-svg" viewBox="0 0 400 260" role="img" aria-label="コースマップ">
               <path class="casing" id="map-casing" d=""/>
               <path class="trackpath" id="map-track" d=""/>
+              <path class="pit-casing" id="map-pitcasing" d=""/>
+              <path class="pitlane" id="map-pitlane" d=""/>
+              <path class="pit-dash" id="map-pitdash" d=""/>
+              <text class="pit-label" id="map-pitlabel" x="0" y="0">PIT LANE</text>
               <line class="startline" id="map-start" x1="0" y1="0" x2="0" y2="0"/>
               <g id="map-dots"></g>
             </svg>
@@ -442,24 +450,36 @@
 "use strict";
 /* ================= DATA ================= */
 var COURSES = [
-  { id:"coast", name:"Sunset Coast", jp:"夕凪海岸", laps:8, km:3.4, wP:0.5, wH:0.5,
-    desc:"海沿いの高速コーナーが続くバランス型。どのマシンでも走れる入門コース。",
-    d:"M60,180 C40,110 90,60 170,55 C250,50 330,70 345,120 C358,165 300,205 220,208 C150,210 78,215 60,180 Z" },
-  { id:"touge", name:"Redline Touge", jp:"赤嶺峠", laps:6, km:2.8, wP:0.3, wH:0.7,
-    desc:"ヘアピン連続の山岳コース。ハンドリングとドライバーの技量が物を言う。",
-    d:"M70,200 L120,120 L95,95 L160,60 L185,110 L240,45 L270,105 L330,80 L345,150 L290,175 L320,215 L200,225 L140,190 L105,225 Z" },
-  { id:"city", name:"Metro City", jp:"都心市街地", laps:9, km:2.6, wP:0.35, wH:0.65,
-    desc:"直角コーナーとシケインの市街地。追い越しは難しいがミスも起きやすい。",
-    d:"M60,60 H250 V110 H180 V160 H340 V215 H60 Z" },
-  { id:"ring", name:"Velocity Ring", jp:"高速周回路", laps:10, km:4.2, wP:0.75, wH:0.25,
-    desc:"ほぼ全開の高速オーバル寄りコース。パワー勝負。タイヤへの負担は小さい。",
-    d:"M200,35 C300,35 365,80 365,130 C365,180 300,225 200,225 C100,225 35,180 35,130 C35,80 100,35 200,35 Z" },
-  { id:"forest", name:"Forest Valley", jp:"深森バレー", laps:7, km:3.8, wP:0.45, wH:0.55,
-    desc:"森の中のうねる中高速コース。リズムを崩すと一気に離される。",
-    d:"M55,140 C60,70 140,40 205,60 C260,25 345,55 350,115 C390,160 340,215 265,205 C215,240 120,225 105,180 C60,185 40,175 55,140 Z" },
-  { id:"lake", name:"Lakeside GP", jp:"湖畔グランプリ", laps:8, km:3.6, wP:0.55, wH:0.45,
-    desc:"湖を囲む最終戦仕様の総合コース。パワーとハンドリングの両方が要る。",
-    d:"M80,90 C110,40 220,35 280,70 C350,60 375,130 330,170 C350,215 250,235 190,210 C120,235 45,200 60,145 C45,115 55,105 80,90 Z" }
+  { id:"trial", name:"Trial Mountain", jp:"トライアルマウンテン", laps:7, km:3.98, wP:0.5, wH:0.5,
+    desc:"GTの顔ともいえる山岳コースを再現。トンネル明けのヘアピンと高速S字が続く、バランス型のテクニカルコース。",
+    d:"M58,202 L248,206 C298,207 330,192 333,162 C336,136 316,121 294,118 L284,86 C298,60 274,40 240,44 C206,48 196,68 176,78 C142,58 96,72 92,104 C89,128 108,140 104,160 C99,184 78,192 58,202 Z" },
+  { id:"deepforest", name:"Deep Forest", jp:"ディープフォレスト", laps:8, km:3.6, wP:0.45, wH:0.55,
+    desc:"深い森の中を抜ける中高速コース。高低差のあるうねりでリズムを崩すと一気に離される。",
+    d:"M78,192 C54,142 72,96 118,80 C128,44 184,28 226,50 C276,24 342,54 346,104 C382,140 350,196 294,200 C250,234 158,232 128,206 C96,216 86,208 78,192 Z" },
+  { id:"grandvalley", name:"Grand Valley", jp:"グランバレー・スピードウェイ", laps:6, km:4.97, wP:0.6, wH:0.4,
+    desc:"谷あいのロングコース。長いストレートと終盤のヘアピンが勝負どころ。パワー寄りのセッティングが効く。",
+    d:"M54,148 C48,94 94,58 152,60 L262,56 C318,54 352,78 350,106 C376,118 374,154 348,164 C352,196 304,216 252,211 L142,213 C92,213 58,190 54,148 Z" },
+  { id:"midfield", name:"Mid-Field", jp:"ミッドフィールド・レースウェイ", laps:8, km:3.56, wP:0.65, wH:0.35,
+    desc:"高速コーナーが気持ちいいパワーサーキット。ほぼ全開区間が長く、接近戦の攻防になる。",
+    d:"M68,192 C58,118 96,58 168,46 C240,34 322,54 342,104 C358,144 332,186 284,193 L252,197 C258,180 236,171 214,181 L122,199 C96,202 74,201 68,192 Z" },
+  { id:"apricot", name:"Apricot Hill", jp:"アプリコットヒル", laps:7, km:4.17, wP:0.5, wH:0.5,
+    desc:"丘陵地帯の総合コース。下りの複合コーナーと最終シケインがリズムを作る、玄人好みのレイアウト。",
+    d:"M64,172 C54,106 104,54 166,59 C186,38 226,40 242,61 C278,44 332,69 340,114 C348,160 306,201 244,206 L130,209 C94,209 69,197 64,172 Z" },
+  { id:"autumn", name:"Autumn Ring", jp:"オータムリング", laps:9, km:2.95, wP:0.4, wH:0.6,
+    desc:"紅葉の森に囲まれたコンパクトなテクニカルコース。S字の連続でハンドリングとライン取りが物を言う。",
+    d:"M92,201 C70,171 96,151 86,120 C76,89 111,54 157,57 C177,34 227,37 240,61 C292,54 337,89 332,134 C327,180 276,206 226,198 C186,216 114,223 92,201 Z" },
+  { id:"suzuka", name:"Suzuka Circuit", jp:"鈴鹿サーキット", laps:5, km:5.81, wP:0.55, wH:0.45,
+    desc:"実在サーキット再現。世界でも珍しい8の字レイアウト。S字、デグナー、ヘアピン、スプーン、130Rと名物コーナーが全部入り。",
+    d:"M290,216 C244,225 206,198 200,164 C194,198 158,224 112,213 C66,202 42,158 68,118 C94,80 156,68 186,94 C198,105 200,116 200,128 C238,102 302,92 332,124 C362,156 342,206 290,216 Z" },
+  { id:"laguna", name:"Laguna Seca", jp:"ラグナ・セカ", laps:8, km:3.6, wP:0.45, wH:0.55,
+    desc:"実在サーキット再現。名物は丘の上から一気に落ちるコークスクリュー。ヘアピンと下りの複合が続くテクニカルコース。",
+    d:"M148,216 C106,211 76,184 84,148 L94,118 C68,102 58,72 84,52 C105,36 141,44 151,64 L176,58 C202,32 262,28 307,54 C352,80 362,131 341,171 C320,209 258,223 204,219 Z" },
+  { id:"spa", name:"Spa-Francorchamps", jp:"スパ・フランコルシャン", laps:4, km:7.0, wP:0.6, wH:0.4,
+    desc:"実在サーキット再現。オールージュからケメルストレートへ駆け上がる、1周7kmの高速ロングコース。タイヤのマネジメントが試される。",
+    d:"M68,216 L118,118 C128,93 160,79 202,77 L300,59 C341,54 362,80 351,111 L331,169 C347,195 320,219 284,216 L238,213 C244,200 228,192 208,201 L108,219 C84,221 62,221 68,216 Z" },
+  { id:"tsukuba", name:"Tsukuba Circuit", jp:"筑波サーキット", laps:13, km:2.05, wP:0.35, wH:0.65,
+    desc:"実在サーキット再現。1周2kmのショートコース。最終コーナーの立ち上がりとヘアピン勝負で、接近戦が続く。",
+    d:"M68,150 C63,99 99,64 156,59 L264,57 C316,57 342,79 339,107 C357,117 354,149 333,156 C340,186 300,206 249,203 L128,206 C93,206 71,185 68,150 Z" }
 ];
 var CARS = [
   { id:"kei",   name:"Hatch K-Sport",  jp:"軽ハッチ",     cls:"K",  power:38, handling:55, price:0,     top:165, color:"#ffd23e" },
@@ -631,29 +651,147 @@ function ttsStyle(role){
   return { voice: ttsVoices[0] || null, pitch: 1.25, rate: 1.12 }; /* jikkyou */
 }
 function ttsProcess(){
-  if(ttsSpeaking || !ttsQueue.length) return;
-  var item = ttsQueue.shift();
-  var st = ttsStyle(item.role);
-  var u = new SpeechSynthesisUtterance(item.text);
-  u.lang = "ja-JP";
-  if(st.voice) u.voice = st.voice;
-  u.pitch = st.pitch; u.rate = st.rate;
-  ttsSpeaking = true;
-  u.onend = u.onerror = function(){ ttsSpeaking = false; ttsProcess(); };
-  try{ speechSynthesis.speak(u); }catch(e){ ttsSpeaking = false; }
+  if(ttsSpeaking) return;
+  while(ttsQueue.length){
+    var item = ttsQueue.shift();
+    /* Drop stale lines: at fast-forward the race has already moved on, and
+       reading out an old situation is what made commentary feel out of sync. */
+    if(item.pri < 3 && performance.now() - item.born > 8000) continue;
+    var text = item.fn ? item.fn() : item.text;
+    if(!text) continue;
+    var st = ttsStyle(item.role);
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "ja-JP";
+    if(st.voice) u.voice = st.voice;
+    u.pitch = st.pitch; u.rate = st.rate;
+    ttsSpeaking = true;
+    u.onend = u.onerror = function(){ ttsSpeaking = false; ttsProcess(); };
+    try{ speechSynthesis.speak(u); }catch(e){ ttsSpeaking = false; continue; }
+    return;
+  }
 }
-/* pri: 3 = must-say (start/finish/final lap), 2 = race action, 1 = colour */
+/* pri: 3 = must-say (start/finish/final lap), 2 = race action, 1 = colour.
+   Every line carries a birth time and is dropped when stale; pri-3 lines
+   flush pending low-priority lines so the voice stays locked to the picture. */
 function say(text, role, pri){
   if(!ttsOn || !("speechSynthesis" in window)) return;
   pri = pri || 2;
+  if(pri >= 3) ttsQueue = ttsQueue.filter(function(q){ return q.pri >= 2; });
   if(ttsQueue.length >= 2 && pri <= 1) return;
   if(ttsQueue.length >= 4 && pri <= 2) return;
-  ttsQueue.push({ text: text, role: role || "jikkyou", pri: pri });
+  ttsQueue.push({ text: text, role: role || "jikkyou", pri: pri, born: performance.now() });
   ttsProcess();
 }
+/* sayFn: the text is generated at the moment it is actually spoken, from the
+   live race state — return null to skip (the situation has already changed). */
+function sayFn(fn, role, pri){
+  if(!ttsOn || !("speechSynthesis" in window)) return;
+  pri = pri || 1;
+  if(ttsQueue.length >= 2 && pri <= 1) return;
+  if(ttsQueue.length >= 4 && pri <= 2) return;
+  ttsQueue.push({ fn: fn, role: role || "jikkyou", pri: pri, born: performance.now() });
+  ttsProcess();
+}
+/* Varied line pools — never use the same phrasing twice in a row. */
+var lineLast = {};
+function pickLine(key, arr){
+  var i = Math.floor(Math.random() * arr.length);
+  if(arr.length > 1){ var guard = 0; while(i === lineLast[key] && guard++ < 8) i = Math.floor(Math.random() * arr.length); }
+  lineLast[key] = i;
+  return arr[i];
+}
+var POOL = {
+  overtake: ["抜いた！ レン、オーバーテイク成功です！", "きました！ レン、前車をかわしてポジションアップ！", "オーバーテイク！ 見事な仕掛けでした！", "抜きました！ レン、一気に前に出ます！"],
+  mistakeJ: ["おっと、レンがコースアウト気味だ！ 大きくタイムを失いました。", "レン、ミス！ 姿勢を乱しています！", "ああ、レンがはらんだ！ タイムロスです。"],
+  mistakeK: ["無理なペースかもしれません。少し落として立て直したいところです。", "タイヤも痛めているはずです。ここは落ち着いて立て直しましょう。", "メンタルを切り替えられるかどうかが、この先の鍵になります。"],
+  pitIn: ["レン、ピットイン！ ピットレーンに入ります。", "ピットストップです。タイヤ交換と給油に入ります。", "レンがピットレーンへ。作業の速さに注目です。"],
+  pitOut: ["ピット作業完了！ レン、コースに戻ります！", "スムーズな作業でした。レン、コース復帰です！", "ピットアウト！ フレッシュタイヤで再スタートです。"],
+  bestLap: ["レン、自己ベスト更新です。いいペースで回っています。", "ファステスト級のラップです。マシンもドライバーも乗れていますね。", "自己ベストを塗り替えました。この調子を維持したいところです。"],
+  posUp: ["レン、{p}位に浮上です！", "ポジションを上げました、{p}位！", "レン、{p}位まで上がってきました！"],
+  posDown: ["レン、{p}位に後退しました。", "ポジションを落として{p}位。ここから巻き返せるか。", "レン、{p}位に下がりました。"],
+  top: ["レン、トップに立ちました！", "首位！ レンがレースをリードします！"],
+  tireWarn: ["タイヤがかなり厳しくなってきました。そろそろピットを考えたいところです。", "タイヤの残りが少なくなっています。このままでは終盤が持ちません。", "タイヤが警告域です。ピットウィンドウに入っていますよ。"],
+  fuelWarn: ["燃料も残りわずかです。このままだとガス欠の危険があります。", "燃料が厳しいですね。ペースを落とすか、ピットか、判断が必要です。"],
+  finLapJ: ["ファイナルラップ！ 残り1周です！", "最終周回に入りました！ あと1周！", "ラストラップです！ 全てが決まります！"],
+  finLapK: ["最後までタイヤが持つかどうか。ピットに入る余裕はもうありません。", "ここからは守るか攻めるか、監督の指示が試されます。", "燃料もタイヤも限界のはず。無事に帰ってきてほしい。"]
+};
 function ttsStop(){
   ttsQueue = []; ttsSpeaking = false;
   if("speechSynthesis" in window){ try{ speechSynthesis.cancel(); }catch(e){} }
+}
+/* Situation colour commentary, built from the LIVE race state at speak time:
+   gaps, tyre/fuel state, laps left, fastest lap holder, the battle ahead. */
+function colorLine(){
+  if(!race || race.over) return null;
+  var me = race.entries[0], sorted = sortedEntries(), idx = sorted.indexOf(me);
+  var leader = sorted[0];
+  var refV = Math.max(8, race.lapDist / leader.baseLap);
+  var cands = [];
+  var ahead = sorted[idx-1], behind = sorted[idx+1];
+  if(ahead && me.inPit <= 0) cands.push("前車との差は約" + ((ahead.dist - me.dist)/refV).toFixed(1) + "秒。じわじわと詰め寄っています。");
+  if(behind && me.inPit <= 0) cands.push("後ろの" + behind.name + "が" + ((me.dist - behind.dist)/refV).toFixed(1) + "秒差まで迫っています。油断できません。");
+  var lapsLeft = race.course.laps - Math.min(me.lap, race.course.laps);
+  if(lapsLeft > 1) cands.push("残り" + lapsLeft + "周です。タイヤの残りは" + Math.round(me.tire) + "パーセント、燃料は" + Math.round(me.fuel) + "パーセント。");
+  if(leader && !leader.me && (leader.dist - me.dist)/refV > 12) cands.push("トップの" + leader.name + "は独走態勢。レンは自分のレースに集中したいところです。");
+  var fl = null;
+  race.entries.forEach(function(e){ if(e.bestLap && (!fl || e.bestLap < fl.bestLap)) fl = e; });
+  if(fl && race.time > 60) cands.push("現在のファステストラップは" + (fl.me ? "レン" : fl.name) + "、" + fmtTime(fl.bestLap) + "です。");
+  cands.push("レンはここまでピット" + me.pitCount + "回。現在のペース指示は" + me.pace + "です。");
+  if(me.tire < 55 && me.tire > 30) cands.push("タイヤは" + Math.round(me.tire) + "パーセントまで消耗。終盤の落ち込みに注意です。");
+  if(idx >= 2 && ahead && sorted[idx-2]) cands.push("前では" + sorted[idx-2].name + "と" + ahead.name + "がバトル中。その隙を突きたいところです。");
+  if(!cands.length) return null;
+  return pickLine("color", cands);
+}
+/* Commentary director: runs ONCE PER FRAME in real time (not inside the sim
+   step loop). step() only raises flags; this turns them into speech using
+   the current state, throttled by real seconds — so even at x3 the voice
+   describes the race as it is NOW, not as it was when the event queued. */
+function commentaryTick(){
+  if(!race) return;
+  var f = race.flags || {}; race.flags = {};
+  if(race.over) return;
+  var me = race.entries[0];
+  if(!race.cPos) race.cPos = race.playerPos;
+  if(!ttsOn){ race.cPos = race.playerPos; race.cLeader = sortedEntries()[0]; return; }
+  var now = performance.now();
+  if(f.finalLap){
+    say(pickLine("finlapj", POOL.finLapJ) + " レンは現在" + race.playerPos + "位！", "jikkyou", 3);
+    say(pickLine("finlapk", POOL.finLapK), "kaisetsu", 2);
+  }
+  if(f.pitIn) say(pickLine("pitin", POOL.pitIn), "jikkyou", 2);
+  if(f.pitOut) say(pickLine("pitout", POOL.pitOut), "jikkyou", 2);
+  if(f.overtake) say(pickLine("overtake", POOL.overtake), "jikkyou", 2);
+  if(f.mistake){ say(pickLine("mistakej", POOL.mistakeJ), "jikkyou", 2); say(pickLine("mistakek", POOL.mistakeK), "kaisetsu", 1); }
+  if(f.bestLap) say(pickLine("bestlap", POOL.bestLap), "kaisetsu", 1);
+  var lead = sortedEntries()[0];
+  if(race.cLeader && lead !== race.cLeader && race.time > 20 && !lead.finished){
+    say("トップが入れ替わりました！ 首位は" + (lead.me ? "レン" : lead.name) + "です！", "jikkyou", 1);
+  }
+  race.cLeader = lead;
+  if(race.playerPos !== race.cPos && me.inPit <= 0 && !me.finished && now - race.lastPosAt > 9000){
+    race.lastPosAt = now;
+    sayFn(function(){
+      if(!race || race.over) return null;
+      var cur = race.playerPos, from = race.cPos;
+      if(cur === from) return null;
+      race.cPos = cur;
+      if(cur === 1) return pickLine("top", POOL.top);
+      return pickLine(cur < from ? "posup" : "posdown", cur < from ? POOL.posUp : POOL.posDown).replace("{p}", cur);
+    }, "jikkyou", 2);
+  }
+  if(!race.tireWarned && me.tire <= 30 && me.tire > 0 && !me.pitQueued && me.inPit <= 0){
+    race.tireWarned = true;
+    sayFn(function(){ if(!race || race.over) return null; var m = race.entries[0]; return (m.tire <= 34 && m.inPit <= 0 && !m.pitQueued) ? pickLine("tirewarn", POOL.tireWarn) : null; }, "kaisetsu", 1);
+  }
+  if(!race.fuelWarned && me.fuel <= 18 && me.inPit <= 0){
+    race.fuelWarned = true;
+    sayFn(function(){ if(!race || race.over) return null; var m = race.entries[0]; return (m.fuel <= 20 && m.inPit <= 0) ? pickLine("fuelwarn", POOL.fuelWarn) : null; }, "kaisetsu", 1);
+  }
+  if(!ttsSpeaking && ttsQueue.length === 0 && now - race.lastColorAt > race.nextColorIn){
+    race.lastColorAt = now;
+    race.nextColorIn = 17000 + Math.random() * 13000;
+    sayFn(function(){ return colorLine(); }, Math.random() < 0.5 ? "kaisetsu" : "jikkyou", 1);
+  }
 }
 $("btn-tts").addEventListener("click", function(){
   ttsOn = !ttsOn;
@@ -671,7 +809,7 @@ $("btn-tts").addEventListener("click", function(){
 });
 
 /* ================= SETUP UI ================= */
-$("ticker").textContent = ("SUNSET COAST ◆ REDLINE TOUGE ◆ METRO CITY ◆ VELOCITY RING ◆ FOREST VALLEY ◆ LAKESIDE GP ◆ B-SPEC DIRECTOR ◆ ").repeat(3);
+$("ticker").textContent = ("TRIAL MOUNTAIN ◆ DEEP FOREST ◆ GRAND VALLEY ◆ MID-FIELD ◆ APRICOT HILL ◆ AUTUMN RING ◆ SUZUKA ◆ LAGUNA SECA ◆ SPA-FRANCORCHAMPS ◆ TSUKUBA ◆ B-SPEC DIRECTOR ◆ ").repeat(3);
 
 function renderDriver(){
   var d = save.driver;
@@ -797,6 +935,23 @@ function logMsg(html, cls){
   el.scrollTop = el.scrollHeight;
 }
 
+/* Pit lane: a real second road on the map, generated per course by offsetting
+   the start/finish section of the main track 16px toward the infield.
+   Cars visibly drive it: entry run -> stop at the box -> exit run. */
+function buildPitLaneD(path, L){
+  var cx = 0, cy = 0, N = 40, i, pt;
+  for(i = 0; i < N; i++){ pt = path.getPointAtLength(L * i / N); cx += pt.x; cy += pt.y; }
+  cx /= N; cy /= N;
+  var pts = [], M = 30;
+  for(i = 0; i <= M; i++){
+    var f = 0.895 + 0.21 * i / M; if(f >= 1) f -= 1;
+    pt = path.getPointAtLength(f * L);
+    var dx = cx - pt.x, dy = cy - pt.y, len = Math.sqrt(dx*dx + dy*dy) || 1;
+    pts.push((pt.x + dx/len*16).toFixed(1) + "," + (pt.y + dy/len*16).toFixed(1));
+  }
+  return "M" + pts.join(" L");
+}
+
 function startRace(courseIdx){
   var course = COURSES[courseIdx];
   var playerCar = carById(selCar);
@@ -805,9 +960,13 @@ function startRace(courseIdx){
     course: course, courseIdx: courseIdx, time:0,
     totalDist: course.km*1000*course.laps, lapDist: course.km*1000,
     entries: gridEntries, over:false, playerPos: gridEntries.length,
-    prevPos: 0, prevLeader: null, lastPosSay: -99, lastFastSay: -99, tireWarned: false, fuelWarned: false
+    prevPos: 0, flags: {}, cPos: 0, cLeader: null, lastPosAt: 0, lastColorAt: 0, nextColorIn: 15000,
+    tireWarned: false, fuelWarned: false, pitPath: null, pitL: 0
   };
   race.prevPos = sortedEntries().indexOf(gridEntries[0]) + 1;
+  race.cPos = race.prevPos;
+  race.lastPosAt = performance.now();
+  race.lastColorAt = performance.now();
   $("pp-total").textContent = gridEntries.length;
   paused = false; simSpeed = 1;
   var sp = document.querySelectorAll(".speed-btn[data-speed]");
@@ -824,6 +983,16 @@ function startRace(courseIdx){
   var nx = -dy/len*13, ny = dx/len*13;
   sl.setAttribute("x1", p0.x-nx); sl.setAttribute("y1", p0.y-ny);
   sl.setAttribute("x2", p0.x+nx); sl.setAttribute("y2", p0.y+ny);
+  var pitD = buildPitLaneD(path, L);
+  $("map-pitlane").setAttribute("d", pitD);
+  $("map-pitcasing").setAttribute("d", pitD);
+  $("map-pitdash").setAttribute("d", pitD);
+  race.pitPath = $("map-pitlane");
+  race.pitL = race.pitPath.getTotalLength();
+  var pitMid = race.pitPath.getPointAtLength(race.pitL * 0.5);
+  var pitLab = $("map-pitlabel");
+  pitLab.setAttribute("x", pitMid.x); pitLab.setAttribute("y", pitMid.y - 9);
+  pitLab.setAttribute("text-anchor", "middle");
   var dots = $("map-dots"); dots.innerHTML = "";
   race.entries.forEach(function(e){
     var g = document.createElementNS("http://www.w3.org/2000/svg","g");
@@ -854,6 +1023,7 @@ function startRace(courseIdx){
     var d = document.createElement("div");
     d.className = "sil-car" + (e.me ? " me" : "");
     var short = (e.letter ? e.letter + " · " : "") + (e.me ? "REN" : e.name.split(" ").pop().toUpperCase());
+    e._silLabel = short;
     d.innerHTML = '<span class="lb">' + short + '</span>' + silSVG(e.car.id, e.color);
     silBox.appendChild(d); e.silEl = d;
   });
@@ -869,6 +1039,7 @@ function startRace(courseIdx){
   $("race-log").innerHTML = "";
   logMsg("グリッド整列完了。出走 "+gridEntries.length+"台（A〜"+String.fromCharCode(64+gridEntries.length)+"、あなたは "+race.entries[0].letter+"）。"+course.name+"、"+course.laps+"周のレース。監督の指示で勝負が決まる。", "hot");
   logMsg("タイヤと燃料の残量に注意。ピットは「次の周回終わり」に入る。");
+  logMsg("ピットレーンはコースマップ内側の専用レーン（PIT LANE表記）。ピット中はマップ上の車がそちらを走って止まる。");
   ttsStop();
   say("スタート！ " + course.name + "、" + course.laps + "周のレースが始まりました！ レンは" + race.prevPos + "番手から追い上げます！", "jikkyou", 3);
   say("解説です。カギはタイヤと燃料のマネジメント。ピットのタイミングが勝敗を分けます。", "kaisetsu", 1);
@@ -907,6 +1078,9 @@ $("btn-pit").addEventListener("click", function(){
 document.querySelectorAll(".speed-btn[data-speed]").forEach(function(b){
   b.addEventListener("click", function(){
     simSpeed = +b.getAttribute("data-speed");
+    /* changing speed invalidates queued commentary: flush it so the voice
+       re-syncs to the race at the new speed instead of reading old news */
+    if(ttsOn){ ttsQueue = []; if(race){ race.cPos = race.playerPos; race.cLeader = sortedEntries()[0]; } }
     document.querySelectorAll(".speed-btn[data-speed]").forEach(function(x){ x.classList.toggle("on", x===b); });
   });
 });
@@ -930,7 +1104,7 @@ function step(dt){
     if(e.finished) return;
     if(e.inPit > 0){
       e.inPit -= dt;
-      if(e.inPit <= 0){ e.tire = 100; e.fuel = 100; if(e.me){ logMsg("ピット完了。タイヤ交換＋給油してコース復帰！", "good"); say("ピット作業完了！ レン、コースに戻ります！", "jikkyou", 2); race.tireWarned = false; race.fuelWarned = false; } }
+      if(e.inPit <= 0){ e.tire = 100; e.fuel = 100; if(e.me){ logMsg("ピット完了。タイヤ交換＋給油してコース復帰！", "good"); race.flags.pitOut = true; race.tireWarned = false; race.fuelWarned = false; } }
       return;
     }
     /* AI brain */
@@ -956,7 +1130,7 @@ function step(dt){
         var canPass = e.overtake && Math.random() < (0.010 + (e.me ? save.driver.battle/100*0.012 : e.skill*0.010));
         if(canPass){
           battleF = 1.10;
-          if(e.me){ logMsg("オーバーテイク成功！ 前車を抜いた。", "good"); say("抜いた！ レン、オーバーテイク成功です！", "jikkyou", 2); }
+          if(e.me){ logMsg("オーバーテイク成功！ 前車を抜いた。", "good"); race.flags.overtake = true; }
         } else {
           battleF = 0.965; /* stuck behind */
           if(e.me && e.overtake && Math.random() < 0.006) logMsg("前車に詰まっている…追い越し指示が効いていない。", "hot");
@@ -970,7 +1144,7 @@ function step(dt){
       var risk = (e.pace >= 5 ? 0.0035 : e.pace === 4 ? 0.0016 : 0.0005) * (e.me ? (1.25 - save.driver.mental/100*0.55) : 1);
       if(Math.random() < risk * dt * 10){
         mistakeF = 0.55; e.mistakeCd = 2.2;
-        if(e.me){ logMsg("ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot"); say("おっと、レンがコースアウト気味だ！ 大きくタイムを失いました。", "jikkyou", 2); say("無理なペースかもしれません。少し落として立て直したいところです。", "kaisetsu", 1); }
+        if(e.me){ logMsg("ドライバーがコースアウト気味に！ タイムを失った。ペースを落とすか？", "hot"); race.flags.mistake = true; }
         else if(Math.random()<0.5) logMsg(e.name+" がミス。順位が入れ替わるかも。", "");
       }
     }
@@ -990,53 +1164,23 @@ function step(dt){
       e.lap++; e.lapStart = race.time;
       if(e.me){
         logMsg("LAP "+(e.lap-1)+" 完了： "+fmtTime(lapTime)+"（ベスト "+fmtTime(e.bestLap)+"）");
-        if(wasBest && lapTime < wasBest && e.lap >= 3 && race.time - race.lastFastSay > 25){
-          race.lastFastSay = race.time;
-          say("レン、自己ベスト更新です。いいペースで回っています。", "kaisetsu", 1);
-        }
-        if(e.lap === course.laps && course.laps > 1){
-          say("ファイナルラップ！ 残り1周です！ レンは現在" + race.playerPos + "位！", "jikkyou", 3);
-          say("最後までタイヤが持つかどうか。ピットに入る余裕はもうありません。", "kaisetsu", 1);
-        }
+        if(wasBest && lapTime < wasBest && e.lap >= 3) race.flags.bestLap = true;
+        if(e.lap === course.laps && course.laps > 1) race.flags.finalLap = true;
       }
       if(e.lap > course.laps){
         e.finished = true; e.finishTime = race.time;
         if(e.me) logMsg("チェッカーフラッグ！ フィニッシュ。", "hot");
       } else if(e.pitQueued){
-        e.pitQueued = false; e.inPit = 9 + Math.random()*3.5; e.pitCount++;
-        if(e.me){ setPit(false); logMsg("ピットイン…タイヤ交換中。", "good"); say("レン、ピットイン！ タイヤ交換と給油に入ります。", "jikkyou", 2); }
+        e.pitQueued = false; e.inPit = e.pitTotal = 11 + Math.random()*3; e.pitCount++;
+        if(e.me){ setPit(false); logMsg("ピットイン…ピットレーンを走行中。", "good"); race.flags.pitIn = true; }
       }
     }
   });
   var me = race.entries[0];
   var newSorted = sortedEntries();
   race.playerPos = newSorted.indexOf(me) + 1;
-  /* --- commentary: position swings, leader change, wear warnings --- */
-  var leadNow = newSorted[0];
-  if(!me.finished){
-    if(ttsOn && race.prevLeader && leadNow !== race.prevLeader && race.time > 20){
-      say("トップが入れ替わりました！ 首位は" + (leadNow.me ? "レン" : leadNow.name) + "です！", "jikkyou", 1);
-    }
-    race.prevLeader = leadNow;
-    if(ttsOn && race.prevPos && race.playerPos !== race.prevPos && me.inPit <= 0 && race.time - race.lastPosSay > 10){
-      race.lastPosSay = race.time;
-      if(race.playerPos < race.prevPos){
-        say(race.playerPos === 1 ? "レン、トップに立ちました！" : "レン、" + race.playerPos + "位に浮上です！", "jikkyou", 2);
-      } else {
-        say("レン、" + race.playerPos + "位に後退しました。", "jikkyou", 2);
-        if(me.tire < 35) say("タイヤの消耗が順位にも響いています。", "kaisetsu", 1);
-      }
-    }
-    race.prevPos = race.playerPos;
-    if(!race.tireWarned && me.tire <= 30 && me.tire > 0 && me.pitQueued === false){
-      race.tireWarned = true;
-      say("タイヤがかなり厳しくなってきました。そろそろピットを考えたいところです。", "kaisetsu", 1);
-    }
-    if(!race.fuelWarned && me.fuel <= 18){
-      race.fuelWarned = true;
-      say("燃料も残りわずかです。このままだとガス欠の危険があります。", "kaisetsu", 1);
-    }
-  }
+  /* Commentary is NOT spoken from here: step() only raises race.flags, and
+     commentaryTick() (once per frame, real time) turns them into speech. */
   if(me.finished || race.entries.every(function(e){ return e.finished; })){
     finishRace();
   }
@@ -1050,6 +1194,7 @@ function frame(ts){
     var steps = Math.max(1, Math.round(simDt / 0.1));
     for(var i=0;i<steps;i++){ step(0.1); if(!race || race.over) break; }
     render();
+    commentaryTick();
   }
   if(race && !race.over) timer = requestAnimationFrame(frame);
 }
@@ -1059,9 +1204,18 @@ function render(){
   var path = $("map-track"), L = path.getTotalLength();
   var leadE = sortedEntries()[0];
   race.entries.forEach(function(e){
-    var prog = ((e.dist % race.lapDist) + race.lapDist) % race.lapDist / race.lapDist;
-    if(e.inPit > 0) prog = 0.995;
-    var pt = path.getPointAtLength(prog * L);
+    var pt;
+    if(e.inPit > 0 && race.pitPath){
+      /* on the pit lane: drive in (0 -> 0.5), stop at the box (0.5), drive out (0.5 -> 1) */
+      var elapsed = (e.pitTotal || 12) - e.inPit, pf;
+      if(elapsed < 2.4) pf = 0.5 * elapsed / 2.4;
+      else if(e.inPit > 2.4) pf = 0.5;
+      else pf = 0.5 + 0.5 * (2.4 - e.inPit) / 2.4;
+      pt = race.pitPath.getPointAtLength(pf * race.pitL);
+    } else {
+      var prog = ((e.dist % race.lapDist) + race.lapDist) % race.lapDist / race.lapDist;
+      pt = path.getPointAtLength(prog * L);
+    }
     e.dot.setAttribute("transform", "translate(" + pt.x + "," + pt.y + ")");
     if(e.silEl){
       /* GT4 B-Spec style: the strip shows each car's distance RELATIVE to the leader,
@@ -1072,6 +1226,8 @@ function render(){
       e._sx = 95 - (rel / race.lapDist) * 90; /* right -> left */
       e.silEl.style.left = e._sx + "%";
       e.silEl.style.opacity = e.inPit > 0 ? "0.45" : "1";
+      var inPitNow = e.inPit > 0;
+      if(!!e._pitTag !== inPitNow){ e._pitTag = inPitNow; e.silEl.firstChild.textContent = (e._silLabel || "") + (inPitNow ? " [PIT]" : ""); }
     }
   });
   /* silhouette gap readouts (real metres between cars) */
@@ -1141,6 +1297,7 @@ function render(){
 function finishRace(){
   race.over = true;
   if(timer) cancelAnimationFrame(timer);
+  ttsStop(); /* kill any queued mid-race lines so the finish call is immediate */
   var sorted = sortedEntries();
   var me = race.entries[0];
   var pos = sorted.indexOf(me) + 1;
