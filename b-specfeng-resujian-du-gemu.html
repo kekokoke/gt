@@ -223,6 +223,11 @@
   .car-sil svg{width:72px;height:24px;display:block;}
   .sil-car.me{z-index:4;}
   .sil-car.me .lb{background:var(--red);}
+  /* full-grid fields (Suzuka '89 = 26 cars): shrink the silhouettes so the
+     whole field still reads on the strip */
+  .sil-stage.many .sil-car{width:88px;}
+  .sil-stage.many .sil-car svg{width:88px;height:30px;}
+  .sil-stage.many .sil-car .lb{max-width:88px;font-size:8px;padding:1px 3px;}
   .sil-ruler{position:absolute;left:0;right:0;bottom:4px;height:12px;font-size:8.5px;color:#7d8089;}
   .sil-ruler span{position:absolute;transform:translateX(-50%);white-space:nowrap;}
   .sil-ruler i{position:absolute;top:-4px;width:1px;height:5px;background:#55585f;display:block;}
@@ -380,7 +385,7 @@
 
     <div class="bm-panel hidden" id="hist-panel">
       <div class="bm-title"><span class="en">HISTORIC REPLAY</span> 歴史的レース再現デモ</div>
-      <p>実在の名レースを、実在ドライバーと車、史実のラップタイム、そしてレースの転機となる出来事（棄権・接触・ノーズ交換ピット・猛追）まで脚本で再現する観戦専用モード。<b>操作は一切不要</b>で、全車が史実ペースのまま自動で走り切る。<b>周回数は実戦どおりのフルディスタンス</b>（富士76＝73周／鈴鹿89＝53周／JGTC94＝68周／筑波シルエット＝20周）、<b>×1は実時間</b>——実際のレースとほぼ同じ時間をかけて進行し、タイヤ・燃料の消耗でペースが落ちることもない。長丁場は倍速ボタン（×2〜×60）で早送りできる。実況もそのレース専用の内容で喋り、車は8bitシルエットながら当時のマシンの色と形を再現してある。ラップタイムと順位の推移を、歴史そのままに眺めるためのモード。</p>
+      <p>実在の名レースを、実在ドライバーと車、史実のラップタイム、そしてレースの転機となる出来事（棄権・接触・ノーズ交換ピット・猛追）まで脚本で再現する観戦専用モード。<b>操作は一切不要</b>で、全車が史実ペースのまま自動で走り切る。<b>周回数は実戦どおりのフルディスタンス</b>（富士76＝73周／鈴鹿89＝53周／JGTC94＝68周／筑波シルエット＝20周）、<b>×1は実時間</b>——実際のレースとほぼ同じ時間をかけて進行し、タイヤ・燃料の消耗でペースが落ちることもない。長丁場は倍速ボタン（×2〜×60）で早送りできる。実況もそのレース専用の内容で喋り、車は8bitシルエットながら当時のマシンの色と形を再現してある。ラップタイムと順位の推移を、歴史そのままに眺めるためのモード。中でも<b>鈴鹿89は完全版</b>：予選通過26台フルグリッドで全車が走り、全リタイア（周回・理由つき）とセナの失格まで公式記録どおりに再現してある。</p>
       <div class="hist-list" id="hist-list"></div>
       <p id="hist-desc"></p>
       <table class="plain">
@@ -847,38 +852,155 @@ var HISTORIC = [
         do:[] }
     ],
     srcHtml:"出典・参考：NISMO「Racing GT-R HISTORY 〜熱狂のスーパーシルエット〜」（<a href=\"https://www.nismo.co.jp/motorsports/entertainment/GT-R_HISTORY2017/vol4.html\" target=\"_blank\" rel=\"noopener\">nismo.co.jp</a>）。スーパーシルエットは富士グランチャンピオンのサポートとして始まり富士・筑波で開催され、最後のレースは1984年12月9日の筑波チャレンジカップ第5戦。エントリーとペースは1982年の日産ターボ軍団を中心とした顔ぶれを基にした再構成。スーパーシルエットのレースは20周程度のスプリント形式が標準だったため、本再現も実戦同様20周とした。" },
-  { id:"suzuka89", course:"suzuka", laps:53, player:1, heroJp:"セナ",
-    title:"1989 F1 日本GP 鈴鹿 ― セナ vs プロスト",
-    event:"1989年10月22日 ／ 鈴鹿サーキット ／ 同僚対決の接触と大逆転劇",
-    desc:"タイトルを争うマクラーレンの同僚、セナとプロスト。プロストが先行し、セナが猛追。そして47周目、シケインで両者が接触——プロストは止まり、セナはピットでノーズを交換して猛烈に追い上げ、トップでチェッカーを受けた（後に失格となり優勝はナンニーニ）。接触とピット劇、そして奇跡の追い上げまでを、実戦どおり53周フルディスタンス・実時間で再現する。",
-    note:"セナは接触後ピットでノーズを交換し猛追、ナンニーニを抜いてトップでチェッカーを受けたが、シケイン不通過により失格。公式優勝はナンニーニで、プロストのワールドチャンピオンが決定した。",
-    introJ:"日本グランプリ、鈴鹿スタート！ プロストがホールショット、セナは2番手で追います！",
-    introK:"解説です。勝った方が王者に王手をかける大一番。セナは勝つしかありません。",
-    finK:"解説です。史実では、この後セナは失格となり優勝はナンニーニへ。プロストのタイトルが決まりました。物議を醸した結末でした。",
-    color:["プロストは計算された走り。セナはリスクを取って攻め続けます。","鈴鹿の観衆は総立ちです。同僚対決の行方に釘付けになっています。","{L}がレースをコントロールしています。この順位のままではタイトルはプロストのものになります。","セナが勝てばタイトル争いは最終戦へ。負ければプロストの王座が決まります。"],
-    entries:[
-      { driver:"A. Prost", jp:"アラン・プロスト", carName:"McLaren MP4/5", best:107.4, color:"#f2f2f0", sil:"f1_89" },
-      { driver:"A. Senna", jp:"アイルトン・セナ", carName:"McLaren MP4/5", best:107.0, color:"#e10600", sil:"f1_89" },
-      { driver:"G. Berger", jp:"ゲルハルト・ベルガー", carName:"Ferrari 640", best:108.4, color:"#ff9f1a", sil:"f1_89" },
+  { id:"suzuka89", course:"suzuka", laps:53, player:0, heroJp:"セナ",
+    title:"1989 F1 日本GP 鈴鹿 ― セナ vs プロスト【完全版】",
+    event:"1989年10月22日 ／ 鈴鹿サーキット ／ 予選通過26台フルグリッド ／ 同僚対決の接触と失格",
+    desc:"タイトルを争うマクラーレンの同僚、セナとプロスト。予選通過26台のフルグリッドで全車が走る完全版。プロストがホールショットで先行し、両者のタイヤ交換（プロスト21周目／セナ23周目）を経てセナが猛追。そして47周目、カシオトライアングル（最終シケイン）で両者が接触——プロストはその場でリタイアし、セナはマーシャルの押しがけで復帰、ピットでノーズを交換して猛烈に追い上げ、ナンニーニを抜いてトップでチェッカーを受けた。だがレース後、シケイン不通過によりセナは失格（DSQ）となり、公式優勝はナンニーニ、プロストのワールドチャンピオンが決定した。全15件のリタイア（周回・理由とも公式記録どおり）と失格まで、実戦どおり53周フルディスタンス・実時間で再現する。",
+    note:"セナは接触後ピットでノーズを交換し猛追、ナンニーニを抜いてトップでチェッカーを受けたが、シケイン不通過により失格（DSQ）。公式優勝はナンニーニ、2位パトレーゼ、3位ブーツェン。プロストのワールドチャンピオンが決定した。",
+    introJ:"日本グランプリ、鈴鹿スタート！ プロストがホールショット！ セナはスタートで出遅れ、2番手で1コーナーへ！ 全26台が一斉に飛び込んでいきます！",
+    introK:"解説です。ポイントはプロスト76対セナ60。セナは残り2戦とも勝つしかありません。そしてプロストはレース前、「今度はドアを開けない」と宣言しています。",
+    finK:"解説です。史実どおり、セナはシケイン不通過で失格となり優勝はナンニーニへ。プロストの3度目のタイトルが決まりました。物議を醸した結末でした。",
+    color:["プロストは計算された走り。セナはリスクを取って攻め続けます。","鈴鹿の観衆13万人は総立ちです。同僚対決の行方に釘付けになっています。","{L}がレースをコントロールしています。この順位のままではタイトルはプロストのものになります。","セナが勝てばタイトル争いは最終戦へ。負ければプロストの王座が決まります。","中嶋悟は母国グランプリを中団で走行中。鈴鹿の大観衆が声援を送ります。","全26台のフルグリッド。後方ではワーウィックらが着実に順位を上げてきています。"],
+    entries:[ /* grid order = the real 1989 qualifying order, all 26 qualifiers */
+      { driver:"A. Senna", jp:"アイルトン・セナ", carName:"McLaren MP4/5", best:107.5, color:"#e10600", sil:"f1_89", startM:-28 },
+      { driver:"A. Prost", jp:"アラン・プロスト", carName:"McLaren MP4/5", best:107.3, color:"#f2f2f0", sil:"f1_89", startM:0 },
+      { driver:"G. Berger", jp:"ゲルハルト・ベルガー", carName:"Ferrari 640", best:108.4, color:"#ff6b4a", sil:"f1_89" },
       { driver:"N. Mansell", jp:"ナイジェル・マンセル", carName:"Ferrari 640", best:109.0, color:"#ffd23e", sil:"f1_89" },
-      { driver:"R. Patrese", jp:"リカルド・パトレーゼ", carName:"Williams FW13", best:109.6, color:"#3d9bff", sil:"f1_89" },
-      { driver:"T. Boutsen", jp:"ティエリー・ブーツェン", carName:"Williams FW13", best:110.2, color:"#4dd0e1", sil:"f1_89" },
-      { driver:"A. Nannini", jp:"アレッサンドロ・ナンニーニ", carName:"Benetton B189", best:110.6, color:"#2fbf71", sil:"f1_89" },
-      { driver:"J. Alesi", jp:"ジャン・アレジ", carName:"Tyrrell 018", best:111.4, color:"#a3e635", sil:"f1_89" }
+      { driver:"R. Patrese", jp:"リカルド・パトレーゼ", carName:"Williams FW13", best:109.2, color:"#3d9bff", sil:"f1_89" },
+      { driver:"A. Nannini", jp:"アレッサンドロ・ナンニーニ", carName:"Benetton B189", best:108.8, color:"#2fbf71", sil:"f1_89" },
+      { driver:"T. Boutsen", jp:"ティエリー・ブーツェン", carName:"Williams FW13", best:109.5, color:"#4dd0e1", sil:"f1_89" },
+      { driver:"P. Alliot", jp:"フィリップ・アリオー", carName:"Lola LC89", best:110.0, color:"#5c6bc0", sil:"f1_89" },
+      { driver:"S. Modena", jp:"ステファノ・モデナ", carName:"Brabham BT58", best:110.2, color:"#9aa0a6", sil:"f1_89" },
+      { driver:"N. Larini", jp:"ニコラ・ラリーニ", carName:"Osella FA1M", best:111.4, color:"#78909c", sil:"f1_89" },
+      { driver:"N. Piquet", jp:"ネルソン・ピケ", carName:"Lotus 101", best:109.9, color:"#f5c518", sil:"f1_89" },
+      { driver:"S. Nakajima", jp:"中嶋悟", carName:"Lotus 101", best:110.6, color:"#c9a227", sil:"f1_89" },
+      { driver:"M. Brundle", jp:"マーティン・ブランドル", carName:"Brabham BT58", best:110.5, color:"#e8e8e8", sil:"f1_89" },
+      { driver:"L. Perez-Sala", jp:"ルイス・ペレス＝サラ", carName:"Minardi M189", best:112.0, color:"#90a4ae", sil:"f1_89" },
+      { driver:"A. Caffi", jp:"アレックス・カフィ", carName:"Dallara 189", best:111.3, color:"#c2185b", sil:"f1_89" },
+      { driver:"A. de Cesaris", jp:"アンドレア・デ・チェザリス", carName:"Dallara 189", best:111.8, color:"#7b1fa2", sil:"f1_89" },
+      { driver:"I. Capelli", jp:"イワン・カペッリ", carName:"March CG891", best:111.0, color:"#26a69a", sil:"f1_89" },
+      { driver:"J. Alesi", jp:"ジャン・アレジ", carName:"Tyrrell 018", best:111.2, color:"#a3e635", sil:"f1_89" },
+      { driver:"P. Barilla", jp:"パオロ・バリッラ", carName:"Minardi M189", best:112.2, color:"#607d8b", sil:"f1_89" },
+      { driver:"M. Gugelmin", jp:"マウリシオ・グージェルミン", carName:"March CG891", best:110.9, color:"#80cbc4", sil:"f1_89" },
+      { driver:"B. Schneider", jp:"ベルント・シュナイダー", carName:"Zakspeed 891", best:112.6, color:"#8d6e63", sil:"f1_89" },
+      { driver:"E. Pirro", jp:"エマニュエル・ピロ", carName:"Benetton B189", best:110.4, color:"#7ee2a8", sil:"f1_89" },
+      { driver:"O. Grouillard", jp:"オリビエ・グルイヤール", carName:"Ligier JS33", best:112.8, color:"#3949ab", sil:"f1_89" },
+      { driver:"E. Cheever", jp:"エディ・チーバー", carName:"Arrows A11", best:111.1, color:"#6d4c41", sil:"f1_89" },
+      { driver:"D. Warwick", jp:"デレック・ワーウィック", carName:"Arrows A11", best:110.7, color:"#fb8c00", sil:"f1_89" },
+      { driver:"J. Palmer", jp:"ジョナサン・パーマー", carName:"Tyrrell 018", best:113.2, color:"#558b2f", sil:"f1_89" }
     ],
+    /* Scripted from the official record: lap = laps COMPLETED by lapOf's car
+       when the event fires (so Prost's clash retirement fires at 46 laps
+       completed = during lap 47, exactly as the record's "46 laps /
+       Collision" entry). lap:0 events fire at the start (0 laps completed). */
     events:[
+      { lapOf:13, lap:0,
+        log:"【スタート直後】ペレス＝サラが他車と接触、1周を終えることなくリタイア。ミナルディの1台が早くも姿を消した。",
+        jik:"スタート直後、ペレス＝サラが接触でリタイアです！",
+        kai:"解説です。26台のフルグリッド、1コーナーの混戦は避けられませんでした。",
+        do:[{ t:"retire", k:13, reason:"スタート直後の接触" }] },
+      { lapOf:18, lap:0,
+        log:"【スタート直後】バリッラのミナルディもクラッチトラブルでストップ。ミナルディは2台とも0周リタイアとなった。",
+        jik:"バリッラも止まった！ ミナルディは2台ともスタート直後に消えました！",
+        kai:"解説です。バリッラはこれがF1デビュー戦でした。ほろ苦いデビューになりましたね。",
+        do:[{ t:"retire", k:18, reason:"クラッチ" }] },
+      { lapOf:20, lap:1,
+        log:"【史実イベント】シュナイダーのザクスピードがギアボックスを壊し、1周でリタイア。",
+        jik:"シュナイダー、ギアボックスでリタイアです。",
+        kai:"解説です。ザクスピード・ヤマハは今季苦戦続き。この鈴鹿でも早々に終わりました。",
+        do:[{ t:"retire", k:20, reason:"ギアボックス" }] },
+      { lapOf:25, lap:20,
+        log:"【史実イベント】パーマーのティレルが燃料漏れでストップ。20周でリタイア。",
+        jik:"パーマーが止まった、燃料漏れです！",
+        kai:"解説です。最後尾グリッドからのレースでしたが、ここまでとなりました。",
+        do:[{ t:"retire", k:25, reason:"燃料漏れ" }] },
+      { lapOf:1, lap:21,
+        log:"【ピット】首位プロストがタイヤ交換ピットイン（21周目）。作業は7.8秒——セナが一時トップに立つ。",
+        jik:"プロスト、ピットイン！ セナがトップに立ちました！",
+        kai:"解説です。プロストは素早い作業で2番手に復帰。セナのストップが勝負の分かれ目になります。",
+        do:[{ t:"pitnow", k:1, time:8 }] },
+      { lapOf:9, lap:21,
+        log:"【史実イベント】予選10位のラリーニ（オゼッラ）がブレーキトラブルでリタイア。21周で姿を消した。",
+        jik:"ラリーニ、ブレーキトラブルでリタイアです。",
+        kai:"解説です。ピレリの予選用タイヤで10番グリッドを掴んだ殊勲の走りでしたが、決勝はここまででした。",
+        do:[{ t:"retire", k:9, reason:"ブレーキ" }] },
+      { lapOf:"player", lap:23,
+        log:"【ピット】セナがタイヤ交換ピットイン（23周目）。左フロントの交換に手間取り、プロストの後方約5秒で復帰。ここからセナの猛追が始まる。",
+        jik:"セナ、ピットイン！ しかし作業が長い！ プロストの後ろでコース復帰です！",
+        kai:"解説です。セナは約5秒を失いました。残り30周、この差を詰められるかどうかが全てです。",
+        do:[{ t:"pitnow", k:"player", time:12 }] },
+      { lapOf:16, lap:27,
+        log:"【史実イベント】カペッリのマーチがサスペンショントラブルでリタイア（27周）。",
+        jik:"カペッリ、サスペンションでリタイアです。",
+        kai:"解説です。レイトンハウスのマーチは信頼性に泣かされました。",
+        do:[{ t:"retire", k:16, reason:"サスペンション" }] },
+      { lapOf:"player", lap:28,
+        log:"【鈴鹿】セナがファステスト級のラップを連発し、プロストへの差を削り始めた。フレッシュタイヤのグリップが効いている。",
+        jik:"セナ、猛追開始！ ラップごとにプロストとの差が縮まっています！",
+        kai:"解説です。セナのペースが上がってきました。プロストはタイヤを労わりながら逃げます。",
+        do:[{ t:"boost", k:"player", f:1.008 }] },
+      { lapOf:22, lap:31,
+        log:"【史実イベント】グルイヤールのリジェがエンジントラブルでリタイア（31周）。",
+        jik:"グルイヤール、エンジンでストップです。",
+        kai:"解説です。中団の争いからまた1台が消えました。",
+        do:[{ t:"retire", k:22, reason:"エンジン" }] },
+      { lapOf:21, lap:33,
+        log:"【史実イベント】ピロのベネトンがヘアピンでデ・チェザリスと接触しリタイア（33周）。22番グリッドから10番手付近まで追い上げていただけに無念。",
+        jik:"ピロが接触でリタイア！ 追い上げの最中でした！",
+        kai:"解説です。新スペックのフォードV8を積んで見事な追い上げでしたが、接触で終わりました。",
+        do:[{ t:"retire", k:21, reason:"接触" }] },
+      { lapOf:2, lap:34,
+        log:"【史実イベント】3位を走っていたベルガーのフェラーリがギアボックスを壊しリタイア（34周）。これでナンニーニが3位に浮上。",
+        jik:"ベルガーが止まった！ フェラーリ、ギアボックスです！ ナンニーニが3位に上がります！",
+        kai:"解説です。これで表彰台争いはナンニーニが一歩リード。マクラーレン2台の後ろで、静かに好位置をキープしています。",
+        do:[{ t:"retire", k:2, reason:"ギアボックス" }] },
+      { lapOf:7, lap:36,
+        log:"【史実イベント】予選8位のアリオー（ローラ）がエンジントラブルでリタイア（36周）。",
+        jik:"アリオー、エンジンでリタイアです。",
+        kai:"解説です。ラルースのローラで予選8位と光った走りでしたが、決勝はここまででした。",
+        do:[{ t:"retire", k:7, reason:"エンジン" }] },
+      { lapOf:17, lap:37,
+        log:"【史実イベント】アレジのティレルがギアボックスを壊しリタイア（37周）。",
+        jik:"アレジ、ギアボックスでストップです。",
+        kai:"解説です。若きアレジの鈴鹿はここで終わりました。",
+        do:[{ t:"retire", k:17, reason:"ギアボックス" }] },
       { lapOf:"player", lap:40,
-        log:"【鈴鹿】セナがプロストの背後に迫る。シケインへのアプローチで明らかに速い。鈴鹿の観衆がどよめく。",
+        log:"【鈴鹿】セナがプロストの背後に迫る。130Rからシケインへのアプローチで明らかに速い。鈴鹿の観衆がどよめく。",
         jik:"セナ、プロストの背後にじわじわと迫ります。シケインへのアプローチが速い！",
         kai:"解説です。セナのペースが上回っています。問題は抜く場所です。鈴鹿でチームメイトを抜くのは至難の業ですよ。",
         do:[] },
-      { lapOf:"player", lap:47,
-        log:"【シケイン】セナとプロストが接触！ プロストはマシンを止めた。セナはコースに復帰し、ノーズ交換のためピットへ向かう！",
-        jik:"ああっ、シケインで接触！ セナとプロストが絡んだ！ プロストはストップ、セナはピットへ向かいます！",
-        kai:"解説です。両雄の戦いは、まさかこんな形で決着するとは。セナはノーズ交換で大きくタイムを失います。ここから追い上げられるかどうかです。",
-        do:[{ t:"retire", k:0 }, { t:"pitnow", k:"player", time:17 }, { t:"boost", k:"player", f:1.05 }] }
+      { lapOf:11, lap:41,
+        log:"【史実イベント】中嶋悟のロータスがエンジントラブルでストップ（41周）。母国グランプリの英雄が、鈴鹿の観衆に手を振りながらマシンを降りた。",
+        jik:"中嶋悟、エンジンでリタイアです……！ 母国グランプリ、無念のストップ！",
+        kai:"解説です。中嶋は中団で粘りの走りを見せていましたが、エンジンが持ちませんでした。観衆からは大きな拍手が送られています。",
+        do:[{ t:"retire", k:11, reason:"エンジン" }] },
+      { lapOf:3, lap:43,
+        log:"【史実イベント】マンセルのフェラーリV12が煙を吹き、エンジンブローでリタイア（43周）。フェラーリは2台とも姿を消した。",
+        jik:"マンセルのマシンから煙！ エンジンブローです！ フェラーリは全滅です！",
+        kai:"解説です。40周目あたりから煙が出ていました。これで残る有力どころはマクラーレン2台とナンニーニ、ウィリアムズ勢です。",
+        do:[{ t:"retire", k:3, reason:"エンジン" }] },
+      { lapOf:8, lap:46,
+        log:"【史実イベント】モデナのブラバムがエンジントラブルでリタイア（46周）。完走は10台だけとなった。",
+        jik:"モデナもエンジンで止まった！ 残るは10台です！",
+        kai:"解説です。そして目線は前へ——セナとプロスト、ついにその時が近づいています。",
+        do:[{ t:"retire", k:8, reason:"エンジン" }] },
+      { lapOf:"player", lap:46,
+        log:"【47周目・カシオトライアングル】セナがシケインでプロストのインに飛び込んだ——接触！ 両車は絡み合ってエスケープロードで停止。プロストはエンジンが止まり、その場でマシンを降りた（リタイア）。セナはマーシャルに押しがけを頼み、シケインを通らずに復帰。壊れたノーズのままピットへ向かい、ノーズ交換のロングストップ。首位はナンニーニに渡った。",
+        jik:"ああっ、シケインで接触！ セナとプロストが絡んだ！ プロストはストップ、降りました！ セナは押しがけで復帰、ピットへ向かいます！ 首位はナンニーニです！",
+        kai:"解説です。プロストはレース前、「今度はドアを開けない」と言っていました。その言葉どおりの接触です。セナは大きくタイムを失いました。ここから追い上げられるかどうか——そして、シケインを通らなかった復帰が後で問題になるかもしれません。",
+        do:[{ t:"retire", k:1, reason:"シケインでの接触" }, { t:"pitnow", k:"player", time:80 }, { t:"boost", k:"player", f:1.045 }] },
+      { lapOf:"player", lap:49,
+        log:"【鈴鹿】セナが信じられないペースでナンニーニに迫る。ファステストラップを連発——鈴鹿の観衆は総立ちだ。",
+        jik:"セナ、猛烈な追い上げ！ ナンニーニの背後が近づいています！",
+        kai:"解説です。新しいノーズとタイヤで、セナは予選のようなラップを刻んでいます。このまま行けばトップ奪還は時間の問題です。",
+        do:[] },
+      { lapOf:"player", lap:53,
+        log:"【チェッカー後】セナがトップでチェッカーを受けた。しかしレーススチュワードは、接触後の復帰でシケインを通過しなかったことを理由にセナの失格（DSQ）を発表。公式優勝はナンニーニとなり、プロストのワールドチャンピオンが決定した。",
+        jik:"セナ、トップでチェッカー！ しかし——レースコントロールから発表です。セナ、失格。公式優勝はナンニーニです！",
+        kai:"解説です。シケイン不通過が失格の理由とされました。セナとマクラーレンは控訴しましたが、後に棄却されています。プロストの3度目の王座が、ここ鈴鹿で決まりました。",
+        do:[{ t:"dsq", k:"player" }] }
     ],
-    srcHtml:"史実メモ：1989年10月22日、鈴鹿サーキット。接触は53周中の47周目、最終シケインで発生。本再現も実戦どおり53周フルディスタンスとし、接触は47周目に配置した。セナはピットでノーズを交換し、ナンニーニを抜いてトップでチェッカーを受けたが、シケイン不通過により失格。公式優勝はナンニーニ、2位パトレーゼ、3位ブーツェン。ペースは当時のレースラップを基にした再構成（優勝タイム1:35:06.277＝53周の平均約1:47.7に整合）。" },
+    srcHtml:"史実メモ（完全版）：1989年10月22日、鈴鹿サーキット。予選通過26台が決勝に出走し、完走は10台。本再現はグリッド順・完走順位・全リタイアの周回と理由を公式記録どおりに脚本化した。公式順位：優勝ナンニーニ（ベネトン、1:35:06.277）、2位パトレーゼ（+11.904）、3位ブーツェン（+13.446）、4位ピケ、5位ブランドル、6位ワーウィック、7位グージェルミン、8位チーバー、9位カフィ、10位デ・チェザリス。リタイア：ペレス＝サラ（0周・接触）、バリッラ（0周・クラッチ）、シュナイダー（1周・ギアボックス）、パーマー（20周・燃料漏れ）、ラリーニ（21周・ブレーキ）、カペッリ（27周・サスペンション）、グルイヤール（31周・エンジン）、ピロ（33周・接触）、ベルガー（34周・ギアボックス）、アリオー（36周・エンジン）、アレジ（37周・ギアボックス）、中嶋悟（41周・エンジン）、マンセル（43周・エンジン）、モデナ（46周・エンジン）、プロスト（46周・シケインでの接触）。プロストは21周目、セナは23周目にタイヤ交換。接触は47周目（両者46周完了時点）の最終シケインで発生し、セナは51周目にナンニーニを抜いてトップでチェッカーを受けたがシケイン不通過で失格。ペース配分は予選タイム（セナ1:38.041のポールほか）と決勝の順位経過を基にした再構成で、接触に伴うセナのロス（停止・押しがけ・スロー走行・ノーズ交換）は約80秒のロングストップとして集約している。出典：<a href=\"https://en.wikipedia.org/wiki/1989_Japanese_Grand_Prix\" target=\"_blank\" rel=\"noopener\">1989 Japanese Grand Prix（Wikipedia）</a>／<a href=\"https://global.honda/en/F1/mclaren/race/1989_japan/\" target=\"_blank\" rel=\"noopener\">Honda F1アーカイブ 1989年日本GP</a>／<a href=\"https://www.race-database.com/results/results.php?year=1989&race=15&series_id=1\" target=\"_blank\" rel=\"noopener\">race-database.com 決勝記録</a>。" },
   { id:"jgtc94", course:"fuji", laps:68, player:1, heroJp:"影山",
     title:"1994 JGTC 開幕戦 富士 ― GT-R同士の初陣",
     event:"1994年5月1日 ／ 富士スピードウェイ ／ 全日本GT選手権 記念すべき第1戦",
@@ -1409,7 +1531,9 @@ function buildGridHist(hist){
       name: b.driver,
       car: { id: b.sil, name: b.carName }, me: isPlayer, color: b.color,
       baseLap: b.best, skill: 0.85,
-      dist: -i * 32, lap: 1, lapStart: 0, lastLap: null, bestLap: null,
+      /* startM overrides the grid-slot start offset (Suzuka '89: Prost's
+         jump start puts him ahead of pole-sitter Senna at turn 1) */
+      dist: (b.startM != null ? b.startM : -i * 32), lap: 1, lapStart: 0, lastLap: null, bestLap: null,
       tire: 100, fuel: 100, pace: 3, overtake: false, pitQueued: false, inPit: 0, pitCount: 0,
       finished: false, finishTime: null, mistakeCd: 0, seed: Math.random() * 10,
       letter: String.fromCharCode(65 + i), hkey: i, boost: 1, dnf: false
@@ -1427,29 +1551,40 @@ function histEntryByKey(k){
    entry completes the scripted lap: retirements (Lauda, Prost), the hero's
    forced nose-change pit stop, the post-incident charge boost, and pure
    broadcast moments. Runs inside step()'s lap-crossing block. */
+function histFireEvent(ev){
+  if(ev._done) return;
+  ev._done = true;
+  if(ev.log) logMsg(ev.log, "hot");
+  if(ev.jik) say(ev.jik, "jikkyou", 3);
+  if(ev.kai) say(ev.kai, "kaisetsu", 2);
+  (ev.do || []).forEach(function(a){
+    var t = histEntryByKey(a.k);
+    if(!t) return;
+    if(a.t === "retire"){
+      t.dnf = true; t.finished = true; t.finishTime = 1e7 + race.time; t.inPit = 0; t.pitQueued = false;
+      t.dnfReason = a.reason || "";
+      logMsg(t.name + " はリタイア。マシンを止めた。" + (a.reason ? "（" + a.reason + "）" : ""), "hot");
+    } else if(a.t === "pitnow"){
+      t.inPit = t.pitTotal = a.time || 14; t.pitCount++;
+      if(t.me){ setPit(false); logMsg("ピットイン…作業中。通常より長いストップになる。", "good"); }
+    } else if(a.t === "boost"){
+      t.boost = a.f;
+    } else if(a.t === "dsq"){
+      /* post-race disqualification (Senna '89): the car keeps its on-road
+         finish, but the official classification excludes it — sortedEntries
+         ranks it below every classified finisher, above the retirements. */
+      t.dsq = true;
+      logMsg("【公式発表】" + t.name + " は失格（DSQ）。トップでチェッカーを受けたが、公式記録から除外された。", "hot");
+    }
+  });
+}
 function histEventCheck(e, lapDone){
   if(!race || !race.histEvents || race.over) return;
   for(var i = 0; i < race.histEvents.length; i++){
     var ev = race.histEvents[i];
     if(ev._done) continue;
     if(histEntryByKey(ev.lapOf) !== e || lapDone !== ev.lap) continue;
-    ev._done = true;
-    if(ev.log) logMsg(ev.log, "hot");
-    if(ev.jik) say(ev.jik, "jikkyou", 3);
-    if(ev.kai) say(ev.kai, "kaisetsu", 2);
-    (ev.do || []).forEach(function(a){
-      var t = histEntryByKey(a.k);
-      if(!t) return;
-      if(a.t === "retire"){
-        t.dnf = true; t.finished = true; t.finishTime = 1e7 + race.time; t.inPit = 0; t.pitQueued = false;
-        logMsg(t.name + " はリタイア。マシンを止めた。", "hot");
-      } else if(a.t === "pitnow"){
-        t.inPit = t.pitTotal = a.time || 14; t.pitCount++;
-        if(t.me){ setPit(false); logMsg("ピットイン…作業中。通常より長いストップになる。", "good"); }
-      } else if(a.t === "boost"){
-        t.boost = a.f;
-      }
-    });
+    histFireEvent(ev);
   }
 }
 
@@ -1560,6 +1695,7 @@ function startRace(courseIdx, bm, hist){
      and the tyre/fuel panel, and reveals the x10/x30/x60 speed buttons. */
   document.body.classList.toggle("hist-watch", !!hist);
   $("pp-total").textContent = gridEntries.length;
+  $("sil-stage").classList.toggle("many", gridEntries.length >= 16);
   paused = false; simSpeed = 1;
   var sp = document.querySelectorAll(".speed-btn[data-speed]");
   for(var i=0;i<sp.length;i++) sp[i].classList.toggle("on", sp[i].getAttribute("data-speed")==="1");
@@ -1657,6 +1793,11 @@ function startRace(courseIdx, bm, hist){
     gridEntries.forEach(function(e){ if(e.letter === "A") poleE = e; });
     if(poleE && !poleE.me) say("ポールポジションは" + poleE.name + "、" + poleE.car.name + "です。この1台をどう崩すかが焦点になります。", "kaisetsu", 1);
   }
+  if(hist && race.histEvents){
+    /* lap:0 scripted events (Suzuka '89: two cars out before completing a
+       single lap) fire immediately at the start. */
+    race.histEvents.forEach(function(ev){ if(ev.lap === 0) histFireEvent(ev); });
+  }
   show("race");
   lastTs = performance.now();
   if(timer) cancelAnimationFrame(timer);
@@ -1704,13 +1845,21 @@ $("btn-pause").addEventListener("click", function(){
 });
 
 function sortedEntries(){
+  /* Classification order, as in an official result sheet:
+     0 = finished on the road, 1 = still running (classified by distance),
+     2 = disqualified (excluded, but listed above the retirements),
+     3 = retired — ordered by distance covered, so a car that stopped on
+     lap 46 ranks above one that stopped on lap 0. */
+  function rank(e){
+    if(e.dnf) return 3;
+    if(e.dsq) return 2;
+    if(e.finished) return 0;
+    return 1;
+  }
   return race.entries.slice().sort(function(a,b){
-    /* retirements (Historic script events) always rank below cars still
-       running or properly finished, ordered by when they stopped */
-    if(a.dnf && b.dnf) return a.finishTime - b.finishTime;
-    if(a.dnf) return 1; if(b.dnf) return -1;
-    if(a.finished && b.finished) return a.finishTime - b.finishTime;
-    if(a.finished) return -1; if(b.finished) return 1;
+    var ra = rank(a), rb = rank(b);
+    if(ra !== rb) return ra - rb;
+    if(ra === 0 || ra === 2) return a.finishTime - b.finishTime;
     return b.dist - a.dist;
   });
 }
@@ -2004,10 +2153,11 @@ function finishRace(){
   var pos = sorted.indexOf(me) + 1;
   var course = race.course;
   var winnerE = sorted[0];
-  if(pos === 1) say(pickLine("finj", ["チェッカー！ レン、優勝です！ 見事な勝利！", "チェッカー！ レンがトップで帰ってきました、優勝です！", "チェッカーフラッグ！ レン、文句なしの優勝です！"]), "jikkyou", 3);
+  if(me.dsq) say("チェッカー！ トップでチェッカーを受けたのはレン！ しかしレース後、失格（DSQ）が発表され、公式優勝は" + winnerE.name + "となりました！", "jikkyou", 3);
+  else if(pos === 1) say(pickLine("finj", ["チェッカー！ レン、優勝です！ 見事な勝利！", "チェッカー！ レンがトップで帰ってきました、優勝です！", "チェッカーフラッグ！ レン、文句なしの優勝です！"]), "jikkyou", 3);
   else say("チェッカー！ 優勝は" + winnerE.name + "！ レンは" + pos + "位でフィニッシュです！", "jikkyou", 3);
   if(race.hist && race.hist.finK) say(race.hist.finK, "kaisetsu", 3);
-  else say(pickLine("fink", pos === 1 ? POOL.finWinK : (pos <= 3 ? POOL.finPodiumK : POOL.finOtherK)).replace("{n}", winnerE.name), "kaisetsu", 3);
+  else if(!me.dsq) say(pickLine("fink", pos === 1 ? POOL.finWinK : (pos <= 3 ? POOL.finPodiumK : POOL.finOtherK)).replace("{n}", winnerE.name), "kaisetsu", 3);
   /* prize by class value of player car + position */
   var base = (race.bm || race.hist) ? 30000 : 4000 + (carById(selCar).price * 0.06);
   var posMul = [1, 1.6, 1.3, 1.1, 0.9, 0.75, 0.6, 0.5, 0.4, 0.35, 0.3][pos] || 0.3;
@@ -2038,9 +2188,23 @@ function finishRace(){
     }
   }
   storeSave(); renderDriver();
+  if(race.hist){
+    /* Historic Replay ends the moment the hero crosses the line, but the
+       official sheet classifies everyone: project the still-running cars
+       to the finish at their current pace so the result table shows real
+       times and gaps for the whole field (DSQ and DNF handled above). */
+    sorted.forEach(function(e){
+      if(!e.finished && !e.dnf){
+        var remain = Math.max(0, race.totalDist - e.dist);
+        var spd = Math.max(8, race.lapDist / e.baseLap * (e.boost || 1));
+        e.finished = true; e.finishTime = race.time + remain / spd;
+      }
+    });
+  }
   /* result UI */
   $("res-fin").textContent = (mode==="champ" && champ) ? ("ROUND "+(champ.round+1)+" FINISH") : "FINISH";
   $("res-pos").innerHTML = (pos===1 ? '<span class="win">'+pos+'</span>' : pos) + '<span class="u">位 / '+sorted.length+'台</span>';
+  if(me.dsq) $("res-pos").innerHTML = '<span style="color:#ff5a52">DSQ</span><span class="u"> 失格 ― トップでチェッカーも公式記録から除外</span>';
   $("res-sub").textContent = course.name+"（"+course.jp+"） ― "+me.car.name+" ／ ベストラップ "+fmtTime(me.bestLap||0)+" ／ ピット "+me.pitCount+"回";
   if(race.hist && race.hist.note) $("res-sub").textContent += " ― 【史実メモ】" + race.hist.note;
   $("res-prize").textContent = fmt(prize);
@@ -2050,7 +2214,7 @@ function finishRace(){
   $("res-pts-head").classList.toggle("hidden", mode!=="champ");
   $("res-growth").innerHTML = "ドライバー成長： <b>"+(gained.join(" ／ ") || "—")+"</b><br>所持金： <b class='mono'>"+fmt(save.money)+" Cr</b>（PACE "+Math.round(before.pace)+"→"+Math.round(d.pace)+"）";
   $("res-body").innerHTML = sorted.map(function(e,i){
-    var t = e.dnf ? "DNF（リタイア）" : (e.finished ? (i===0 ? fmtTime(e.finishTime) : "+"+((e.finishTime-sorted[0].finishTime)).toFixed(1)+"s") : "走行中（距離順）");
+    var t = e.dsq ? "DSQ（失格）― トップでチェッカーもシケイン不通過で除外" : (e.dnf ? "DNF（リタイア）" + (e.dnfReason ? " ― " + e.dnfReason : "") : (e.finished ? (i===0 ? fmtTime(e.finishTime) : "+"+((e.finishTime-sorted[0].finishTime)).toFixed(1)+"s") : "走行中（距離順）"));
     var p = (mode==="champ") ? '<td class="mono">'+(PTS_TABLE[i]||0)+'</td>' : "";
     return '<tr class="'+(e.me?"me":"")+'"><td class="mono"><b>'+(i+1)+'</b></td><td>'+e.name+'<br><span style="font-size:11px;color:var(--muted)">'+e.car.name+' ／ PIT '+e.pitCount+'回</span></td><td class="mono">'+t+'</td>'+p+'</tr>';
   }).join("");
